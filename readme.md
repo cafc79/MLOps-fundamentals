@@ -708,9 +708,9 @@ After completing the full series, you could:
 ## 📞 Getting Help
 
 For each part:
-- **Part 1 Issues:** Check `MLOps-Fundamentals-Capstone-Part1-Foundations/README.md`
-- **Part 2 Issues:** Check `MLOps-Fundamentals-Capstone-Part2-Monitoring/README.md`
-- **Part 3 Issues:** Check `MLOps-Fundamentals-Capstone-Part3-Advanced/README.md`
+- **Part 1 Issues:** Check [MLOps-Fundamentals-Capstone-Part1-Foundations README](https://github.com/espiridion87/MLOps-Fundamentals-Capstone-Part1-Foundations)
+- **Part 2 Issues:** Check [MLOps-Fundamentals-Capstone-Part2-Monitoring README](https://github.com/espiridion87/MLOps-Fundamentals-Capstone-Part2-Monitoring)
+- **Part 3 Issues:** Check [MLOps-Fundamentals-Capstone-Part3-Advanced README](https://github.com/espiridion87/MLOps-Fundamentals-Capstone-Part3-Advanced)
 
 ---
 
