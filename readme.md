@@ -1,725 +1,321 @@
-# MLOps Fundamentals Capstone - Complete Series Guide
+# MLOps Fundamentals: Part 1 - Foundations (Model Training & Versioning)
 
-## 📚 Overview
+## 🎯 Project Overview
 
-This is the **complete guide** for the MLOps Fundamentals 3-part capstone project series. This document explains how the three projects interconnect, the progression path, and how to use them as an integrated learning system.
+**Part 1: Foundations** is the first module in a 3-part iterative MLOps capstone project series. This module focuses on building the **core ML pipeline**: training models, versioning them with MLflow, and deploying them as a simple API.
 
----
+### What You'll Build
+- ✅ Text classification model for SMS spam detection
+- ✅ MLflow experiment tracking and model registry
+- ✅ Docker containerization for reproducible deployments
+- ✅ FastAPI serving endpoint for predictions
 
-## 🎯 Project Series Summary
-
-### Part 1: Foundations (2 weeks)
-**Focus:** Core ML pipeline fundamentals
-
-Build a complete ML model training and serving system with proper versioning and containerization.
-
-**Key Skills:**
-- Model training and evaluation
-- MLflow experiment tracking
-- Model registry management
-- FastAPI REST API development
-- Docker containerization
-- Unit testing for ML code
-
-**Deliverables:**
-- Working training script
-- MLflow experiment tracking
-- FastAPI prediction API
-- Docker container
-- Test suite (>80% coverage)
-
-**Tech Stack:**
-```
-Core: scikit-learn, FastAPI, MLflow, Docker
-Data: pandas, numpy, NLTK
-Testing: pytest
-```
+### Timeline
+- **Duration:** 2 weeks part-time
+- **Complexity:** ⭐ Beginner/Intermediate
+- **Next Step:** Part 2 (Monitoring & Automated Retraining)
 
 ---
 
-### Part 2: Monitoring & Automation (2 weeks)
-**Focus:** Observability and automated workflows
+## 🧠 Core Concepts Covered
 
-Build on Part 1 to add drift detection, scheduled retraining, and monitoring dashboards.
-
-**Key Skills:**
-- Data drift detection
-- Scheduled task automation (APScheduler)
-- Performance monitoring
-- Dashboard design (Streamlit)
-- Model comparison
-- Automated decision-making
-- SQLite database management
-
-**Deliverables:**
-- Drift detection module
-- Scheduled retraining system
-- Monitoring dashboard
-- Model comparison logic
-- Retraining history database
-- Extended test suite
-
-**Tech Stack:**
-```
-Scheduling: APScheduler
-Dashboards: Streamlit
-Drift: Evidently (or custom)
-Database: SQLAlchemy, SQLite
-```
-
-**Dependency:** ✅ Part 1 must be complete
+| Concept | What You'll Learn |
+|---------|------------------|
+| **Model Training** | Build scikit-learn models (Naive Bayes, Logistic Regression, SVM) with hyperparameter tuning |
+| **Experiment Tracking** | Use MLflow to log metrics, parameters, and artifacts for reproducible science |
+| **Model Versioning** | Manage model versions in MLflow registry with staging control |
+| **Text Feature Engineering** | TF-IDF vectorization and text preprocessing with NLTK |
+| **Containerization** | Package code and dependencies in Docker for consistent environments |
+| **API Serving** | Create FastAPI endpoints for model inference |
+| **Version Control** | Git best practices for ML projects |
 
 ---
 
-### Part 3: Advanced Intelligence (2-3 weeks)
-**Focus:** Intelligent decision-making and enterprise deployment
+## 📋 Functional Requirements
 
-Build on Parts 1 & 2 to add LangChain agents, alerts, A/B testing, and production orchestration.
-
-**Key Skills:**
-- LangChain agent development
-- LLM integration (OpenAI, Anthropic)
-- Multi-channel alerting systems
-- A/B testing frameworks
-- API security (authentication, audit logging)
-- Docker Compose orchestration
-- Performance monitoring and observability
-- Production deployment strategies
-
-**Deliverables:**
-- LangChain retraining agent
-- Email/Slack alert system
-- A/B testing framework
-- Advanced observability (Prometheus)
-- API authentication
-- Audit logging system
-- Docker Compose full stack
-- End-to-end integration tests
-- Production deployment guide
-- Demo video
-
-**Tech Stack:**
-```
-AI: LangChain, OpenAI/Anthropic APIs
-Alerts: smtplib, slack-sdk
-Observability: Prometheus
-Security: PyJWT, cryptography
-Orchestration: Docker Compose
-```
-
-**Dependency:** ✅ Parts 1 & 2 must be complete
+| ID | Requirement | Description |
+|----|-------------|-------------|
+| **FR01** | Model Training Script | Train spam detection models using Naive Bayes, Logistic Regression, and SVM with TF-IDF features |
+| **FR02** | Hyperparameter Tuning | Grid search for optimal hyperparameters across 3+ model variants |
+| **FR03** | MLflow Integration | Log all experiments with metrics (accuracy, precision, recall, F1), parameters, and model artifacts |
+| **FR04** | Model Registry | Store and version models in MLflow registry with proper lineage tracking |
+| **FR05** | Docker Containerization | Package training and serving code in Docker containers |
+| **FR06** | FastAPI Prediction API | Create REST API endpoint for spam/ham predictions with confidence scores |
+| **FR07** | Text Preprocessing | Implement NLTK-based text cleaning (lowercase, tokenization, stopword removal) |
+| **FR08** | Model Persistence | Save trained models and vectorizers as artifacts |
 
 ---
 
-## 🔄 How the Parts Connect
+## 🚀 Implementation & Execution
 
-### Part 1 → Part 2 Transition
-
-```
-Part 1 Output                 Part 2 Input
-────────────────────────────────────────────────
-✓ Trained model        →      Use for predictions
-✓ MLflow registry      →      Retrieve models
-✓ FastAPI API          →      Add monitoring endpoints
-✓ Docker setup         →      Extend with new services
-✓ Training code        →      Automate with scheduler
-```
-
-**What Part 2 adds:**
-```python
-# Part 1: Single prediction
-{"message": "text"} → model → {"prediction": "spam"}
-
-# Part 2: Monitoring layer
-Monitor production predictions
-  ↓
-Detect drift in incoming data
-  ↓
-Compare metrics against thresholds
-  ↓
-Trigger retraining automatically
-  ↓
-Deploy new model if improved
-```
-
-### Part 2 → Part 3 Transition
-
-```
-Part 2 Output                 Part 3 Input
-────────────────────────────────────────────────
-✓ Drift metrics        →      Agent analyzes metrics
-✓ Monitoring service   →      Agent subscribes to events
-✓ Retraining logic     →      Agent makes decisions
-✓ Model versions       →      Agent selects best model
-✓ Dashboard            →      Agent provides context
-```
-
-**What Part 3 adds:**
-```python
-# Part 2: Rule-based trigger
-if drift > 0.15 or accuracy < 0.93:
-    trigger_retraining()
-
-# Part 3: Intelligent agent
-Agent observes metrics
-  ↓
-LLM analyzes patterns and context
-  ↓
-Agent reasons about spam evolution
-  ↓
-Agent decides: retrain, wait, or alert
-  ↓
-Agent sends alerts via email/Slack
-  ↓
-Agent implements A/B testing
-```
-
----
-
-## 📊 Scope Distribution
-
-### Part 1: Foundations (35% of total scope)
-
-**Core Requirements Covered:**
-- ✅ FR01: Model Training Script
-- ✅ FR02: Hyperparameter Tuning
-- ✅ FR03: MLflow Integration
-- ✅ FR04: Model Registry
-- ✅ FR05: Docker Containerization
-- ✅ FR06: FastAPI Prediction API
-- ✅ FR07: Text Preprocessing
-- ✅ FR08: Model Persistence
-
-**Non-Functional Requirements Covered:**
-- ✅ NFR01: Training Time (<2 min)
-- ✅ NFR02: API Response Time (<100ms)
-- ✅ NFR08: Container Startup (<30s)
-- ✅ NFR09: Model Accuracy (>95%)
-
-**Concepts Introduced:**
-- Model training workflows
-- Experiment tracking
-- API development
-- Containerization
-
----
-
-### Part 2: Monitoring & Automation (35% of total scope)
-
-**Core Requirements Covered:**
-- ✅ FR06: Text Drift Detection
-- ✅ FR07: Drift Metrics
-- ✅ FR08: Scheduled Retraining
-- ✅ FR09: Monitoring Service
-- ✅ FR10: Model Comparison
-- ✅ FR11: Conditional Deployment
-- ✅ FR12: Dashboard Metrics
-- ✅ FR13: Alert Triggers
-- ✅ FR14: Historical Tracking
-
-**Non-Functional Requirements Covered:**
-- ✅ NFR03: Text Preprocessing Time (<50ms)
-- ✅ NFR05: Model Registry Access (<2s)
-- ✅ NFR06: Retraining Trigger Reliability (>90%)
-- ✅ NFR07: Dashboard Load Time (<3s)
-
-**Concepts Introduced:**
-- Drift detection
-- Scheduled automation
-- Observability
-- Statistical analysis
-- Dashboard design
-
----
-
-### Part 3: Advanced Intelligence (30% of total scope)
-
-**Core Requirements Covered:**
-- ✅ FR07: Retraining Agent (with LLM)
-- ✅ FR10: Alert System (multi-channel)
-- ✅ Advanced: A/B Testing
-- ✅ Advanced: Security
-- ✅ Advanced: Full Orchestration
-- ✅ Advanced: Integration Testing
-- ✅ Advanced: Production Deployment
-
-**Concepts Introduced:**
-- Intelligent agents
-- LLM integration
-- Multi-channel communication
-- A/B testing
-- Security & authentication
-- Orchestration patterns
-- Production deployment
-
----
-
-## 🎯 Learning Path
-
-### Week 1-2: Part 1 Fundamentals
-```
-Day 1-2:  Setup, data exploration, requirements
-Day 3-4:  Model training pipeline
-Day 5-6:  MLflow integration
-Day 7-8:  FastAPI serving
-Day 9-10: Docker containerization
-Day 11-12: Testing and documentation
-Day 13-14: Polish, demo, presentation
-```
-
-### Week 3-4: Part 2 Monitoring
-```
-Day 1-2:  Drift detection theory & implementation
-Day 3-4:  APScheduler integration
-Day 5-6:  Monitoring service
-Day 7-8:  Streamlit dashboard
-Day 9-10: Model comparison & deployment logic
-Day 11-12: Advanced testing
-Day 13-14: Polish, integration testing, presentation
-```
-
-### Week 5-6: Part 3 Intelligence
-```
-Day 1-2:  LangChain & agent architecture
-Day 3-4:  LLM integration
-Day 5-6:  Alert systems
-Day 7-8:  A/B testing framework
-Day 9-10: Security & audit logging
-Day 11-12: Docker Compose orchestration
-Day 13-14: Integration tests, deployment guide, demo
-```
-
----
-
-## 🔗 Repository Organization
-
-### Recommended Setup
-
-**Option A: Separate Repositories (Recommended)**
-```
-GitHub Account
-├── MLOps-Fundamentals-Capstone-Part1-Foundations/
-│   └── Complete Part 1 code
-│
-├── MLOps-Fundamentals-Capstone-Part2-Monitoring/
-│   └── Complete Part 2 code (builds on Part 1)
-│
-└── MLOps-Fundamentals-Capstone-Part3-Advanced/
-    └── Complete Part 3 code (builds on Parts 1 & 2)
-```
-
-**Option B: Monorepo with Branches**
-```
-MLOps-Fundamentals-Capstone/
-├── main (Part 3 complete)
-│
-├── part-1-foundations (Part 1 only)
-├── part-2-monitoring (Parts 1 & 2)
-└── part-3-advanced (All parts)
-```
-
-### Recommended: Option A (Separate Repos)
-- ✅ Clear progression
-- ✅ Each repo can be submitted independently
-- ✅ Better for portfolio showcase
-- ✅ Easier to manage dependencies
-
----
-
-## 🏗️ Architecture Progression
-
-### Part 1: Simple Architecture
-```
-┌──────────────┐
-│   Training   │
-│   Script     │
-└───────┬──────┘
-        │
-    ┌───▼────┐
-    │ MLflow  │ (versioning)
-    └───┬────┘
-        │
-┌───────▼──────────┐
-│   FastAPI API    │ (predictions)
-└──────────────────┘
-```
-
-### Part 2: Extended Architecture
-```
-┌──────────────┐    ┌──────────────────┐
-│   Training   │    │  New Messages    │
-│   Script     │    │  (production)    │
-└───────┬──────┘    └────────┬─────────┘
-        │                    │
-    ┌───▼────┐      ┌────────▼────────┐
-    │ MLflow  │      │ Drift Detection │
-    └───┬────┘      └────────┬────────┘
-        │                    │
-        │          ┌─────────▼─────────┐
-        │          │ Monitoring Svc    │
-        │          │ (scheduled check) │
-        │          └────────┬──────────┘
-        │                   │
-┌───────▼───────────────────▼────────────┐
-│    FastAPI API (+ monitoring endpoints) │
-└─────────────┬──────────────────────────┘
-              │
-       ┌──────▼────────┐
-       │ Streamlit     │
-       │ Dashboard     │
-       └───────────────┘
-```
-
-### Part 3: Full Enterprise Architecture
-```
-┌──────────────┐    ┌──────────────────┐    ┌──────────────┐
-│   Training   │    │  New Messages    │    │  Users/Apps  │
-│   Script     │    │  (production)    │    │   (web/API)  │
-└───────┬──────┘    └────────┬─────────┘    └────┬─────────┘
-        │                    │                   │
-    ┌───▼────┐      ┌────────▼────────┐    ┌────▼──────┐
-    │ MLflow  │      │ Drift Detection │    │ Auth/Sec  │
-    └───┬────┘      └────────┬────────┘    └────┬──────┘
-        │                    │                   │
-        │          ┌─────────▼─────────┐         │
-        │          │ Monitoring Svc    │◄────────┤
-        │          │ + LangChain Agent │         │
-        │          └────────┬──────────┘         │
-        │                   │                    │
-        │          ┌────────▼────────┐           │
-        │          │  Alert System   │           │
-        │          │(Email/Slack)    │           │
-        │          └────────┬────────┘           │
-        │                   │                    │
-        │          ┌────────▼────────┐           │
-        │          │  A/B Testing    │           │
-        │          └────────┬────────┘           │
-        │                   │                    │
-┌───────▼───────────────────▼────────────────────▼────────────┐
-│                 FastAPI API (Production)                    │
-│              (+ auth, observability, audit log)             │
-└─────────────┬─────────────────────────────────┬─────────────┘
-              │                                 │
-       ┌──────▼────────┐             ┌──────────▼──────┐
-       │ Streamlit     │             │  Prometheus     │
-       │ Dashboard     │             │  Metrics        │
-       └───────────────┘             └─────────────────┘
-```
-
----
-
-## 📝 Code Reuse Strategy
-
-### Part 1 Code → Part 2
-```python
-# Part 1: src/train.py
-def train_model(data, model_type='logistic_regression'):
-    # Training logic
-    return model, vectorizer, metrics
-
-# Part 2: Can call directly without modification
-from src.train import train_model
-
-# Part 2 adds retraining wrapper
-def retrain_if_needed():
-    if drift_detected or accuracy_low:
-        model, vec, metrics = train_model(new_data)
-        compare_and_deploy(model)
-```
-
-### Part 2 Code → Part 3
-```python
-# Part 2: src/monitor.py
-class MonitoringService:
-    def check_retraining_needed(self):
-        return {
-            'drift': self.calculate_drift(),
-            'accuracy': self.evaluate_model(),
-            'recommendation': 'RETRAIN' if drift > threshold else 'OK'
-        }
-
-# Part 3: Agent uses this directly
-from src.monitor import MonitoringService
-
-class RetrainingAgent:
-    def __init__(self):
-        self.monitor = MonitoringService()
-    
-    async def decide(self):
-        metrics = self.monitor.check_retraining_needed()
-        # Use LLM to reason about metrics
-        decision = await self.llm.analyze(metrics)
-        # Send alerts, trigger retraining
-```
-
----
-
-## ✅ Success Criteria by Part
-
-### Part 1 Success Criteria
-- ✅ Model achieves >95% accuracy on test set
-- ✅ Training completes in <2 minutes
-- ✅ API responds in <100ms per request
-- ✅ Code coverage >80%
-- ✅ Docker container builds and runs
-- ✅ All unit tests pass
-- ✅ Full documentation provided
-- ✅ Demo video shows training → serving workflow
-
-### Part 2 Success Criteria
-- ✅ All Part 1 criteria maintained
-- ✅ Drift detection accuracy >85%
-- ✅ Scheduled retraining works reliably (>90% trigger accuracy)
-- ✅ Dashboard loads in <3s
-- ✅ Model comparison works correctly
-- ✅ Retraining history is tracked
-- ✅ Integration tests pass (Part 1 + Part 2)
-- ✅ Demo shows full monitoring and retraining workflow
-
-### Part 3 Success Criteria
-- ✅ All Part 1 & 2 criteria maintained
-- ✅ Agent makes decisions with >95% accuracy
-- ✅ Alerts send in <60s
-- ✅ A/B testing routes traffic correctly
-- ✅ API authentication works on all endpoints
-- ✅ Audit log is complete and accurate
-- ✅ Docker Compose orchestrates all services
-- ✅ End-to-end integration tests pass
-- ✅ Production deployment guide is complete
-- ✅ Demo video shows all features working together
-
----
-
-## 🚀 Deployment Progression
-
-### Part 1: Local Development
+### Prerequisites
 ```bash
-# Local training
-python src/train.py
+# Required installations
+- Python 3.9+
+- Docker & Docker Compose
+- Git
+```
 
-# Local API
-uvicorn src.serve:app --reload
+### How to Build
 
-# Docker container
+```bash
+# 1. Clone and setup repository
+git clone https://github.com/YOUR_USERNAME/MLOps-Fundamentals-Capstone-Part1-Foundations
+cd MLOps-Fundamentals-Capstone-Part1-Foundations
+
+# 2. Create virtual environment
+python -m venv .venv
+source .venv/bin/activate  # On Windows: .\.venv\Scripts\activate
+
+# 3. Install dependencies
+pip install -r requirements.txt
+
+# 4. Download dataset
+python scripts/download_data.py
+```
+
+### How to Run
+
+#### Option A: Quick Start (Make Commands)
+```bash
+make setup              # First-time setup
+make train              # Train initial model
+make serve              # Start prediction API
+```
+
+#### Option B: Manual
+```bash
+# 1. Start MLflow tracking server
+mlflow server --host 0.0.0.0 --port 5000
+
+# 2. Train model (new terminal)
+python src/train.py --experiment-name "initial_training"
+
+# 3. Start FastAPI server (new terminal)
+uvicorn src.serve:app --host 0.0.0.0 --port 8000 --reload
+```
+
+#### Option C: Docker
+```bash
+# Build and run
 docker build -t spam-detector:v1 .
 docker run -p 8000:8000 spam-detector:v1
 ```
 
-### Part 2: Local with Monitoring
+---
+
+## 🧪 How to Test
+
+### A. Test Model Training
 ```bash
-# Multiple local processes
-mlflow server
-uvicorn src.serve:app
-python src/monitor.py
-streamlit run src/dashboard.py
+python src/train.py --experiment-name "test_run"
+
+# Expected output:
+# ✓ Model trained and saved
+# ✓ Metrics logged to MLflow
+# ✓ Run ID: abc123def456
 ```
 
-### Part 3: Full Docker Compose
+### B. Test Prediction API
 ```bash
-# Single command for full stack
-docker-compose up --build
+# Test spam message
+curl -X POST "http://localhost:8000/predict" \
+  -H "Content-Type: application/json" \
+  -d '{"message": "Congratulations! You have won a $1000 gift card. Click here to claim now!"}'
 
-# Production-ready orchestration
-# Includes: MLflow, FastAPI, Streamlit, Agent, DB, Prometheus
+# Expected response:
+{
+  "prediction": "spam",
+  "confidence": 0.94,
+  "model_version": "v1.0.0",
+  "timestamp": "2025-12-09T10:30:00Z",
+  "top_features": ["won", "claim", "click"]
+}
+
+# Test legitimate message
+curl -X POST "http://localhost:8000/predict" \
+  -H "Content-Type: application/json" \
+  -d '{"message": "Hey, are we still meeting for lunch?"}'
+
+# Expected response:
+{
+  "prediction": "ham",
+  "confidence": 0.98,
+  "model_version": "v1.0.0"
+}
+
+# Health check
+curl http://localhost:8000/health
 ```
 
----
+### C. Test via Swagger UI
+1. Open `http://localhost:8000/docs`
+2. Test the `/predict` endpoint
+3. Check `http://localhost:5000` for MLflow UI
 
-## 📚 Skills Progression
-
-```
-Part 1: Foundations
-├── Python fundamentals
-├── ML libraries (scikit-learn)
-├── API development (FastAPI)
-├── ML experiment tracking (MLflow)
-├── Docker basics
-└── Testing (pytest)
-
-Part 2: Intermediate
-├── Statistical analysis (drift detection)
-├── Data engineering (preprocessing at scale)
-├── Task scheduling (APScheduler)
-├── Dashboard design (Streamlit)
-├── Database management (SQLite)
-├── Performance analysis
-└── System monitoring
-
-Part 3: Advanced
-├── AI agents (LangChain)
-├── LLM integration
-├── System design (orchestration)
-├── Security & authentication
-├── Observability (Prometheus)
-├── Production operations
-├── End-to-end testing
-└── DevOps practices
-```
-
----
-
-## 🎓 Portfolio Showcase
-
-### How to Present Each Part
-
-**Part 1 Presentation:**
-- "I built an end-to-end ML pipeline for spam detection"
-- Show: MLflow UI, API docs, Docker image
-- Emphasize: Model performance, code quality, testing
-
-**Part 2 Presentation:**
-- "I added intelligent monitoring to detect data drift"
-- Show: Drift metrics, monitoring dashboard, retraining history
-- Emphasize: Automation, observability, decision logic
-
-**Part 3 Presentation:**
-- "I completed a production-ready MLOps system with AI agents"
-- Show: Agent reasoning, multi-channel alerts, full orchestration
-- Emphasize: Enterprise readiness, intelligent automation, security
-
-**Complete Portfolio Achievement:**
-- "I designed and built a complete production MLOps system"
-- Show: All three projects integrated
-- Emphasize: End-to-end workflow, intelligent decisions, enterprise features
-
----
-
-## 🔗 Cross-Project Dependencies
-
-### Environment Variables
+### D. Unit Tests
 ```bash
-# Part 1
-MLFLOW_TRACKING_URI=http://localhost:5000
-
-# Part 2 (extends Part 1)
-MLFLOW_TRACKING_URI=http://localhost:5000
-DB_PATH=data/retraining_history.db
-
-# Part 3 (extends Parts 1 & 2)
-MLFLOW_TRACKING_URI=http://localhost:5000
-DB_PATH=data/retraining_history.db
-OPENAI_API_KEY=sk-...
-SLACK_WEBHOOK_URL=https://hooks.slack.com/...
-SMTP_SERVER=smtp.gmail.com
-ALERT_EMAIL=your-email@example.com
-```
-
-### Shared Database
-```
-Part 1: No persistent state beyond MLflow
-Part 2: SQLite for retraining history
-Part 3: Extends SQLite for alerts, A/B test results
-```
-
-### Shared Configuration
-```python
-# src/config.py - shared across all parts
-DRIFT_THRESHOLD = 0.15
-ACCURACY_THRESHOLD = 0.93
-RETRAINING_SCHEDULE = 'weekly'  # Part 2+
-AB_TEST_SPLIT = 0.2             # Part 3+
+pytest tests/test_train.py -v
+pytest tests/test_serve.py -v
 ```
 
 ---
 
-## 🤔 Common Pitfalls & Solutions
+## 📁 Project Structure
 
-### Pitfall 1: Not Completing Part 1 Before Part 2
-**Problem:** Trying to add monitoring without a solid foundation
-**Solution:** 
-- Complete all Part 1 tests first
-- Have Part 1 running in production before starting Part 2
-- Use `make test` to verify everything works
-
-### Pitfall 2: Skipping Testing
-**Problem:** Code works locally but fails in monitoring
-**Solution:**
-- Write tests as you go (TDD)
-- Aim for >80% coverage in each part
-- Test the integration points between parts
-
-### Pitfall 3: Ignoring Documentation
-**Problem:** Reviewers can't understand your decisions
-**Solution:**
-- Document architecture decisions
-- Explain monitoring thresholds
-- Provide runbooks for failures
-
-### Pitfall 4: Over-Engineering Early
-**Problem:** Spending too much time on optimization in Part 1
-**Solution:**
-- Follow the 80/20 rule
-- Get it working first
-- Optimize in Part 3 if needed
+```
+MLOps-Fundamentals-Capstone-Part1-Foundations/
+├── README.md                          # This file
+├── Makefile                           # Quick commands
+├── requirements.txt                   # Python dependencies
+├── Dockerfile                         # Container definition
+├── .env.example                       # Environment variables
+├── data/
+│   └── smsspamcollection.csv         # Dataset (after download)
+├── src/
+│   ├── __init__.py
+│   ├── train.py                      # Model training pipeline
+│   ├── serve.py                      # FastAPI application
+│   ├── preprocessing.py              # Text preprocessing utilities
+│   ├── models.py                     # Model definitions
+│   └── config.py                     # Configuration management
+├── scripts/
+│   └── download_data.py              # Dataset download script
+├── tests/
+│   ├── test_train.py                 # Training tests
+│   ├── test_serve.py                 # API tests
+│   ├── test_preprocessing.py         # Preprocessing tests
+│   └── conftest.py                   # Pytest configuration
+└── mlruns/                           # MLflow tracking (auto-created)
+```
 
 ---
 
-## 📖 Additional Resources
+## 📊 Success Metrics (Part 1)
 
-### Part 1 Resources
-- [scikit-learn documentation](https://scikit-learn.org/)
-- [MLflow quickstart](https://mlflow.org/docs/latest/quickstart.html)
-- [FastAPI tutorial](https://fastapi.tiangolo.com/tutorial/)
-- [Docker for ML](https://docs.docker.com/)
-
-### Part 2 Resources
-- [APScheduler documentation](https://apscheduler.readthedocs.io/)
-- [Streamlit documentation](https://docs.streamlit.io/)
-- [Drift detection patterns](https://docs.evidentlyai.com/)
-- [Time series analysis](https://pandas.pydata.org/docs/)
-
-### Part 3 Resources
-- [LangChain documentation](https://docs.langchain.com/)
-- [OpenAI API reference](https://platform.openai.com/docs/)
-- [Docker Compose guide](https://docs.docker.com/compose/)
-- [Prometheus monitoring](https://prometheus.io/docs/)
+| Metric | Target | Status |
+|--------|--------|--------|
+| Training Time | < 2 minutes | `PENDING` |
+| API Response Time | < 100ms | `PENDING` |
+| Model Accuracy | > 95% | `PENDING` |
+| Model F1-Score | > 90% | `PENDING` |
+| Code Coverage | > 80% | `PENDING` |
+| Docker Build Time | < 5 minutes | `PENDING` |
 
 ---
 
-## 🎯 What's Next After All 3 Parts?
+## 🎓 Learning Outcomes
 
-After completing the full series, you could:
+After completing Part 1, you will:
 
-1. **Cloud Deployment**
-   - Deploy to AWS/GCP/Azure
-   - Use managed services (SageMaker, Vertex AI)
-   - Implement auto-scaling
-
-2. **Advanced Features**
-   - Feature store integration
-   - Model explainability (SHAP, LIME)
-   - Adversarial testing
-   - Model compression
-
-3. **Specialized Domains**
-   - Computer Vision pipelines
-   - NLP-specific techniques (transformers)
-   - Time series forecasting
-   - Reinforcement learning
-
-4. **Production Hardening**
-   - Kubernetes deployment
-   - Multi-region setup
-   - Disaster recovery
-   - Compliance (GDPR, HIPAA)
+1. ✅ **Understand ML Pipelines:** Build end-to-end training workflows
+2. ✅ **Master MLflow:** Track experiments, log models, manage versions
+3. ✅ **Implement APIs:** Serve ML models via REST endpoints
+4. ✅ **Use Docker:** Containerize ML applications for deployment
+5. ✅ **Write Tests:** Test ML code and API endpoints
+6. ✅ **Apply Best Practices:** Logging, error handling, documentation
 
 ---
 
-## 📞 Getting Help
+## 🔗 Progression Path
 
-For each part:
-- **Part 1 Issues:** Check [MLOps-Fundamentals-Capstone-Part1-Foundations README](https://github.com/espiridion87/MLOps-Fundamentals-Capstone-Part1-Foundations)
-- **Part 2 Issues:** Check [MLOps-Fundamentals-Capstone-Part2-Monitoring README](https://github.com/espiridion87/MLOps-Fundamentals-Capstone-Part2-Monitoring)
-- **Part 3 Issues:** Check [MLOps-Fundamentals-Capstone-Part3-Advanced README](https://github.com/espiridion87/MLOps-Fundamentals-Capstone-Part3-Advanced)
+```
+Part 1: Foundations (YOU ARE HERE)
+   ↓
+Part 2: Monitoring & Automation
+   - Adds drift detection
+   - Adds scheduled retraining
+   - Adds monitoring dashboard
+   ↓
+Part 3: Advanced Intelligence
+   - Adds LangChain agent
+   - Adds alert systems
+   - Adds full orchestration
+```
 
 ---
 
-## 🎉 Conclusion
+## 📚 Key Technologies
 
-This 3-part series takes you from ML fundamentals to a production-ready MLOps system. Each part builds logically on the previous one, teaching essential skills at each level.
+```
+Data Processing:  pandas, numpy, scikit-learn
+NLP:              TfidfVectorizer, NLTK
+ML Framework:     scikit-learn (Naive Bayes, Logistic Regression, SVM)
+ML Ops:           MLflow
+API:              FastAPI, uvicorn
+Containerization: Docker
+Testing:          pytest
+Utilities:        python-dotenv, requests
+```
 
-**Part 1:** Build the foundation
-**Part 2:** Add intelligence and automation
-**Part 3:** Create an enterprise system
+---
 
-Good luck! 🚀
+## 🚀 Quick Start Commands
+
+```bash
+make setup              # Install dependencies
+make train              # Train model
+make serve              # Start API server
+make test               # Run tests
+make docker-build       # Build Docker image
+make docker-run         # Run in Docker
+make mlflow-ui          # Open MLflow UI
+```
+
+---
+
+## 📋 Deliverables (Part 1)
+
+- ✅ Working training script with model persistence
+- ✅ MLflow experiment tracking and model registry
+- ✅ FastAPI prediction service with documentation
+- ✅ Docker containerization for reproducible deployment
+- ✅ Comprehensive test suite (>80% coverage)
+- ✅ Complete documentation (README, inline comments, examples)
+- ✅ Demo: Training → Serving workflow
+
+---
+
+## 🤔 Troubleshooting
+
+### MLflow Server Won't Start
+```bash
+# Clear old MLflow data
+rm -rf mlruns/
+mlflow server --host 0.0.0.0 --port 5000
+```
+
+### Docker Build Issues
+```bash
+# Clear cache and rebuild
+docker system prune
+docker build --no-cache -t spam-detector:v1 .
+```
+
+### Import Errors
+```bash
+# Reinstall dependencies
+pip install --upgrade -r requirements.txt
+```
+
+---
+
+## 📞 Support & Next Steps
+
+Once Part 1 is complete:
+- Review the MLflow model registry
+- Test the API thoroughly with various messages
+- Prepare for Part 2 by understanding drift detection concepts
+- Consider optimizing model performance
+
+**Ready for Part 2?** See `../MLOps-Fundamentals-Capstone-Part2-Monitoring/README.md`
+
+---
+
+## 📖 References
+
+- [MLflow Documentation](https://mlflow.org/docs/latest/)
+- [FastAPI Documentation](https://fastapi.tiangolo.com/)
+- [scikit-learn Models](https://scikit-learn.org/)
+- [SMS Spam Dataset](https://archive.ics.uci.edu/ml/datasets/SMS+Spam+Collection)
+- [Docker Best Practices for ML](https://docs.docker.com/)
