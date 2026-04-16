@@ -1,0 +1,176 @@
+import React, { useState } from 'react';
+import {
+Terminal,
+Search,
+BarChart3,
+CheckCircle2,
+ShieldCheck,
+ArrowRight,
+Play,
+FileCode,
+Tag,
+Mail,
+AlertTriangle
+} from 'lucide-react';
+
+const StepCard = ({ number, title, subtitle, status, icon: Icon, color, children, isActive, onClick }) => (
+<div onClick={onClick} className={`p-5 rounded-2xl border-2 transition-all duration-300 cursor-pointer ${ isActive ?
+    `bg-white shadow-xl border-${color}-500 scale-[1.02] z-10` : `bg-slate-50 border-transparent hover:border-slate-200
+    opacity-90` }`}>
+    <div className="flex items-center justify-between mb-4">
+        <div className={`p-2 rounded-lg bg-${color}-100 text-${color}-600`}>
+            <Icon size={24} />
+        </div>
+        <span className="text-xs font-mono font-bold text-slate-400">PASO {number}</span>
+    </div>
+    <h3 className="text-lg font-bold text-slate-900 leading-tight">{title}</h3>
+    <p className="text-xs text-slate-500 mb-4">{subtitle}</p>
+
+    {isActive && (
+    <div className="space-y-3 animate-in fade-in slide-in-from-top-2">
+        {children}
+    </div>
+    )}
+</div>
+);
+
+const App = () => {
+const [activeStep, setActiveStep] = useState(1);
+
+return (
+<div className="min-h-screen bg-slate-50 p-4 md:p-8 font-sans">
+    <div className="max-w-5xl mx-auto">
+        {/* Cabecera */}
+        <header className="mb-10 text-center">
+            <div
+                className="inline-flex items-center gap-2 px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs font-bold mb-4 uppercase">
+                <Mail size={14} /> Caso de Uso: NLP & MLOps
+            </div>
+            <h1 className="text-3xl md:text-5xl font-black text-slate-900 mb-4">
+                MLflow en Acción: <span className="text-blue-600">Spam Detector</span>
+            </h1>
+            <p className="text-slate-600 max-w-2xl mx-auto">
+                Visualiza cómo MLflow gestiona el ciclo de vida de un clasificador de texto, desde que "limpiamos" los
+                correos hasta que el modelo está filtrando spam en vivo.
+            </p>
+        </header>
+
+        {/* Pipeline Visual */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+            <StepCard number="01" title="Tracking de Experimentos" subtitle="MLflow Tracking" icon={Search} color="blue"
+                isActive={activeStep===1} onClick={()=> setActiveStep(1)}
+                >
+                <div className="p-3 bg-slate-900 rounded-lg font-mono text-[10px] text-blue-300">
+                    mlflow.log_param("vectorizer", "TF-IDF")<br />
+                    mlflow.log_param("max_features", 5000)<br />
+                    mlflow.log_metric("accuracy", 0.982)
+                </div>
+                <p className="text-xs text-slate-600 mt-2">Registramos qué preprocesamiento usamos y los resultados de
+                    cada prueba.</p>
+            </StepCard>
+
+            <StepCard number="02" title="Empaquetado de Lógica" subtitle="MLflow Projects" icon={FileCode}
+                color="indigo" isActive={activeStep===2} onClick={()=> setActiveStep(2)}
+                >
+                <div className="space-y-2">
+                    <div className="flex items-center gap-2 p-2 bg-indigo-50 rounded border border-indigo-100">
+                        <Tag size={12} className="text-indigo-500" />
+                        <span className="text-[10px] font-bold">MLproject file</span>
+                    </div>
+                    <p className="text-xs text-slate-600">Definimos que necesitamos <code>scikit-learn</code> y
+                        <code>nltk</code> para que el código sea portable.</p>
+                </div>
+            </StepCard>
+
+            <StepCard number="03" title="Serialización del Modelo" subtitle="MLflow Models" icon={Tag} color="purple"
+                isActive={activeStep===3} onClick={()=> setActiveStep(3)}
+                >
+                <div className="p-3 bg-slate-100 rounded-lg flex flex-col gap-2">
+                    <div className="flex justify-between items-center text-[10px]">
+                        <span className="font-bold text-slate-700 italic">Flavor: sklearn</span>
+                        <CheckCircle2 size={12} className="text-emerald-500" />
+                    </div>
+                    <p className="text-xs text-slate-600">Guardamos el modelo listo para ser consumido como API o Batch.
+                    </p>
+                </div>
+            </StepCard>
+
+            <StepCard number="04" title="Gestión de Versiones" subtitle="Model Registry" icon={ShieldCheck}
+                color="emerald" isActive={activeStep===4} onClick={()=> setActiveStep(4)}
+                >
+                <div className="space-y-2">
+                    <div
+                        className="flex items-center justify-between text-[10px] p-1 bg-emerald-50 rounded text-emerald-700 border border-emerald-200">
+                        <span>Versión 2.0.4</span>
+                        <span className="font-bold">PRODUCTION</span>
+                    </div>
+                    <div
+                        className="flex items-center justify-between text-[10px] p-1 bg-slate-100 rounded text-slate-500">
+                        <span>Versión 2.1.0</span>
+                        <span className="font-bold">STAGING</span>
+                    </div>
+                </div>
+            </StepCard>
+        </div>
+
+        {/* Dashboard de Monitorización Simulado */}
+        <div className="bg-white rounded-3xl p-8 shadow-sm border border-slate-200">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+                <div>
+                    <h2 className="text-xl font-bold text-slate-900">Métricas del Experimento: "Spam_v2"</h2>
+                    <p className="text-sm text-slate-500 italic">Datos actualizados hace 2 minutos</p>
+                </div>
+                <button
+                    className="px-4 py-2 bg-blue-600 text-white rounded-xl text-sm font-bold flex items-center gap-2 hover:bg-blue-700 transition-colors">
+                    <Play size={16} /> Ver en MLflow UI
+                </button>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="p-6 bg-slate-50 rounded-2xl border border-slate-100">
+                    <div className="flex items-center gap-2 text-blue-600 mb-2">
+                        <BarChart3 size={18} />
+                        <span className="text-xs font-bold uppercase tracking-wider">Precisión</span>
+                    </div>
+                    <div className="text-3xl font-black text-slate-900">99.4%</div>
+                    <div className="text-[10px] text-emerald-600 mt-1 font-bold">+0.2% vs baseline</div>
+                </div>
+
+                <div className="p-6 bg-slate-50 rounded-2xl border border-slate-100">
+                    <div className="flex items-center gap-2 text-rose-600 mb-2">
+                        <AlertTriangle size={18} />
+                        <span className="text-xs font-bold uppercase tracking-wider">Falsos Positivos</span>
+                    </div>
+                    <div className="text-3xl font-black text-slate-900">0.02%</div>
+                    <div className="text-[10px] text-slate-500 mt-1">Crítico: Evitar correos válidos en spam</div>
+                </div>
+
+                <div className="p-6 bg-slate-50 rounded-2xl border border-slate-100">
+                    <div className="flex items-center gap-2 text-indigo-600 mb-2">
+                        <Terminal size={18} />
+                        <span className="text-xs font-bold uppercase tracking-wider">Latencia de Inferencia</span>
+                    </div>
+                    <div className="text-3xl font-black text-slate-900">12ms</div>
+                    <div className="text-[10px] text-slate-500 mt-1">Optimizado para tiempo real</div>
+                </div>
+            </div>
+        </div>
+
+        {/* Footer */}
+        <footer className="mt-12 text-center text-slate-400 text-xs py-8">
+            <p>© 2024 Flujo de Trabajo MLOps con MLflow • Ejemplo de NLP para Clasificación de Spam</p>
+        </footer>
+    </div>
+
+    {/* Tailwind Utility Guard */}
+    <div className="hidden">
+        <div className="border-blue-500 bg-blue-100 text-blue-600"></div>
+        <div className="border-indigo-500 bg-indigo-100 text-indigo-600"></div>
+        <div className="border-purple-500 bg-purple-100 text-purple-600"></div>
+        <div className="border-emerald-500 bg-emerald-100 text-emerald-700"></div>
+    </div>
+</div>
+);
+};
+
+export default App;

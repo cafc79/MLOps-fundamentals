@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Masterclass: Gobernanza y Seguridad en MLOps</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Fira+Code:wght@400;500&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: #0f172a;
+            line-height: 1.6;
+        }
+
+        .code-block {
+            font-family: 'Fira Code', monospace;
+            background-color: #0f172a;
+            color: #e2e8f0;
+            padding: 1.25rem;
+            border-radius: 0.75rem;
+            font-size: 0.85rem;
+            line-height: 1.6;
+            border-left: 4px solid #10b981;
+            overflow-x: auto;
+            margin-bottom: 1.5rem;
+        }
+
+        .py-comment {
+            color: #64748b;
+            font-style: italic;
+        }
+
+        .py-keyword {
+            color: #f472b6;
+        }
+
+        .py-func {
+            color: #38bdf8;
+        }
+
+        .py-str {
+            color: #fbbf24;
+        }
+
+        .phase-indicator {
+            @apply inline-block px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest mb-4 bg-emerald-600 text-white shadow-sm;
+        }
+
+        .sub-stage {
+            @apply border-l-2 border-slate-200 pl-6 mb-12 relative;
+        }
+
+        .sub-stage::before {
+            content: '';
+            @apply absolute -left-[9px] top-0 w-4 h-4 bg-emerald-600 rounded-full border-4 border-white shadow-sm;
+        }
+
+        .alert-card {
+            @apply bg-rose-50 border-l-4 border-rose-500 p-5 rounded-r-xl mb-8 shadow-sm;
+        }
+
+        .best-practice {
+            @apply bg-emerald-50 border-l-4 border-emerald-500 p-5 rounded-r-xl mb-8 shadow-sm;
+        }
+
+        .health-badge {
+            @apply px-2 py-0.5 rounded text-[10px] font-bold border flex items-center gap-1 bg-white;
+        }
+    </style>
+</head>
+
+<body class="p-4 md:p-12 lg:p-20">
+
+    <div class="max-w-5xl mx-auto">
+        <!-- CABECERA ESTRATÉGICA -->
+        <header class="mb-20 border-b border-slate-200 pb-12">
+            <div class="flex flex-col md:flex-row items-center gap-6 mb-8">
+                <div class="p-4 bg-slate-900 text-white rounded-2xl shadow-2xl text-center">
+                    <i class="fas fa-shield-check text-3xl text-emerald-400"></i>
+                </div>
+                <div>
+                    <h1 class="text-4xl md:text-6xl font-black tracking-tighter text-slate-900">Gobernanza <span
+                            class="text-emerald-600">& Ética</span></h1>
+                    <p class="text-slate-500 font-bold text-lg uppercase tracking-widest">MLOps Pillar #6: IA
+                        Responsable y Segura</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="p-6 bg-white rounded-2xl shadow-sm border border-slate-200">
+                    <h3 class="text-xl font-bold text-slate-800 mb-2">Definición de la Fase</h3>
+                    <p class="text-sm text-slate-600 leading-relaxed">
+                        Es la capa envolvente que asegura que los modelos sean **explicables, seguros y cumplan con el
+                        marco legal**. En MLOps, la gobernanza no es un "freno", sino el sistema de seguridad que
+                        permite escalar la IA en sectores regulados (Banca, Salud, Gobierno) sin riesgos catastróficos.
+                    </p>
+                </div>
+                <div class="bg-emerald-900 rounded-2xl shadow-xl p-6 text-white">
+                    <h4 class="text-xs font-black text-emerald-300 uppercase mb-3">El Valor de la Transparencia</h4>
+                    <p class="text-sm italic opacity-90">
+                        "Una predicción sin explicación es un riesgo de cumplimiento. La gobernanza transforma la 'Caja
+                        Negra' en un proceso auditable donde cada decisión puede ser justificada ante un regulador o un
+                        cliente."
+                    </p>
+                </div>
+            </div>
+        </header>
+
+        <!-- CONCEPTOS, VENTAJAS Y DESVENTAJAS -->
+        <section class="mb-24 grid grid-cols-1 md:grid-cols-2 gap-12">
+            <div>
+                <h2 class="text-2xl font-black mb-6 flex items-center gap-2"><i
+                        class="fas fa-layer-group text-emerald-600"></i> Conceptos Críticos</h2>
+                <ul class="space-y-4 text-sm text-slate-600">
+                    <li class="p-4 bg-white border border-slate-200 rounded-xl shadow-sm">
+                        <strong class="text-slate-900">Explicabilidad (XAI):</strong> Uso de SHAP o LIME para entender
+                        qué variables "empujaron" al modelo a dar un resultado específico.
+                    </li>
+                    <li class="p-4 bg-white border border-slate-200 rounded-xl shadow-sm">
+                        <strong class="text-slate-900">Linaje de Modelos:</strong> Registro histórico e inmutable que
+                        conecta el Modelo V2 con el Dataset V1.4 y el Commit de Git #xyz.
+                    </li>
+                    <li class="p-4 bg-white border border-slate-200 rounded-xl shadow-sm">
+                        <strong class="text-slate-900">Cumplimiento (Compliance):</strong> Alineación técnica con leyes
+                        como la **EU AI Act** o **GDPR** para evitar multas de hasta el 7% del volumen de negocio.
+                    </li>
+                </ul>
+            </div>
+            <div>
+                <h2 class="text-2xl font-black mb-6 flex items-center gap-2"><i
+                        class="fas fa-balance-scale text-emerald-600"></i> Análisis de Valor</h2>
+                <div class="grid grid-cols-1 gap-4">
+                    <div class="bg-emerald-50 p-5 rounded-xl border border-emerald-100 shadow-sm">
+                        <h4 class="text-[10px] font-black text-emerald-700 uppercase mb-2">Ventajas Industriales</h4>
+                        <ul class="text-xs text-emerald-800 space-y-1">
+                            <li>• Mitigación de sesgos discriminatorios.</li>
+                            <li>• Protección contra ataques adversarios (Security).</li>
+                            <li>• Mayor adopción del usuario por confianza técnica.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-rose-50 p-5 rounded-xl border border-rose-100 shadow-sm">
+                        <h4 class="text-[10px] font-black text-rose-700 uppercase mb-2">Desventajas / Retos</h4>
+                        <ul class="text-xs text-rose-800 space-y-1">
+                            <li>• Latencia adicional en el pipeline de validación.</li>
+                            <li>• Coste de almacenamiento de metadatos de auditoría.</li>
+                            <li>• Necesidad de perfiles legales/éticos en el equipo.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SUB-ETAPAS DE GOBERNANZA (CON CÓDIGO) -->
+        <section class="mb-24">
+            <h2 class="text-3xl font-black mb-12 text-slate-900">Etapas del Ciclo de Gobernanza</h2>
+
+            <!-- Etapa 6.1: Explainability -->
+            <div class="sub-stage">
+                <span class="phase-indicator">1. Explicabilidad Local y Global (SHAP)</span>
+                <h3 class="text-xl font-bold mb-3">Abriendo la Caja Negra</h3>
+                <p class="text-sm text-slate-600 mb-6">Implementamos SHAP para cuantificar la contribución de cada
+                    característica en una decisión individual.</p>
+                <div class="code-block">
+                    <span class="py-keyword">import</span> shap
+
+                    <span class="py-comment"># Explicación de un modelo de bosque o neuronal</span>
+                    explainer = shap.<span class="py-func">TreeExplainer</span>(model)
+                    shap_values = explainer.<span class="py-func">shap_values</span>(X_test)
+
+                    <span class="py-comment"># Visualización para auditoría: ¿Qué variables importan más?</span>
+                    shap.<span class="py-func">summary_plot</span>(shap_values, X_test)
+
+                    <span class="py-comment"># Explicación de una predicción única (Derecho a la explicación
+                        GDPR)</span>
+                    shap.<span class="py-func">force_plot</span>(explainer.expected_value, shap_values[<span
+                        class="py-val">0</span>,:], X_test.iloc[<span class="py-val">0</span>,:])
+                </div>
+            </div>
+
+            <!-- Etapa 6.2: Lineage -->
+            <div class="sub-stage">
+                <span class="phase-indicator">2. Auditoría de Linaje (Metadata Tracking)</span>
+                <h3 class="text-xl font-bold mb-3">Trazabilidad End-to-End</h3>
+                <p class="text-sm text-slate-600 mb-6">Registramos los hashes inmutables del código y el dato para
+                    recrear el modelo en cualquier auditoría legal.</p>
+                <div class="code-block">
+                    <span class="py-keyword">import</span> mlflow
+
+                    <span class="py-comment"># Registro de linaje inmutable en el Model Registry</span>
+                    <span class="py-keyword">with</span> mlflow.<span class="py-func">start_run</span>():
+                    mlflow.<span class="py-func">log_param</span>(<span class="py-str">"data_hash"</span>, <span
+                        class="py-str">"sha256_dataset_v4"</span>)
+                    mlflow.<span class="py-func">log_param</span>(<span class="py-str">"git_commit"</span>, <span
+                        class="py-str">"a1b2c3d"</span>)
+                    mlflow.<span class="py-func">log_artifact</span>(<span class="py-str">"model_card.pdf"</span>)
+                </div>
+            </div>
+
+            <!-- Etapa 6.3: Security & RBAC -->
+            <div class="sub-stage">
+                <span class="phase-indicator">3. Seguridad y RBAC</span>
+                <h3 class="text-xl font-bold mb-3">Control de Acceso y Protección</h3>
+                <p class="text-sm text-slate-600 mb-6">Solo personal autorizado puede transicionar un modelo a
+                    "Production" mediante firmas electrónicas.</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="p-4 bg-slate-100 rounded-xl border border-slate-200">
+                        <h4 class="font-bold text-xs uppercase text-slate-500 mb-2">RBAC (Role Based Access)</h4>
+                        <p class="text-[10px] text-slate-600">Separación de entornos: Data Scientist (Entrenar), Lead ML
+                            (Aprobar), SRE (Desplegar).</p>
+                    </div>
+                    <div class="p-4 bg-slate-100 rounded-xl border border-slate-200">
+                        <h4 class="font-bold text-xs uppercase text-slate-500 mb-2">Protección de Pesos</h4>
+                        <p class="text-[10px] text-slate-600">Cifrado de artefactos en S3/GCS para evitar la
+                            exfiltración de propiedad intelectual.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ZOOM TÉCNICO: VALIDACIÓN CRUZADA COMO PRUEBA DE ROBUSTEZ -->
+        <section class="mb-24">
+            <h2 class="text-3xl font-black mb-10 text-slate-900">Foco: Validación Cruzada (Gobernanza Lógica)</h2>
+            <div
+                class="p-8 bg-slate-900 rounded-[2.5rem] text-white shadow-2xl relative overflow-hidden border border-slate-700">
+                <div class="absolute -right-20 -top-20 opacity-10"><i class="fas fa-microchip text-[250px]"></i></div>
+                <div class="relative z-10">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                        <div>
+                            <h3 class="text-xl font-bold text-emerald-400 mb-4 uppercase tracking-widest">¿Por qué es
+                                Gobernanza?</h3>
+                            <p class="text-sm text-slate-300 leading-relaxed mb-6">
+                                La <strong>Validación Cruzada (K-Fold)</strong> es el acta notarial de la capacidad del
+                                modelo. Demuestra ante un auditor que la precisión no es fruto de la suerte, sino una
+                                propiedad intrínseca del algoritmo validada en múltiples escenarios de datos
+                                independientes.
+                            </p>
+                            <div class="bg-white/5 p-4 rounded-2xl border border-white/10 text-xs italic">
+                                <span class="text-emerald-400 font-bold">Definición:</span> Dividir el dato en $K$
+                                bloques, entrenando $K$ veces para asegurar consistencia estadística total.
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-blue-400 mb-4 uppercase tracking-widest">Análisis
+                                Comparativo</h3>
+                            <div class="space-y-4">
+                                <div class="p-3 bg-emerald-500/10 rounded-xl border border-emerald-500/20">
+                                    <h4 class="text-xs font-bold text-emerald-400">Ventajas</h4>
+                                    <p class="text-[10px] text-slate-400">Prueba irrefutable de generalización.
+                                        Detección temprana de sesgos en sub-particiones de datos.</p>
+                                </div>
+                                <div class="p-3 bg-rose-500/10 rounded-xl border border-rose-500/20">
+                                    <h4 class="text-xs font-bold text-rose-400">Desventajas</h4>
+                                    <p class="text-[10px] text-slate-400">Coste computacional lineal ($O(K)$).
+                                        Dificultad para explicar a perfiles no técnicos.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ERRORES COMUNES Y SALUD DE LA FASE -->
+        <section class="mb-24">
+            <h2 class="text-2xl font-black mb-8 text-slate-900">Higiene Ética y Seguridad</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="alert-card">
+                    <h4 class="text-rose-800 font-bold text-xs uppercase mb-1">Error: Ceguera de Sesgo</h4>
+                    <p class="text-xs text-rose-700 leading-relaxed">
+                        Eliminar la variable "Género" o "Raza" y creer que el modelo ya es justo.
+                        <strong>Impacto:</strong> El modelo aprende el sesgo por correlación con otras variables (ej.
+                        código postal). <strong>Solución:</strong> Pruebas de paridad demográfica obligatorias.
+                    </p>
+                </div>
+                <div class="best-practice">
+                    <h4 class="text-emerald-800 font-bold text-xs uppercase mb-1">Práctica: Model Cards (DNI del Modelo)
+                    </h4>
+                    <p class="text-xs text-emerald-700 leading-relaxed">
+                        Documentar automáticamente las limitaciones, usos permitidos y riesgos conocidos del modelo
+                        antes de cualquier despliegue.
+                    </p>
+                </div>
+            </div>
+
+            <!-- HEALTH CHECK DE LA FASE -->
+            <div class="bg-white border border-slate-200 rounded-[2.5rem] p-10 shadow-sm mt-12">
+                <h3 class="text-2xl font-black mb-8 text-center text-emerald-600">Model Health Check: Fase de Gobernanza
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="text-center">
+                        <div
+                            class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-search-plus"></i></div>
+                        <h5 class="font-bold text-sm mb-1">Explainability Score</h5>
+                        <span class="health-badge border-emerald-400 text-emerald-400">SHAP Valido</span>
+                    </div>
+                    <div class="text-center border-x border-slate-100">
+                        <div
+                            class="w-12 h-12 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-balance-scale"></i></div>
+                        <h5 class="font-bold text-sm mb-1">Bias Parity</h5>
+                        <span class="health-badge border-blue-400 text-blue-400">Sin Sesgo Crítico</span>
+                    </div>
+                    <div class="text-center">
+                        <div
+                            class="w-12 h-12 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-stamp"></i></div>
+                        <h5 class="font-bold text-sm mb-1">Audit Trail</h5>
+                        <span class="health-badge border-amber-400 text-amber-400">Linaje 100% OK</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHECKLIST DE VALIDACIÓN FINAL -->
+        <section class="bg-white rounded-[2.5rem] p-10 shadow-xl border border-slate-200">
+            <h2 class="text-3xl font-black mb-10 flex items-center gap-4 text-emerald-600">
+                <i class="fas fa-clipboard-check"></i> Checklist MLOps: Gobernanza y Ética
+            </h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 text-sm leading-relaxed text-slate-500">
+                <div class="space-y-6">
+                    <div class="flex gap-4">
+                        <i class="fas fa-check-circle text-emerald-500 mt-1"></i>
+                        <div>
+                            <h5 class="font-bold text-slate-900 uppercase text-xs">Explicabilidad Generada</h5>
+                            <p class="text-[11px]">¿Se han guardado los gráficos SHAP de impacto global para esta
+                                versión del modelo?</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-4">
+                        <i class="fas fa-check-circle text-emerald-500 mt-1"></i>
+                        <div>
+                            <h5 class="font-bold text-slate-900 uppercase text-xs">Registro de Linaje (Lineage)</h5>
+                            <p class="text-[11px]">¿Podemos rastrear el ID del dataset original desde el servicio de
+                                producción?</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-4">
+                        <i class="fas fa-check-circle text-emerald-500 mt-1"></i>
+                        <div>
+                            <h5 class="font-bold text-slate-900 uppercase text-xs">Audit de Sesgo Realizado</h5>
+                            <p class="text-[11px]">¿Se validó el desempeño del modelo por grupos demográficos sensibles
+                                (Fairness)?</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <div class="flex gap-4">
+                        <i class="fas fa-check-circle text-emerald-500 mt-1"></i>
+                        <div>
+                            <h5 class="font-bold text-slate-900 uppercase text-xs">Control de Acceso (RBAC)</h5>
+                            <p class="text-[11px]">¿Solo los managers aprobados tienen permiso para mover el modelo a
+                                producción?</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-4">
+                        <i class="fas fa-check-circle text-emerald-500 mt-1"></i>
+                        <div>
+                            <h5 class="font-bold text-slate-900 uppercase text-xs">Anonimización (PII)</h5>
+                            <p class="text-[11px]">¿Se confirmó que el modelo no ha memorizado datos personales
+                                identificables?</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-4">
+                        <i class="fas fa-check-circle text-emerald-500 mt-1"></i>
+                        <div>
+                            <h5 class="font-bold text-slate-900 uppercase text-xs">Model Card Publicada</h5>
+                            <p class="text-[11px]">¿Existe el documento técnico que describe el propósito y limitaciones
+                                del modelo?</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="mt-20 pt-10 border-t border-slate-200 text-center pb-12">
+            <p class="text-slate-400 text-[10px] uppercase font-black tracking-[0.2em] mb-4">
+                Industrial Standard v6.0 • MLOps Governance Framework • 2024
+            </p>
+            <div class="flex justify-center gap-8 text-slate-300">
+                <i class="fas fa-balance-scale text-2xl"></i>
+                <i class="fas fa-eye text-2xl"></i>
+                <i class="fas fa-shield-alt text-2xl"></i>
+                <i class="fas fa-gavel text-2xl"></i>
+            </div>
+        </footer>
+    </div>
+
+</body>
+
+</html>
