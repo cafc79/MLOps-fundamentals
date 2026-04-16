@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Algoritmo Árboles de Decisión</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+
+        .card-active {
+            background-color: white !important;
+            transform: scale(1.02);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            z-index: 20;
+        }
+
+        .content-drawer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out, opacity 0.3s ease;
+            opacity: 0;
+        }
+
+        .card-active .content-drawer {
+            max-height: 500px;
+            opacity: 1;
+            margin-top: 1.5rem;
+        }
+
+        .step-badge {
+            position: absolute;
+            top: -1rem;
+            left: -1rem;
+            width: 2.5rem;
+            height: 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 9999px;
+            color: white;
+            font-weight: 800;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+
+<body class="text-slate-800 p-4 md:p-10">
+
+    <div class="max-w-6xl mx-auto">
+        <!-- HEADER -->
+        <header class="text-center mb-16">
+            <div class="inline-flex items-center px-4 py-2 bg-amber-600 text-white rounded-full mb-6 shadow-lg">
+                <i class="fas fa-sitemap mr-2"></i>
+                <span class="text-xs font-bold uppercase tracking-widest">Modelos Basados en Reglas
+                    (Supervisados)</span>
+            </div>
+            <h1 class="text-4xl md:text-6xl font-black text-slate-900 mb-6 tracking-tight">
+                Árboles de <span class="text-amber-600">Decisión</span>
+            </h1>
+            <p class="text-slate-500 text-lg max-w-3xl mx-auto leading-relaxed">
+                Un modelo predictivo que utiliza una estructura de tipo diagrama de flujo para mapear decisiones y sus
+                posibles consecuencias, transformando datos complejos en reglas de decisión legibles.
+            </p>
+        </header>
+
+        <!-- INFO BANNER -->
+        <div class="bg-amber-50 border-l-4 border-amber-500 p-4 mb-12 rounded-r-xl flex items-center gap-4">
+            <i class="fas fa-info-circle text-amber-500 text-xl"></i>
+            <p class="text-sm text-amber-800"><strong>Guía del Algoritmo:</strong> Haz clic en cada tarjeta para
+                explorar la jerarquía lógica, desde el nodo raíz hasta la toma de decisiones final.</p>
+        </div>
+
+        <!-- GRID DE PASOS -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 relative">
+
+            <!-- STEP 1: NODO RAÍZ -->
+            <div class="relative p-8 rounded-3xl border-2 border-transparent bg-slate-50 cursor-pointer transition-all duration-300 card-active"
+                onclick="toggleStep(this, 'amber')">
+                <div class="step-badge bg-amber-600">1</div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="p-3 rounded-2xl bg-amber-100 text-amber-600">
+                        <i class="fas fa-level-down-alt text-2xl rotate-180"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">Nodo Raíz (Root)</h3>
+                </div>
+                <p class="text-sm text-slate-600">El punto de partida de todo el árbol. Representa la característica que
+                    mejor divide el conjunto de datos inicial.</p>
+
+                <div class="content-drawer">
+                    <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                        El algoritmo evalúa todas las variables y selecciona aquella que proporciona la mayor separación
+                        de clases. Es la decisión más importante, ya que define el primer nivel de jerarquía.
+                    </p>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-amber-500 mr-2"></i> Punto de entrada único
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-amber-500 mr-2"></i> Selección de variable óptima
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-amber-500 mr-2"></i> Máxima diferenciación
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 2: CRITERIOS DE PUREZA -->
+            <div class="relative p-8 rounded-3xl border-2 border-transparent bg-slate-50 cursor-pointer transition-all duration-300"
+                onclick="toggleStep(this, 'orange')">
+                <div class="step-badge bg-orange-500">2</div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="p-3 rounded-2xl bg-orange-100 text-orange-600">
+                        <i class="fas fa-vial text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">Criterios de Splitting</h3>
+                </div>
+                <p class="text-sm text-slate-600">Las métricas matemáticas que deciden cómo "cortar" los datos: Impureza
+                    de Gini y Entropía.</p>
+
+                <div class="content-drawer">
+                    <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                        El <strong>Índice Gini</strong> mide qué tan a menudo un elemento aleatorio sería identificado
+                        incorrectamente. La <strong>Entropía</strong> mide el desorden de la información. El objetivo
+                        siempre es maximizar la pureza en los nodos hijos.
+                    </p>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-orange-500 mr-2"></i> Minimización de Gini
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-orange-500 mr-2"></i> Ganancia de Información
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-orange-500 mr-2"></i> Homogeneidad de Nodos
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 3: RAMIFICACIÓN -->
+            <div class="relative p-8 rounded-3xl border-2 border-transparent bg-slate-50 cursor-pointer transition-all duration-300"
+                onclick="toggleStep(this, 'yellow')">
+                <div class="step-badge bg-yellow-500">3</div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="p-3 rounded-2xl bg-yellow-100 text-yellow-600">
+                        <i class="fas fa-code-branch text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">Nodos de Decisión</h3>
+                </div>
+                <p class="text-sm text-slate-600">Nodos intermedios que plantean preguntas lógicas (Sí/No) para
+                    subdividir los datos.</p>
+
+                <div class="content-drawer">
+                    <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                        Cada nodo de decisión representa una prueba sobre un atributo. Dependiendo del resultado de la
+                        prueba, los datos fluyen por una rama específica hacia un nivel más profundo del árbol.
+                    </p>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-yellow-600 mr-2"></i> Bifurcación Lógica
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-yellow-600 mr-2"></i> División de Atributos
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-yellow-600 mr-2"></i> Profundidad del Árbol
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 4: NODOS HOJA -->
+            <div class="relative p-8 rounded-3xl border-2 border-transparent bg-slate-50 cursor-pointer transition-all duration-300"
+                onclick="toggleStep(this, 'emerald')">
+                <div class="step-badge bg-emerald-500">4</div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="p-3 rounded-2xl bg-emerald-100 text-emerald-600">
+                        <i class="fas fa-leaf text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">Nodos Hoja (Leaves)</h3>
+                </div>
+                <p class="text-sm text-slate-600">El destino final. Representa la etiqueta de clase o el valor numérico
+                    predicho.</p>
+
+                <div class="content-drawer">
+                    <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                        En estos nodos no ocurren más divisiones. La predicción final se basa en el voto mayoritario de
+                        los datos que llegaron a esa hoja (clasificación) o el promedio (regresión).
+                    </p>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-emerald-500 mr-2"></i> Resultado Final
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-emerald-500 mr-2"></i> Nodos Terminales
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-emerald-500 mr-2"></i> Predicción de Salida
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 5: SOBREAJUSTE (OVERFITTING) -->
+            <div class="relative p-8 rounded-3xl border-2 border-transparent bg-slate-50 cursor-pointer transition-all duration-300"
+                onclick="toggleStep(this, 'rose')">
+                <div class="step-badge bg-rose-500">5</div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="p-3 rounded-2xl bg-rose-100 text-rose-600">
+                        <i class="fas fa-exclamation-triangle text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">El Riesgo: Overfitting</h3>
+                </div>
+                <p class="text-sm text-slate-600">Los árboles tienden a crecer demasiado, "memorizando" el ruido de los
+                    datos de entrenamiento.</p>
+
+                <div class="content-drawer">
+                    <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                        Un árbol sin restricciones puede crear una regla para cada fila de datos, lo que resulta en una
+                        precisión perfecta en el entrenamiento pero un desempeño pobre en la realidad.
+                    </p>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-rose-500 mr-2"></i> Alta Varianza
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-rose-500 mr-2"></i> Árboles muy profundos
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-rose-500 mr-2"></i> Baja Generalización
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 6: PODA (PRUNING) -->
+            <div class="relative p-8 rounded-3xl border-2 border-transparent bg-slate-50 cursor-pointer transition-all duration-300"
+                onclick="toggleStep(this, 'indigo')">
+                <div class="step-badge bg-indigo-500">6</div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="p-3 rounded-2xl bg-indigo-100 text-indigo-600">
+                        <i class="fas fa-cut text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">Poda (Pruning)</h3>
+                </div>
+                <p class="text-sm text-slate-600">Técnicas para simplificar el árbol eliminando ramas que aportan poco
+                    valor predictivo.</p>
+
+                <div class="content-drawer">
+                    <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                        El <strong>Pre-poda</strong> detiene el crecimiento temprano (ej. limitando la profundidad). El
+                        <strong>Post-poda</strong> elimina ramas después de que el árbol ha crecido totalmente para
+                        mejorar la robustez.
+                    </p>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-indigo-500 mr-2"></i> Max_Depth Control
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-indigo-500 mr-2"></i> Reducción de Complejidad
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-indigo-500 mr-2"></i> Coste-Complejidad
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 7: CART (VERSATILIDAD) -->
+            <div class="relative p-8 rounded-3xl border-2 border-transparent bg-slate-50 cursor-pointer transition-all duration-300 lg:col-span-1"
+                onclick="toggleStep(this, 'cyan')">
+                <div class="step-badge bg-cyan-500">7</div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="p-3 rounded-2xl bg-cyan-100 text-cyan-600">
+                        <i class="fas fa-th-large text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">Modelo CART</h3>
+                </div>
+                <p class="text-sm text-slate-600">Classification and Regression Trees. La versatilidad de usar la misma
+                    lógica para categorías o números.</p>
+
+                <div class="content-drawer">
+                    <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                        Esta implementación permite que el árbol actúe como clasificador o como regresor, adaptando la
+                        función de error (Gini para categorías, MSE para valores continuos).
+                    </p>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-cyan-500 mr-2"></i> Clasificación Binaria/Multi
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-cyan-500 mr-2"></i> Regresión No Lineal
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-cyan-500 mr-2"></i> Adaptabilidad de Datos
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- POR QUÉ ELEGIR ÁRBOLES DE DECISIÓN -->
+            <div
+                class="lg:col-span-2 bg-slate-900 rounded-[2rem] p-10 text-white flex flex-col justify-center items-center text-center shadow-2xl relative overflow-hidden">
+                <div class="absolute top-0 right-0 p-10 opacity-10">
+                    <i class="fas fa-project-diagram text-[150px]"></i>
+                </div>
+                <h2 class="text-3xl font-bold mb-4 relative z-10">Valor de los Árboles de Decisión</h2>
+                <p class="text-slate-400 text-sm mb-8 max-w-lg relative z-10">
+                    Su gran ventaja es la <strong>Interpretabilidad</strong>. Son "Cajas Blancas" que permiten a
+                    cualquier humano seguir el camino de una decisión. Además, son la base fundamental de algoritmos más
+                    potentes como Random Forest y XGBoost.
+                </p>
+                <div class="flex flex-wrap gap-4 justify-center relative z-10">
+                    <span class="px-5 py-2 bg-white/10 rounded-xl text-xs font-mono border border-white/20">Caja
+                        Blanca</span>
+                    <span
+                        class="px-5 py-2 bg-white/10 rounded-xl text-xs font-mono border border-white/20">Interpretable</span>
+                    <span class="px-5 py-2 bg-white/10 rounded-xl text-xs font-mono border border-white/20">No
+                        Lineal</span>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- FOOTER -->
+        <footer class="mt-20 pt-8 border-t border-slate-200 text-center text-slate-400 text-xs">
+            <p>© 2024 Guía de Algoritmos • Árboles de Decisión: La Lógica Detrás de la Clasificación</p>
+        </footer>
+    </div>
+
+    <script>
+        function toggleStep(element, color) {
+            // Si ya está activo, lo cerramos
+            if (element.classList.contains('card-active')) {
+                element.classList.remove('card-active');
+                element.style.borderColor = 'transparent';
+                return;
+            }
+
+            // Cerramos otros
+            document.querySelectorAll('.card-active').forEach(card => {
+                card.classList.remove('card-active');
+                card.style.borderColor = 'transparent';
+            });
+
+            // Abrimos el actual
+            element.classList.add('card-active');
+
+            // Colores dinámicos para el borde (basados en Tailwind)
+            const colorMap = {
+                amber: '#d97706',
+                orange: '#f97316',
+                yellow: '#eab308',
+                emerald: '#10b981',
+                rose: '#f43f5e',
+                indigo: '#6366f1',
+                cyan: '#06b6d4'
+            };
+            element.style.borderColor = colorMap[color];
+        }
+    </script>
+</body>
+
+</html>
