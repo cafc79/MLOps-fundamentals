@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Caso Práctico: SVM en Diagnóstico Médico</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+
+        .card-active {
+            background-color: white !important;
+            transform: scale(1.02);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            z-index: 20;
+        }
+
+        .content-drawer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out, opacity 0.3s ease;
+            opacity: 0;
+        }
+
+        .card-active .content-drawer {
+            max-height: 500px;
+            opacity: 1;
+            margin-top: 1.5rem;
+        }
+
+        .step-badge {
+            position: absolute;
+            top: -1rem;
+            left: -1rem;
+            width: 2.5rem;
+            height: 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 9999px;
+            color: white;
+            font-weight: 800;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+
+<body class="text-slate-800 p-4 md:p-10">
+
+    <div class="max-w-6xl mx-auto">
+        <!-- HEADER -->
+        <header class="text-center mb-16">
+            <div class="inline-flex items-center px-4 py-2 bg-violet-600 text-white rounded-full mb-6 shadow-lg">
+                <i class="fas fa-microscope mr-2"></i>
+                <span class="text-xs font-bold uppercase tracking-widest">Caso Real: Clasificación de Tumores</span>
+            </div>
+            <h1 class="text-4xl md:text-6xl font-black text-slate-900 mb-6 tracking-tight">
+                Diagnóstico con <span class="text-violet-600">SVM</span>
+            </h1>
+            <p class="text-slate-500 text-lg max-w-3xl mx-auto leading-relaxed">
+                ¿Es un tumor maligno o benigno? En medicina, el margen de error debe ser mínimo. SVM encuentra la
+                frontera matemática más segura para clasificar células basándose en biomarcadores complejos.
+            </p>
+        </header>
+
+        <!-- INFO BANNER -->
+        <div class="bg-violet-50 border-l-4 border-violet-500 p-4 mb-12 rounded-r-xl flex items-center gap-4">
+            <i class="fas fa-notes-medical text-violet-500 text-xl"></i>
+            <p class="text-sm text-violet-800"><strong>Guía de Negocio:</strong> Haz clic en cada etapa para entender
+                cómo transformamos biopsias en decisiones clínicas de alta precisión.</p>
+        </div>
+
+        <!-- GRID DE PASOS -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 relative">
+
+            <!-- STEP 1: EL DESAFÍO CLÍNICO -->
+            <div class="relative p-8 rounded-3xl border-2 border-transparent bg-slate-50 cursor-pointer transition-all duration-300 card-active"
+                onclick="toggleStep(this, 'violet')">
+                <div class="step-badge bg-violet-600">1</div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="p-3 rounded-2xl bg-violet-100 text-violet-600">
+                        <i class="fas fa-hospital-user text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">Objetivo Crítico</h3>
+                </div>
+                <p class="text-sm text-slate-600">Clasificar biopsias en dos categorías: Maligno (1) o Benigno (0) con
+                    máxima fiabilidad.</p>
+
+                <div class="content-drawer">
+                    <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                        Analizamos datos históricos de miles de pacientes. La meta es crear un modelo que ayude a los
+                        oncólogos a reducir los falsos negativos (tumores peligrosos no detectados), que son el riesgo
+                        más alto en salud.
+                    </p>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-violet-500 mr-2"></i> Variable Target: Patología
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-violet-500 mr-2"></i> Reducción de Error Humano
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-violet-500 mr-2"></i> Diagnóstico Asistido
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 2: BIOMARCADORES -->
+            <div class="relative p-8 rounded-3xl border-2 border-transparent bg-slate-50 cursor-pointer transition-all duration-300"
+                onclick="toggleStep(this, 'indigo')">
+                <div class="step-badge bg-indigo-500">2</div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="p-3 rounded-2xl bg-indigo-100 text-indigo-600">
+                        <i class="fas fa-dna text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">Atributos Celulares</h3>
+                </div>
+                <p class="text-sm text-slate-600">Extraemos medidas precisas de las células de la biopsia mediante
+                    imágenes digitales.</p>
+
+                <div class="content-drawer">
+                    <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                        Consideramos factores como: Radio medio de la célula, Textura (variación en escala de grises),
+                        Perímetro, Área y Concavidad. SVM procesará estas 30+ dimensiones para encontrar patrones de
+                        riesgo.
+                    </p>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-indigo-500 mr-2"></i> Morfología Celular
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-indigo-500 mr-2"></i> Características Geométricas
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-indigo-500 mr-2"></i> Alta Dimensionalidad
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 3: ESPACIO DE CARACTERÍSTICAS -->
+            <div class="relative p-8 rounded-3xl border-2 border-transparent bg-slate-50 cursor-pointer transition-all duration-300"
+                onclick="toggleStep(this, 'purple')">
+                <div class="step-badge bg-purple-500">3</div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="p-3 rounded-2xl bg-purple-100 text-purple-600">
+                        <i class="fas fa-cube text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">Mapeo de Datos</h3>
+                </div>
+                <p class="text-sm text-slate-600">Cada biopsia se convierte en un punto en un espacio multidimensional
+                    complejo.</p>
+
+                <div class="content-drawer">
+                    <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                        El algoritmo visualiza los datos como coordenadas. Si las células malignas tienden a ser más
+                        grandes y rugosas, se agruparán en una zona específica del "espacio". SVM buscará cómo
+                        dividirlos físicamente.
+                    </p>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-purple-500 mr-2"></i> Posicionamiento Vectorial
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-purple-500 mr-2"></i> Agrupación por Similitud
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-purple-500 mr-2"></i> N-Dimensiones
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 4: EL HIPERPLANO ÓPTIMO -->
+            <div class="relative p-8 rounded-3xl border-2 border-transparent bg-slate-50 cursor-pointer transition-all duration-300"
+                onclick="toggleStep(this, 'fuchsia')">
+                <div class="step-badge bg-fuchsia-500">4</div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="p-3 rounded-2xl bg-fuchsia-100 text-fuchsia-600">
+                        <i class="fas fa-border-style text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">Frontera de Decisión</h3>
+                </div>
+                <p class="text-sm text-slate-600">SVM traza la frontera matemática que separa las clases con la mayor
+                    limpieza posible.</p>
+
+                <div class="content-drawer">
+                    <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                        No basta con una línea cualquiera; el hiperplano debe ser el "muro" perfecto. Para SVM, la mejor
+                        frontera es aquella que mantiene la mayor distancia posible con los casos más ambiguos de cada
+                        bando.
+                    </p>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-fuchsia-500 mr-2"></i> Separación Geométrica
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-fuchsia-500 mr-2"></i> Hiperplano de Soporte
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-fuchsia-500 mr-2"></i> Límite Clínico
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 5: MARGEN DE SEGURIDAD -->
+            <div class="relative p-8 rounded-3xl border-2 border-transparent bg-slate-50 cursor-pointer transition-all duration-300"
+                onclick="toggleStep(this, 'pink')">
+                <div class="step-badge bg-pink-500">5</div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="p-3 rounded-2xl bg-pink-100 text-pink-600">
+                        <i class="fas fa-arrows-alt-h text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">Margen Máximo</h3>
+                </div>
+                <p class="text-sm text-slate-600">Buscamos la "calle" más ancha entre los grupos para maximizar la
+                    confianza del diagnóstico.</p>
+
+                <div class="content-drawer">
+                    <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                        El margen protege al modelo de variaciones leves. Al maximizar el espacio entre el hiperplano y
+                        las células reales (Vectores de Soporte), el algoritmo se vuelve inmune al ruido de las muestras
+                        individuales.
+                    </p>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-pink-500 mr-2"></i> Robustez Predictiva
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-pink-500 mr-2"></i> Zona de No-Confusión
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-pink-500 mr-2"></i> Generalización Médica
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 6: KERNEL (CASOS COMPLEJOS) -->
+            <div class="relative p-8 rounded-3xl border-2 border-transparent bg-slate-50 cursor-pointer transition-all duration-300"
+                onclick="toggleStep(this, 'rose')">
+                <div class="step-badge bg-rose-500">6</div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="p-3 rounded-2xl bg-rose-100 text-rose-600">
+                        <i class="fas fa-magic text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">El Truco del Kernel</h3>
+                </div>
+                <p class="text-sm text-slate-600">¿Qué pasa si los datos están mezclados? Elevamos la dimensión para
+                    separarlos.</p>
+
+                <div class="content-drawer">
+                    <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                        A veces los tumores no se separan con una línea recta. El Kernel (ej. RBF) proyecta los datos a
+                        una dimensión superior (como verlos desde arriba) donde un plano sí puede dividirlos
+                        limpiamente.
+                    </p>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-rose-500 mr-2"></i> Manejo de No-Linealidad
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-rose-500 mr-2"></i> Flexibilidad RBF
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-rose-500 mr-2"></i> Resolución de Ambigüedad
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 7: IMPACTO EN VIDAS -->
+            <div class="relative p-8 rounded-3xl border-2 border-transparent bg-slate-50 cursor-pointer transition-all duration-300 lg:col-span-1"
+                onclick="toggleStep(this, 'violet')">
+                <div class="step-badge bg-violet-600">7</div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="p-3 rounded-2xl bg-violet-100 text-violet-600">
+                        <i class="fas fa-heartbeat text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">Valor Clínico</h3>
+                </div>
+                <p class="text-sm text-slate-600">Medimos la precisión en el mundo real y el ahorro de tiempo en
+                    diagnósticos críticos.</p>
+
+                <div class="content-drawer">
+                    <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                        SVM logra una precisión del 98% en estos casos. Esto permite clasificar biopsias en segundos,
+                        priorizando casos urgentes para tratamiento inmediato y evitando cirugías innecesarias en
+                        tumores benignos.
+                    </p>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-violet-500 mr-2"></i> Precisión Quirúrgica
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-violet-500 mr-2"></i> Eficiencia en Laboratorio
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-violet-500 mr-2"></i> Escalabilidad Hospitalaria
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VALOR DE NEGOCIO CARD -->
+            <div
+                class="lg:col-span-2 bg-slate-900 rounded-[2rem] p-10 text-white flex flex-col justify-center items-center text-center shadow-2xl relative overflow-hidden border border-violet-900/30">
+                <div class="absolute top-0 right-0 p-10 opacity-10">
+                    <i class="fas fa-vector-square text-[150px]"></i>
+                </div>
+                <h2 class="text-3xl font-bold mb-4 relative z-10 text-violet-400">La Geometría que Salva Vidas</h2>
+                <p class="text-slate-400 text-sm mb-8 max-w-lg relative z-10 leading-relaxed">
+                    SVM es el algoritmo predilecto para la medicina porque es <strong>Eficiente con pocos datos</strong>
+                    pero complejos. No necesita millones de registros; necesita que los "Vectores de Soporte" definan
+                    con exactitud matemática el límite entre la salud y la enfermedad.
+                </p>
+                <div class="flex flex-wrap gap-4 justify-center relative z-10">
+                    <span class="px-5 py-2 bg-white/10 rounded-xl text-xs font-mono border border-white/20">Alta
+                        Precisión</span>
+                    <span class="px-5 py-2 bg-white/10 rounded-xl text-xs font-mono border border-white/20">Kernel
+                        Power</span>
+                    <span
+                        class="px-5 py-2 bg-white/10 rounded-xl text-xs font-mono border border-white/20">Fiabilidad</span>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- FOOTER -->
+        <footer class="mt-20 pt-8 border-t border-slate-200 text-center text-slate-400 text-xs pb-12">
+            <p>© 2024 Laboratorio de Ciencia de Datos • Caso Práctico: Diagnóstico de Cáncer con SVM</p>
+        </footer>
+    </div>
+
+    <script>
+        function toggleStep(element, color) {
+            if (element.classList.contains('card-active')) {
+                element.classList.remove('card-active');
+                element.style.borderColor = 'transparent';
+                return;
+            }
+
+            document.querySelectorAll('.card-active').forEach(card => {
+                card.classList.remove('card-active');
+                card.style.borderColor = 'transparent';
+            });
+
+            element.classList.add('card-active');
+
+            const colorMap = {
+                violet: '#7c3aed',
+                indigo: '#6366f1',
+                purple: '#a855f7',
+                fuchsia: '#d946ef',
+                pink: '#ec4899',
+                rose: '#f43f5e'
+            };
+            element.style.borderColor = colorMap[color];
+        }
+    </script>
+</body>
+
+</html>

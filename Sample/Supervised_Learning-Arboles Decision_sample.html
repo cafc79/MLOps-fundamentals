@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Caso Práctico: Árboles de Decisión</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+
+        .card-active {
+            background-color: white !important;
+            transform: scale(1.02);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            z-index: 20;
+        }
+
+        .content-drawer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out, opacity 0.3s ease;
+            opacity: 0;
+        }
+
+        .card-active .content-drawer {
+            max-height: 500px;
+            opacity: 1;
+            margin-top: 1.5rem;
+        }
+
+        .step-badge {
+            position: absolute;
+            top: -1rem;
+            left: -1rem;
+            width: 2.5rem;
+            height: 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 9999px;
+            color: white;
+            font-weight: 800;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+
+<body class="text-slate-800 p-4 md:p-10">
+
+    <div class="max-w-6xl mx-auto">
+        <!-- HEADER -->
+        <header class="text-center mb-16">
+            <div class="inline-flex items-center px-4 py-2 bg-amber-600 text-white rounded-full mb-6 shadow-lg">
+                <i class="fas fa-university mr-2"></i>
+                <span class="text-xs font-bold uppercase tracking-widest">Caso Real: Sistema de Riesgo Crediticio</span>
+            </div>
+            <h1 class="text-4xl md:text-6xl font-black text-slate-900 mb-6 tracking-tight">
+                Aprobación de <span class="text-amber-600">Créditos Bancarios</span>
+            </h1>
+            <p class="text-slate-500 text-lg max-w-3xl mx-auto leading-relaxed">
+                ¿Debería el banco prestar dinero a este solicitante? Los Árboles de Decisión transforman los datos
+                financieros en una serie de preguntas lógicas que cualquier analista de crédito puede entender y
+                auditar.
+            </p>
+        </header>
+
+        <!-- INFO BANNER -->
+        <div class="bg-amber-50 border-l-4 border-amber-500 p-4 mb-12 rounded-r-xl flex items-center gap-4">
+            <i class="fas fa-project-diagram text-amber-500 text-xl"></i>
+            <p class="text-sm text-amber-800"><strong>Guía de Negocio:</strong> Haz clic en cada tarjeta para entender
+                cómo un flujo de datos financieros se convierte en una decisión crediticia automática.</p>
+        </div>
+
+        <!-- GRID DE PASOS -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 relative">
+
+            <!-- STEP 1: DEFINICIÓN DE LA META -->
+            <div class="relative p-8 rounded-3xl border-2 border-transparent bg-slate-50 cursor-pointer transition-all duration-300 card-active"
+                onclick="toggleStep(this, 'amber')">
+                <div class="step-badge bg-amber-600">1</div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="p-3 rounded-2xl bg-amber-100 text-amber-600">
+                        <i class="fas fa-check-double text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">Objetivo del Negocio</h3>
+                </div>
+                <p class="text-sm text-slate-600">Predecir si un solicitante pagará su deuda (Aprobado) o si entrará en
+                    mora (Rechazado).</p>
+
+                <div class="content-drawer">
+                    <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                        Aislamos el comportamiento de 10,000 clientes pasados. Etiquetamos como "Aprobado" a quienes
+                        pagaron a tiempo y como "Rechazado" a quienes fallaron. El árbol aprenderá las reglas que
+                        separan estos dos grupos.
+                    </p>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-amber-500 mr-2"></i> Variable Target: Solvencia
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-amber-500 mr-2"></i> Análisis Histórico
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-amber-500 mr-2"></i> Minimización de Riesgo
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 2: CARACTERÍSTICAS DEL CLIENTE -->
+            <div class="relative p-8 rounded-3xl border-2 border-transparent bg-slate-50 cursor-pointer transition-all duration-300"
+                onclick="toggleStep(this, 'orange')">
+                <div class="step-badge bg-orange-500">2</div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="p-3 rounded-2xl bg-orange-100 text-orange-600">
+                        <i class="fas fa-file-invoice-dollar text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">Datos del Perfil</h3>
+                </div>
+                <p class="text-sm text-slate-600">Seleccionamos los atributos financieros clave que influyen en la
+                    capacidad de pago.</p>
+
+                <div class="content-drawer">
+                    <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                        Analizamos variables como: Ingresos Mensuales, Nivel de Deuda Actual, Puntaje de Crédito (Score)
+                        y Estabilidad Laboral. Estas preguntas serán los "nodos" que bifurcan el árbol.
+                    </p>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-orange-500 mr-2"></i> Nivel de Ingresos
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-orange-500 mr-2"></i> Ratio Deuda/Ingreso
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-orange-500 mr-2"></i> Antecedentes Legales
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 3: SELECCIÓN DE LA RAÍZ -->
+            <div class="relative p-8 rounded-3xl border-2 border-transparent bg-slate-50 cursor-pointer transition-all duration-300"
+                onclick="toggleStep(this, 'yellow')">
+                <div class="step-badge bg-yellow-500">3</div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="p-3 rounded-2xl bg-yellow-100 text-yellow-600">
+                        <i class="fas fa-seedling text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">La Pregunta Raíz</h3>
+                </div>
+                <p class="text-sm text-slate-600">El algoritmo identifica cuál es el factor más determinante para
+                    separar buenos de malos pagadores.</p>
+
+                <div class="content-drawer">
+                    <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                        Tras analizar los datos, el árbol determina que el <strong>Puntaje de Crédito</strong> es el
+                        filtro inicial más fuerte. Si el score es > 700, la probabilidad de pago es altísima desde el
+                        primer segundo.
+                    </p>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-yellow-600 mr-2"></i> Ganancia de Información
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-yellow-600 mr-2"></i> Selección de Nodo Raíz
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-yellow-600 mr-2"></i> Máxima Diferenciación
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 4: RAMIFICACIÓN LÓGICA -->
+            <div class="relative p-8 rounded-3xl border-2 border-transparent bg-slate-50 cursor-pointer transition-all duration-300"
+                onclick="toggleStep(this, 'amber')">
+                <div class="step-badge bg-amber-600">4</div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="p-3 rounded-2xl bg-amber-100 text-amber-600">
+                        <i class="fas fa-code-branch text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">Caminos de Decisión</h3>
+                </div>
+                <p class="text-sm text-slate-600">Se crean ramificaciones secuenciales basadas en umbrales numéricos
+                    precisos.</p>
+
+                <div class="content-drawer">
+                    <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                        Ejemplo de flujo: ¿Score > 650? -> Sí -> ¿Ingresos > $2000? -> Sí -> <strong>Aprobado</strong>.
+                        Si el score es bajo pero tiene un aval, el árbol explora esa rama secundaria antes de decidir.
+                    </p>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-amber-500 mr-2"></i> Reglas IF-THEN
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-amber-500 mr-2"></i> Estructura Jerárquica
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-amber-500 mr-2"></i> Transparencia Lógica
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 5: PUREZA DE GRUPOS -->
+            <div class="relative p-8 rounded-3xl border-2 border-transparent bg-slate-50 cursor-pointer transition-all duration-300"
+                onclick="toggleStep(this, 'orange')">
+                <div class="step-badge bg-orange-500">5</div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="p-3 rounded-2xl bg-orange-100 text-orange-600">
+                        <i class="fas fa-vial text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">Evaluación de Nodos</h3>
+                </div>
+                <p class="text-sm text-slate-600">El modelo busca que al final de cada rama, casi todos los clientes
+                    sean del mismo tipo.</p>
+
+                <div class="content-drawer">
+                    <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                        Usamos el <strong>Índice Gini</strong>. Si una rama termina con 95% de pagadores y solo 5% de
+                        morosos, se considera un nodo "Puro". Esto garantiza que la predicción final sea muy segura.
+                    </p>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-orange-500 mr-2"></i> Índice Gini Bajo
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-orange-500 mr-2"></i> Consistencia de Clientes
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-orange-500 mr-2"></i> Validación de Grupos
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 6: DECISIÓN FINAL (HOJA) -->
+            <div class="relative p-8 rounded-3xl border-2 border-transparent bg-slate-50 cursor-pointer transition-all duration-300"
+                onclick="toggleStep(this, 'emerald')">
+                <div class="step-badge bg-emerald-500">6</div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="p-3 rounded-2xl bg-emerald-100 text-emerald-600">
+                        <i class="fas fa-leaf text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">Resultado Ejecutable</h3>
+                </div>
+                <p class="text-sm text-slate-600">El sistema entrega una etiqueta final basada en el camino recorrido
+                    por el solicitante.</p>
+
+                <div class="content-drawer">
+                    <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                        Llega un cliente nuevo. El árbol lo procesa en milisegundos a través de sus preguntas y termina
+                        en una "Hoja". La decisión sale: <strong>"Aprobar Crédito: 98% Confianza"</strong>. El banco
+                        puede automatizar el desembolso.
+                    </p>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-emerald-500 mr-2"></i> Clasificación Instantánea
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-emerald-500 mr-2"></i> Explicación para el cliente
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-emerald-500 mr-2"></i> Proceso sin Sesgos Humanos
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 7: VALOR ESTRATÉGICO -->
+            <div class="relative p-8 rounded-3xl border-2 border-transparent bg-slate-50 cursor-pointer transition-all duration-300 lg:col-span-1"
+                onclick="toggleStep(this, 'cyan')">
+                <div class="step-badge bg-cyan-500">7</div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="p-3 rounded-2xl bg-cyan-100 text-cyan-600">
+                        <i class="fas fa-chart-line text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">Eficiencia Bancaria</h3>
+                </div>
+                <p class="text-sm text-slate-600">Medimos la reducción en el tiempo de respuesta y la baja en la tasa de
+                    morosidad.</p>
+
+                <div class="content-drawer">
+                    <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                        Al implementar este árbol, el banco redujo el tiempo de aprobación de 3 días a 10 segundos.
+                        Además, al basarse en datos objetivos, la morosidad cayó un 12% al detectar patrones de riesgo
+                        invisibles para humanos.
+                    </p>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-cyan-500 mr-2"></i> Reducción de Costo Operativo
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-cyan-500 mr-2"></i> Escalabilidad de Negocio
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-cyan-500 mr-2"></i> Auditoría Regulatoria Fácil
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VALOR DE NEGOCIO CARD -->
+            <div
+                class="lg:col-span-2 bg-slate-900 rounded-[2rem] p-10 text-white flex flex-col justify-center items-center text-center shadow-2xl relative overflow-hidden border border-amber-900/30">
+                <div class="absolute top-0 right-0 p-10 opacity-10">
+                    <i class="fas fa-project-diagram text-[150px]"></i>
+                </div>
+                <h2 class="text-3xl font-bold mb-4 relative z-10 text-amber-400">La Ventaja de la Caja Blanca</h2>
+                <p class="text-slate-400 text-sm mb-8 max-w-lg relative z-10 leading-relaxed">
+                    A diferencia de las Redes Neuronales, los Árboles de Decisión son <strong>Interpretables</strong>.
+                    Si el banco niega un crédito, puede decirle exactamente al cliente: "Se le negó porque su ratio de
+                    deuda supera el 40%". Esto genera confianza y cumple con las leyes de transparencia financiera.
+                </p>
+                <div class="flex flex-wrap gap-4 justify-center relative z-10">
+                    <span
+                        class="px-5 py-2 bg-white/10 rounded-xl text-xs font-mono border border-white/20">Transparencia</span>
+                    <span
+                        class="px-5 py-2 bg-white/10 rounded-xl text-xs font-mono border border-white/20">Auditoría</span>
+                    <span
+                        class="px-5 py-2 bg-white/10 rounded-xl text-xs font-mono border border-white/20">Rapidez</span>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- FOOTER -->
+        <footer class="mt-20 pt-8 border-t border-slate-200 text-center text-slate-400 text-xs pb-12">
+            <p>© 2024 Laboratorio de Ciencia de Datos • Caso Práctico: Credit Scoring con Árboles de Decisión</p>
+        </footer>
+    </div>
+
+    <script>
+        function toggleStep(element, color) {
+            if (element.classList.contains('card-active')) {
+                element.classList.remove('card-active');
+                element.style.borderColor = 'transparent';
+                return;
+            }
+
+            document.querySelectorAll('.card-active').forEach(card => {
+                card.classList.remove('card-active');
+                card.style.borderColor = 'transparent';
+            });
+
+            element.classList.add('card-active');
+
+            const colorMap = {
+                amber: '#d97706',
+                orange: '#f97316',
+                yellow: '#eab308',
+                emerald: '#10b981',
+                cyan: '#06b6d4'
+            };
+            element.style.borderColor = colorMap[color];
+        }
+    </script>
+</body>
+
+</html>
