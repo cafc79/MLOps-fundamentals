@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pipeline Industrial: Regresión Logística & MLOps</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Fira+Code:wght@400;500&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: #0f172a;
+            line-height: 1.6;
+        }
+
+        .code-block {
+            font-family: 'Fira Code', monospace;
+            background-color: #0f172a;
+            color: #e2e8f0;
+            padding: 1.25rem;
+            border-radius: 0.75rem;
+            font-size: 0.85rem;
+            line-height: 1.6;
+            border-left: 4px solid #6366f1;
+            overflow-x: auto;
+            margin-bottom: 1.5rem;
+        }
+
+        .py-comment {
+            color: #64748b;
+            font-style: italic;
+        }
+
+        .py-keyword {
+            color: #f472b6;
+        }
+
+        .py-func {
+            color: #38bdf8;
+        }
+
+        .py-str {
+            color: #fbbf24;
+        }
+
+        .py-val {
+            color: #bd93f9;
+        }
+
+        .phase-indicator {
+            @apply inline-block px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest mb-4 bg-indigo-600 text-white shadow-sm;
+        }
+
+        .alert-card {
+            @apply bg-rose-50 border-l-4 border-rose-500 p-5 rounded-r-xl mb-8;
+        }
+
+        .best-practice {
+            @apply bg-emerald-50 border-l-4 border-emerald-500 p-5 rounded-r-xl mb-8;
+        }
+
+        .health-badge {
+            @apply px-2 py-0.5 rounded text-[10px] font-bold border flex items-center gap-1;
+        }
+    </style>
+</head>
+
+<body class="p-4 md:p-12 lg:p-20">
+
+    <div class="max-w-5xl mx-auto">
+        <!-- CABECERA TÉCNICA -->
+        <header class="mb-20 border-b border-slate-200 pb-12">
+            <div class="flex flex-col md:flex-row items-center gap-6 mb-8">
+                <div class="p-4 bg-slate-900 text-white rounded-2xl shadow-2xl">
+                    <i class="fas fa-project-diagram text-3xl text-indigo-400"></i>
+                </div>
+                <div>
+                    <h1 class="text-4xl md:text-6xl font-black tracking-tighter text-slate-900">Regresión <span
+                            class="text-indigo-600">Logística</span></h1>
+                    <p class="text-slate-500 font-bold text-lg uppercase tracking-widest">Pipeline de Clasificación
+                        Industrial (v6.0)</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="p-6 bg-white rounded-2xl shadow-sm border border-slate-200">
+                    <h4 class="text-xs font-black text-slate-400 uppercase mb-3">¿Por qué elegir Regresión Logística?
+                    </h4>
+                    <p class="text-sm text-slate-600">
+                        A diferencia de SVM o Bosques, es el estándar cuando:
+                        <br>• Necesitas una <strong>probabilidad calibrada</strong> (0-100%).
+                        <br>• El impacto de las variables es <strong>independiente y aditivo</strong>.
+                        <br>• Se requiere una <strong>solución base (Baseline)</strong> rápida antes de escalar a Deep
+                        Learning.
+                    </p>
+                </div>
+                <div class="p-6 bg-indigo-900 rounded-2xl shadow-xl text-white">
+                    <h4 class="text-xs font-black text-indigo-300 uppercase mb-3">Elemento Distintivo: La Sigmoide</h4>
+                    <p class="text-sm italic opacity-90">
+                        "Su esencia radica en comprimir el espacio lineal infinito en una curva S. Es el modelo más
+                        honesto: si no está seguro, te dará un 0.5, permitiéndote decidir el umbral de riesgo de
+                        negocio."
+                    </p>
+                </div>
+            </div>
+        </header>
+
+        <!-- FASE 1: DATA OPS -->
+        <section class="mb-24">
+            <span class="phase-indicator bg-blue-600">Fase 1: Ingesta & Estratificación</span>
+            <h2 class="text-3xl font-extrabold mb-6">Manejo de Desbalance y Split</h2>
+            <p class="text-slate-600 mb-8">En clasificación, el error fatal es no considerar la proporción de clases. Si
+                el 99% de los datos son "No Fraude", un modelo inútil tendrá 99% de precisión.</p>
+
+            <div class="code-block">
+                <span class="py-keyword">import</span> pandas <span class="py-keyword">as</span> pd
+                <span class="py-keyword">from</span> sklearn.model_selection <span class="py-keyword">import</span>
+                train_test_split
+
+                <span class="py-comment"># Ingesta inmutable</span>
+                df = pd.<span class="py-func">read_csv</span>(<span class="py-str">'churn_data_v2.csv'</span>)
+
+                <span class="py-comment"># Validar balance de clases</span>
+                <span class="py-func">print</span>(df[<span class="py-str">'target'</span>].<span
+                    class="py-func">value_counts</span>(normalize=<span class="py-keyword">True</span>))
+
+                <span class="py-comment"># SPLIT ESTRATIFICADO: Mantiene la proporción de la clase en train y
+                    test</span>
+                X_train, X_test, y_train, y_test = <span class="py-func">train_test_split</span>(
+                df.drop(<span class="py-str">'target'</span>, axis=<span class="py-val">1</span>),
+                df[<span class="py-str">'target'</span>],
+                test_size=<span class="py-val">0.2</span>,
+                stratify=df[<span class="py-str">'target'</span>], <span class="py-comment"># CRÍTICO</span>
+                random_state=<span class="py-val">42</span>
+                )
+            </div>
+
+            <div class="alert-card">
+                <h4 class="text-rose-800 font-bold text-sm uppercase mb-2"><i
+                        class="fas fa-exclamation-triangle mr-2"></i>Error Común: Nombre Confuso</h4>
+                <p class="text-xs text-rose-700 leading-relaxed">Confundirla con una regresión para valores continuos.
+                    La Regresión Logística <strong>es un algoritmo de clasificación</strong>. No intentes predecir el
+                    "precio" de algo con ella; predice la "probabilidad" de que algo suceda.</p>
+            </div>
+        </section>
+
+        <!-- FASE 2: FEATURE ENGINEERING -->
+        <section class="mb-24">
+            <span class="phase-indicator bg-indigo-600">Fase 2: Preprocessing & Multicolinealidad</span>
+            <h2 class="text-3xl font-extrabold mb-6">Escalado y Validación Logit</h2>
+            <p class="text-slate-600 mb-8">El modelo asume una relación lineal entre las variables y los
+                <strong>log-odds</strong> del target.</p>
+
+            <div class="code-block">
+                <span class="py-keyword">from</span> sklearn.preprocessing <span class="py-keyword">import</span>
+                StandardScaler
+                <span class="py-keyword">from</span> statsmodels.stats.outliers_influence <span
+                    class="py-keyword">import</span> variance_inflation_factor
+
+                <span class="py-comment"># La Logística usa regularización por defecto (L2), requiere escalado</span>
+                scaler = <span class="py-func">StandardScaler</span>()
+                X_train_scaled = scaler.<span class="py-func">fit_transform</span>(X_train)
+
+                <span class="py-comment"># Chequeo de Multicolinealidad (VIF)</span>
+                <span class="py-comment"># Si VIF > 5, las variables están correlacionadas y los coeficientes
+                    fallan</span>
+                vif = [variance_inflation_factor(X_train_scaled, i) <span class="py-keyword">for</span> i <span
+                    class="py-keyword">in</span> <span class="py-func">range</span>(X_train_scaled.shape[<span
+                    class="py-val">1</span>])]
+            </div>
+
+            <div class="best-practice">
+                <h4 class="text-emerald-800 font-bold text-sm uppercase mb-2"><i
+                        class="fas fa-check-double mr-2"></i>Validación Crucial: Independencia</h4>
+                <p class="text-xs text-emerald-700">Asegúrate de que no haya variables que sean derivadas de otras (ej.
+                    Edad y Año de Nacimiento). La Regresión Logística es extremadamente sensible a esto y colapsará en
+                    producción si existen variables redundantes.</p>
+            </div>
+        </section>
+
+        <!-- FASE 3: TRAINING & TRACKING -->
+        <section class="mb-24">
+            <span class="phase-indicator bg-purple-600">Fase 3: Model Training & Tuning</span>
+            <h2 class="text-3xl font-extrabold mb-6">Regularización y Optimizador</h2>
+            <p class="text-slate-600 mb-8">No solo entrenamos; ajustamos la penalización para evitar el sobreajuste.</p>
+
+            <div class="code-block">
+                <span class="py-keyword">from</span> sklearn.linear_model <span class="py-keyword">import</span>
+                LogisticRegression
+                <span class="py-keyword">import</span> mlflow
+
+                <span class="py-keyword">with</span> mlflow.<span class="py-func">start_run</span>():
+                <span class="py-comment"># C: Inverso de la fuerza de regularización (menor C = más
+                    regularización)</span>
+                model = <span class="py-func">LogisticRegression</span>(penalty=<span class="py-str">'l2'</span>,
+                C=<span class="py-val">1.0</span>, solver=<span class="py-str">'liblinear'</span>)
+                model.<span class="py-func">fit</span>(X_train_scaled, y_train)
+
+                <span class="py-comment"># Log de coeficientes: El impacto marginal real</span>
+                mlflow.<span class="py-func">log_params</span>({<span class="py-str">"penalty"</span>: <span
+                    class="py-str">"l2"</span>, <span class="py-str">"C"</span>: <span class="py-val">1.0</span>})
+            </div>
+        </section>
+
+        <!-- FASE 4: VALIDATION & HEALTH CHECK -->
+        <section class="mb-24">
+            <span class="phase-indicator bg-rose-600">Fase 4: Evaluación & Model Health</span>
+            <h2 class="text-3xl font-extrabold mb-8">Diagnóstico de Clasificación</h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                <div class="p-8 bg-slate-900 rounded-3xl text-white shadow-2xl">
+                    <h3 class="text-xl font-bold mb-6 flex items-center gap-2 text-rose-400">
+                        <i class="fas fa-heartbeat"></i> Model Health Check
+                    </h3>
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center border-b border-white/10 pb-2">
+                            <span class="text-xs">ROC-AUC (Discriminación)</span>
+                            <span class="health-badge border-emerald-400 text-emerald-400">Meta > 0.80</span>
+                        </div>
+                        <div class="flex justify-between items-center border-b border-white/10 pb-2">
+                            <span class="text-xs">Precision-Recall Balance</span>
+                            <span class="health-badge border-blue-400 text-blue-400">F1 > 0.75</span>
+                        </div>
+                        <div class="flex justify-between items-center border-b border-white/10 pb-2">
+                            <span class="text-xs">Calibración de Prob.</span>
+                            <span class="health-badge border-amber-400 text-amber-400">Brier Score < 0.1</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs">Falsos Negativos (Riesgo)</span>
+                            <span class="health-badge border-rose-400 text-rose-400">Crítico: < 5%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="code-block !mb-0 !text-[11px] leading-tight">
+                    <span class="py-keyword">from</span> sklearn.metrics <span class="py-keyword">import</span>
+                    classification_report, roc_auc_score
+
+                    y_proba = model.<span class="py-func">predict_proba</span>(X_test_scaled)[:, <span
+                        class="py-val">1</span>]
+                    y_pred = (y_proba > <span class="py-val">0.7</span>).<span class="py-func">astype</span>(int) <span
+                        class="py-comment"># Umbral de negocio conservador</span>
+
+                    <span class="py-func">print</span>(classification_report(y_test, y_pred))
+                    <span class="py-func">print</span>(<span class="py-str">f"AUC: {roc_auc_score(y_test,
+                        y_proba)}"</span>)
+                </div>
+            </div>
+
+            <div class="alert-card mt-8">
+                <h4 class="text-rose-800 font-bold text-sm uppercase mb-2"><i
+                        class="fas fa-skull-crossbones mr-2"></i>La Trampa del Accuracy</h4>
+                <p class="text-xs text-rose-700">Nunca uses el Accuracy en clases desbalanceadas. Un modelo de fraude
+                    con 99.9% de accuracy puede estar fallando en detectar el único caso de fraude que importa.
+                    <strong>Usa el F1-Score o el área bajo la curva Precision-Recall.</strong></p>
+            </div>
+        </section>
+
+        <!-- FASE 5: OPERATIONALIZATION -->
+        <section class="mb-24">
+            <span class="phase-indicator bg-emerald-600">Fase 5: Serving & Registry</span>
+            <h2 class="text-3xl font-extrabold mb-6">Empaquetado Atómico del Inferencia</h2>
+            <p class="text-slate-600 mb-8">El modelo no viaja solo; debe ir acompañado de su escalador para garantizar
+                la integridad de la entrada.</p>
+
+            <div class="code-block">
+                <span class="py-keyword">import</span> joblib
+
+                <span class="py-comment"># El "Bundle" de Producción</span>
+                inference_service = {
+                <span class="py-str">"version"</span>: <span class="py-str">"2.1.0"</span>,
+                <span class="py-str">"scaler"</span>: scaler,
+                <span class="py-str">"classifier"</span>: model,
+                <span class="py-str">"threshold"</span>: <span class="py-val">0.7</span> <span class="py-comment">#
+                    Hardcoded por decisión de negocio</span>
+                }
+                joblib.<span class="py-func">dump</span>(inference_service, <span
+                    class="py-str">'fraud_detector.pkl'</span>)
+            </div>
+        </section>
+
+        <!-- FASE 6: MONITORING -->
+        <section class="mb-24">
+            <span class="phase-indicator bg-slate-900">Fase 6: Monitoring & Drift</span>
+            <h2 class="text-3xl font-extrabold mb-6">Vigilancia de la Calibración</h2>
+            <p class="text-slate-600 mb-8">Monitoreamos si las probabilidades predichas coinciden con la frecuencia real
+                observada.</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="p-6 bg-white border border-slate-200 rounded-2xl shadow-sm">
+                    <h4 class="font-black text-slate-800 mb-4 uppercase text-[10px] tracking-widest">Alarmas de
+                        Re-entrenamiento:</h4>
+                    <div class="space-y-4">
+                        <div class="flex items-start gap-3">
+                            <i class="fas fa-wave-square text-indigo-500 mt-1"></i>
+                            <div>
+                                <h5 class="text-xs font-bold">Data Drift</h5>
+                                <p class="text-[10px] text-slate-500">Si la media de los scores de entrada cambia > 10%.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <i class="fas fa-chart-pie text-rose-500 mt-1"></i>
+                            <div>
+                                <h5 class="text-xs font-bold">Label Shift</h5>
+                                <p class="text-[10px] text-slate-500">Si la proporción de fraude real en el mercado
+                                    aumenta.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div
+                    class="flex items-center justify-center bg-indigo-50 rounded-3xl border-2 border-dashed border-indigo-200">
+                    <div class="text-center p-8">
+                        <i class="fas fa-sync-alt text-4xl text-indigo-400 animate-spin-slow"></i>
+                        <p class="text-[10px] font-mono text-indigo-600 mt-4 uppercase">Continuous Training Active</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHECKLIST DE VALIDACIÓN FINAL -->
+        <section
+            class="bg-slate-900 rounded-[2.5rem] p-10 text-white shadow-2xl relative overflow-hidden border border-slate-700">
+            <div class="absolute -right-20 -bottom-20 opacity-10">
+                <i class="fas fa-check-double text-[250px]"></i>
+            </div>
+            <div class="relative z-10">
+                <h2 class="text-3xl font-black mb-10 flex items-center gap-4 text-emerald-400">
+                    <i class="fas fa-clipboard-check"></i> Checklist de Validación Industrial
+                </h2>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+                    <div class="space-y-6">
+                        <div class="flex gap-4">
+                            <div
+                                class="w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center shrink-0 border border-emerald-500/40">
+                                <i class="fas fa-check text-emerald-400 text-xs"></i></div>
+                            <div>
+                                <h5 class="font-bold text-sm">Estratificación Confirmada</h5>
+                                <p class="text-[11px] text-slate-400">¿Se usó `stratify` en el split para mantener el
+                                    balance de clases?</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <div
+                                class="w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center shrink-0 border border-emerald-500/40">
+                                <i class="fas fa-check text-emerald-400 text-xs"></i></div>
+                            <div>
+                                <h5 class="font-bold text-sm">VIF < 5</h5>
+                                        <p class="text-[11px] text-slate-400">¿Se eliminaron las variables con alta
+                                            multicolinealidad?</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <div
+                                class="w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center shrink-0 border border-emerald-500/40">
+                                <i class="fas fa-check text-emerald-400 text-xs"></i></div>
+                            <div>
+                                <h5 class="font-bold text-sm">Métrica Alienada al Negocio</h5>
+                                <p class="text-[11px] text-slate-400">¿Se validó el Recall para minimizar el riesgo de
+                                    falsos negativos?</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div class="flex gap-4">
+                            <div
+                                class="w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center shrink-0 border border-emerald-500/40">
+                                <i class="fas fa-check text-emerald-400 text-xs"></i></div>
+                            <div>
+                                <h5 class="font-bold text-sm">Escalador Serializado</h5>
+                                <p class="text-[11px] text-slate-400">¿El bundle de producción incluye el
+                                    `StandardScaler` original?</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <div
+                                class="w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center shrink-0 border border-emerald-500/40">
+                                <i class="fas fa-check text-emerald-400 text-xs"></i></div>
+                            <div>
+                                <h5 class="font-bold text-sm">Umbral de Decisión Optimizada</h5>
+                                <p class="text-[11px] text-slate-400">¿Se seleccionó el threshold basado en la curva
+                                    Precision-Recall y no en 0.5 arbitrario?</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <div
+                                class="w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center shrink-0 border border-emerald-500/40">
+                                <i class="fas fa-check text-emerald-400 text-xs"></i></div>
+                            <div>
+                                <h5 class="font-bold text-sm">Tracking de Linaje</h5>
+                                <p class="text-[11px] text-slate-400">¿Existe un rastro (MLflow) que conecte el
+                                    artefacto final con el dataset `vX.Y.Z`?</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="mt-20 pt-10 border-t border-slate-200 text-center pb-12">
+            <p class="text-slate-400 text-[10px] uppercase font-black tracking-[0.2em] mb-4">
+                Laboratorio de ML Ops • Standard Industrial v6.0 • 2024
+            </p>
+            <div class="flex justify-center gap-8 text-slate-300">
+                <i class="fab fa-python text-2xl"></i>
+                <i class="fas fa-shield-alt text-2xl"></i>
+                <i class="fas fa-network-wired text-2xl"></i>
+            </div>
+        </footer>
+    </div>
+
+</body>
+
+</html>

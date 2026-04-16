@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pipeline Industrial: Árboles de Decisión & MLOps</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Fira+Code:wght@400;500&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #fcfaf8;
+            color: #1e293b;
+            line-height: 1.6;
+        }
+
+        .code-block {
+            font-family: 'Fira Code', monospace;
+            background-color: #0f172a;
+            color: #e2e8f0;
+            padding: 1.25rem;
+            border-radius: 0.75rem;
+            font-size: 0.85rem;
+            line-height: 1.6;
+            border-left: 4px solid #f59e0b;
+            overflow-x: auto;
+            margin-bottom: 1.5rem;
+        }
+
+        .py-comment {
+            color: #64748b;
+            font-style: italic;
+        }
+
+        .py-keyword {
+            color: #f472b6;
+        }
+
+        .py-func {
+            color: #38bdf8;
+        }
+
+        .py-str {
+            color: #fbbf24;
+        }
+
+        .py-val {
+            color: #bd93f9;
+        }
+
+        .phase-indicator {
+            @apply inline-block px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest mb-4 bg-amber-600 text-white shadow-sm;
+        }
+
+        .alert-card {
+            @apply bg-rose-50 border-l-4 border-rose-500 p-5 rounded-r-xl mb-8;
+        }
+
+        .best-practice {
+            @apply bg-amber-50 border-l-4 border-amber-500 p-5 rounded-r-xl mb-8;
+        }
+
+        .health-badge {
+            @apply px-2 py-0.5 rounded text-[10px] font-bold border flex items-center gap-1 bg-white;
+        }
+    </style>
+</head>
+
+<body class="p-4 md:p-12 lg:p-20">
+
+    <div class="max-w-5xl mx-auto">
+        <!-- CABECERA TÉCNICA -->
+        <header class="mb-20 border-b border-slate-200 pb-12 text-center md:text-left">
+            <div class="flex flex-col md:flex-row items-center gap-6 mb-8">
+                <div class="p-4 bg-amber-600 text-white rounded-2xl shadow-2xl">
+                    <i class="fas fa-sitemap text-3xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-4xl md:text-6xl font-black tracking-tighter text-slate-900">Decision <span
+                            class="text-amber-600">Trees</span></h1>
+                    <p class="text-slate-500 font-bold text-lg uppercase tracking-widest italic">Interpretabilidad
+                        Radical en Producción</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="p-6 bg-white rounded-2xl shadow-sm border border-slate-200">
+                    <h4 class="text-xs font-black text-slate-400 uppercase mb-3">Selección Arquitectónica: ¿Por qué este
+                        modelo?</h4>
+                    <p class="text-sm text-slate-600">
+                        Los Árboles son superiores a modelos de "caja negra" cuando:
+                        <br>• El negocio exige <strong>auditabilidad completa</strong> de cada regla.
+                        <br>• Existen relaciones <strong>no lineales y complejas</strong> entre variables categóricas.
+                        <br>• No se desea realizar <strong>escalado de datos</strong> (los árboles son invariantes a la
+                        escala).
+                    </p>
+                </div>
+                <div class="p-6 bg-amber-900 rounded-2xl shadow-xl text-white">
+                    <h4 class="text-xs font-black text-amber-300 uppercase mb-3">Diferenciador Clave: La Caja Blanca
+                    </h4>
+                    <p class="text-sm italic opacity-90">
+                        "Un árbol de decisión no solo predice; documenta. Cada rama es una regla de negocio explícita
+                        que permite justificar legalmente por qué un crédito fue aprobado o rechazado."
+                    </p>
+                </div>
+            </div>
+        </header>
+
+        <!-- FASE 1: DATA OPS -->
+        <section class="mb-24">
+            <span class="phase-indicator bg-amber-600">Fase 1: Ingesta & Data Lineage</span>
+            <h2 class="text-3xl font-extrabold mb-6">Manejo de Valores Faltantes y Split</h2>
+            <p class="text-slate-600 mb-8">Los árboles manejan bien el ruido, pero son extremadamente sensibles a
+                cambios pequeños en el dataset si no se controlan.</p>
+
+            <div class="code-block">
+                <span class="py-keyword">import</span> pandas <span class="py-keyword">as</span> pd
+                <span class="py-keyword">from</span> sklearn.model_selection <span class="py-keyword">import</span>
+                train_test_split
+
+                <span class="py-comment"># Ingesta desde lago de datos (S3 / DVC)</span>
+                df = pd.<span class="py-func">read_csv</span>(<span class="py-str">'credit_scoring_v3.csv'</span>)
+
+                <span class="py-comment"># Los árboles manejan NaNs (dependiendo de la implementación), </span>
+                <span class="py-comment"># pero en Scikit-Learn debemos imputar antes del split.</span>
+                df = df.fillna(df.median())
+
+                <span class="py-comment"># Split Estratificado: Mantiene la proporción de morosidad en ambos sets</span>
+                X_train, X_test, y_train, y_test = <span class="py-func">train_test_split</span>(
+                df.drop(<span class="py-str">'solvencia'</span>, axis=<span class="py-val">1</span>),
+                df[<span class="py-str">'solvencia'</span>],
+                test_size=<span class="py-val">0.25</span>,
+                stratify=df[<span class="py-str">'solvencia'</span>],
+                random_state=<span class="py-val">42</span>
+                )
+            </div>
+
+            <div class="alert-card">
+                <h4 class="text-rose-800 font-bold text-sm uppercase mb-2"><i
+                        class="fas fa-exclamation-triangle mr-2"></i>Error Común: "Greedy nature"</h4>
+                <p class="text-xs text-rose-700 leading-relaxed">Confiar en que el árbol encontrará el óptimo global.
+                    Los árboles usan algoritmos codiciosos (greedy) que eligen la mejor división <strong>local</strong>
+                    en cada paso. Esto puede llevar a estructuras ineficientes si no se limitan.</p>
+            </div>
+        </section>
+
+        <!-- FASE 2: FEATURE ENGINEERING -->
+        <section class="mb-24">
+            <span class="phase-indicator bg-orange-600">Fase 2: Preprocessing & Codificación</span>
+            <h2 class="text-3xl font-extrabold mb-6">Manejo de Categorías y "No-Scaling"</h2>
+            <p class="text-slate-600 mb-8">Una ventaja distintiva: los árboles no requieren que escales o normalices los
+                datos numéricos.</p>
+
+            <div class="code-block">
+                <span class="py-keyword">from</span> sklearn.preprocessing <span class="py-keyword">import</span>
+                LabelEncoder
+
+                <span class="py-comment"># Mejor Práctica: Para árboles, One-Hot Encoding puede crear matrices demasiado
+                </span>
+                <span class="py-comment"># esparcidas que "confunden" al split. LabelEncoding suele ser más
+                    eficiente.</span>
+                le = <span class="py-func">LabelEncoder</span>()
+                X_train[<span class="py-str">'tipo_vivienda'</span>] = le.<span
+                    class="py-func">fit_transform</span>(X_train[<span class="py-str">'tipo_vivienda'</span>])
+                X_test[<span class="py-str">'tipo_vivienda'</span>] = le.<span
+                    class="py-func">transform</span>(X_test[<span class="py-str">'tipo_vivienda'</span>])
+
+                <span class="py-comment"># NOTA: Saltamos StandardScaler() - Los árboles son invariantes de
+                    escala.</span>
+            </div>
+
+            <div class="best-practice">
+                <h4 class="text-emerald-800 font-bold text-sm uppercase mb-2"><i class="fas fa-magic mr-2"></i>Elemento
+                    Distintivo: Monotonicidad</h4>
+                <p class="text-xs text-emerald-700">El árbol solo mira el orden de los valores, no su magnitud. Esto lo
+                    hace inmune a los <strong>Outliers</strong> en las variables independientes (X).</p>
+            </div>
+        </section>
+
+        <!-- FASE 3: TRAINING & PRUNING -->
+        <section class="mb-24">
+            <span class="phase-indicator bg-purple-600">Fase 3: Entrenamiento & Control de Crecimiento</span>
+            <h2 class="text-3xl font-extrabold mb-6">Poda (Pruning) e Hiperparámetros</h2>
+            <p class="text-slate-600 mb-8">Un árbol sin límites memorizará el ruido. Controlamos la complejidad para
+                asegurar generalización.</p>
+
+            <div class="code-block">
+                <span class="py-keyword">from</span> sklearn.tree <span class="py-keyword">import</span>
+                DecisionTreeClassifier
+                <span class="py-keyword">import</span> mlflow
+
+                <span class="py-keyword">with</span> mlflow.<span class="py-func">start_run</span>(run_name=<span
+                    class="py-str">"credit_tree_v1"</span>):
+                <span class="py-comment"># Max_depth y min_samples_leaf son tus frenos de mano contra el
+                    Overfitting</span>
+                model = <span class="py-func">DecisionTreeClassifier</span>(
+                criterion=<span class="py-str">'gini'</span>,
+                max_depth=<span class="py-val">5</span>,
+                min_samples_leaf=<span class="py-val">20</span>,
+                class_weight=<span class="py-str">'balanced'</span> <span class="py-comment"># Manejo de desbalance
+                    interno</span>
+                )
+                model.<span class="py-func">fit</span>(X_train, y_train)
+
+                <span class="py-comment"># Log de parámetros para MLOps Tracking</span>
+                mlflow.<span class="py-func">log_params</span>({<span class="py-str">"max_depth"</span>: <span
+                    class="py-val">5</span>, <span class="py-str">"criterion"</span>: <span
+                    class="py-str">"gini"</span>})
+            </div>
+        </section>
+
+        <!-- FASE 4: VALIDATION & HEALTH CHECK -->
+        <section class="mb-24">
+            <span class="phase-indicator bg-rose-600">Fase 4: Validación & Diagnóstico</span>
+            <h2 class="text-3xl font-extrabold mb-8">Salud de la Jerarquía Lógica</h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                <div class="p-8 bg-slate-900 rounded-3xl text-white shadow-2xl">
+                    <h3 class="text-xl font-bold mb-6 flex items-center gap-2 text-rose-400">
+                        <i class="fas fa-heartbeat"></i> Model Health Check
+                    </h3>
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center border-b border-white/10 pb-2">
+                            <span class="text-xs">Gini / Entropía (Pureza)</span>
+                            <span class="health-badge border-emerald-400 text-emerald-400">Target < 0.1 en hojas</span>
+                        </div>
+                        <div class="flex justify-between items-center border-b border-white/10 pb-2">
+                            <span class="text-xs">Delta Accuracy (Train vs Test)</span>
+                            <span class="health-badge border-blue-400 text-blue-400">Tolerancia < 4%</span>
+                        </div>
+                        <div class="flex justify-between items-center border-b border-white/10 pb-2">
+                            <span class="text-xs">Variable Importance Stability</span>
+                            <span class="health-badge border-amber-400 text-amber-400">Consistente</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs">Path Depth (Auditabilidad)</span>
+                            <span class="health-badge border-purple-400 text-purple-400">Max 7 niveles</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="code-block !mb-0 !text-[11px] leading-tight">
+                    <span class="py-keyword">from</span> sklearn.tree <span class="py-keyword">import</span> export_text
+
+                    <span class="py-comment"># Validación distintiva: Inspección de reglas humanas</span>
+                    tree_rules = <span class="py-func">export_text</span>(model, feature_names=<span
+                        class="py-func">list</span>(X.columns))
+                    <span class="py-func">print</span>(tree_rules)
+
+                    <span class="py-comment"># Si el árbol es demasiado profundo, la salud es "Pobre"</span>
+                    <span class="py-comment"># porque pierde su valor de interpretabilidad.</span>
+                </div>
+            </div>
+
+            <div class="alert-card mt-8">
+                <h4 class="text-rose-800 font-bold text-sm uppercase mb-2"><i
+                        class="fas fa-skull-crossbones mr-2"></i>La Trampa de la Inestabilidad</h4>
+                <p class="text-xs text-rose-700">Pequeños cambios en los datos pueden generar un árbol totalmente
+                    distinto. <strong>Solución:</strong> Valida la importancia de variables con permutaciones para
+                    asegurar que los "nodos raíz" sean estables.</p>
+            </div>
+        </section>
+
+        <!-- FASE 5: OPERATIONALIZATION -->
+        <section class="mb-24">
+            <span class="phase-indicator bg-emerald-600">Fase 5: Serving & Registry</span>
+            <h2 class="text-3xl font-extrabold mb-6">Persistencia de la Estructura</h2>
+            <p class="text-slate-600 mb-8">Convertimos el objeto de Python en un servicio que puede responder en
+                microsegundos.</p>
+
+            <div class="code-block">
+                <span class="py-keyword">import</span> joblib
+
+                <span class="py-comment"># Bundle de Producción</span>
+                scoring_service = {
+                <span class="py-str">"model_version"</span>: <span class="py-str">"v1.0.4"</span>,
+                <span class="py-str">"encoder_map"</span>: {<span class="py-str">"vivienda"</span>:
+                le.classes_.tolist()},
+                <span class="py-str">"classifier"</span>: model
+                }
+                joblib.<span class="py-func">dump</span>(scoring_service, <span
+                    class="py-str">'credit_engine.joblib'</span>)
+            </div>
+        </section>
+
+        <!-- FASE 6: MONITORING -->
+        <section class="mb-24">
+            <span class="phase-indicator bg-slate-900">Fase 6: Monitoring & Logic Drift</span>
+            <h2 class="text-3xl font-extrabold mb-6">Vigilancia del Comportamiento</h2>
+            <p class="text-slate-600 mb-8">Monitorizamos no solo el error, sino si las "hojas" se están llenando de
+                forma inusual.</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="p-6 bg-white border border-slate-200 rounded-2xl shadow-sm">
+                    <h4 class="font-black text-slate-800 mb-4 uppercase text-[10px] tracking-widest">Alertas MLOps:</h4>
+                    <div class="space-y-4">
+                        <div class="flex items-start gap-3">
+                            <i class="fas fa-chart-pie text-amber-500 mt-1"></i>
+                            <div>
+                                <h5 class="text-xs font-bold">Distribution Shift</h5>
+                                <p class="text-[10px] text-slate-500">Si un nodo hoja que solía tener 10% de tráfico
+                                    ahora tiene 40%.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <i class="fas fa-exclamation-circle text-rose-500 mt-1"></i>
+                            <div>
+                                <h5 class="text-xs font-bold">Feature Drift</h5>
+                                <p class="text-[10px] text-slate-500">Si los ingresos de los solicitantes cambian
+                                    drásticamente.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div
+                    class="flex items-center justify-center bg-amber-50 rounded-3xl border-2 border-dashed border-amber-200">
+                    <div class="text-center p-8 text-amber-700">
+                        <i class="fas fa-shield-alt text-4xl mb-4"></i>
+                        <p class="text-[10px] font-mono uppercase">Model Governance Active</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHECKLIST DE VALIDACIÓN FINAL -->
+        <section
+            class="bg-slate-900 rounded-[2.5rem] p-10 text-white shadow-2xl relative overflow-hidden border border-slate-700">
+            <div class="absolute -right-20 -bottom-20 opacity-10">
+                <i class="fas fa-check-double text-[250px]"></i>
+            </div>
+            <div class="relative z-10">
+                <h2 class="text-3xl font-black mb-10 flex items-center gap-4 text-amber-400">
+                    <i class="fas fa-clipboard-check"></i> Checklist de Validación MLOps
+                </h2>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-12 text-sm">
+                    <div class="space-y-6 border-r border-white/10 pr-6">
+                        <div class="flex gap-4">
+                            <i class="fas fa-check-circle text-emerald-400 mt-1"></i>
+                            <div>
+                                <h5 class="font-bold">Control de Profundidad</h5>
+                                <p class="text-[11px] text-slate-400">¿Se limitó `max_depth` para evitar que el modelo
+                                    sea una copia del set de entrenamiento?</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <i class="fas fa-check-circle text-emerald-400 mt-1"></i>
+                            <div>
+                                <h5 class="font-bold">Fuga de Datos (Leakage)</h5>
+                                <p class="text-[11px] text-slate-400">¿Se validó que el `LabelEncoder` no vio datos de
+                                    test durante su ajuste?</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <i class="fas fa-check-circle text-emerald-400 mt-1"></i>
+                            <div>
+                                <h5 class="font-bold">Métrica de Pureza</h5>
+                                <p class="text-[11px] text-slate-400">¿Se comparó Gini vs Entropía para asegurar que el
+                                    split sea el más informativo?</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div class="flex gap-4">
+                            <i class="fas fa-check-circle text-emerald-400 mt-1"></i>
+                            <div>
+                                <h5 class="font-bold">Auditoría Humana</h5>
+                                <p class="text-[11px] text-slate-400">¿Se exportó el árbol a texto/PDF para validación
+                                    por los expertos de negocio?</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <i class="fas fa-check-circle text-emerald-400 mt-1"></i>
+                            <div>
+                                <h5 class="font-bold">Manejo de Desbalance</h5>
+                                <p class="text-[11px] text-slate-400">¿Se usó `class_weight='balanced'` o técnicas de
+                                    muestreo (SMOTE)?</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <i class="fas fa-check-circle text-emerald-400 mt-1"></i>
+                            <div>
+                                <h5 class="font-bold">Trazabilidad Total</h5>
+                                <p class="text-[11px] text-slate-400">¿Existe el registro en MLflow que asocia este
+                                    modelo con el dataset versionado?</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="mt-20 pt-10 border-t border-slate-200 text-center pb-12">
+            <p class="text-slate-400 text-[10px] uppercase font-black tracking-[0.2em] mb-4">
+                Industrial Standard v7.0 • Árboles de Decisión & MLOps • 2024
+            </p>
+            <div class="flex justify-center gap-8 text-slate-300">
+                <i class="fab fa-python text-2xl"></i>
+                <i class="fas fa-database text-2xl"></i>
+                <i class="fas fa-code-branch text-2xl"></i>
+                <i class="fas fa-microchip text-2xl"></i>
+            </div>
+        </footer>
+    </div>
+
+</body>
+
+</html>

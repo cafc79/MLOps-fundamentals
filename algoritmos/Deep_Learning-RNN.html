@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Algoritmo RNN (Recurrent Neural Networks)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+
+        .card-active {
+            background-color: white !important;
+            transform: scale(1.02);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            z-index: 20;
+        }
+
+        .content-drawer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out, opacity 0.3s ease;
+            opacity: 0;
+        }
+
+        .card-active .content-drawer {
+            max-height: 500px;
+            opacity: 1;
+            margin-top: 1.5rem;
+        }
+
+        .step-badge {
+            position: absolute;
+            top: -1rem;
+            left: -1rem;
+            width: 2.5rem;
+            height: 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 9999px;
+            color: white;
+            font-weight: 800;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+
+<body class="text-slate-800 p-4 md:p-10">
+
+    <div class="max-w-6xl mx-auto">
+        <!-- HEADER -->
+        <header class="text-center mb-16">
+            <div class="inline-flex items-center px-4 py-2 bg-amber-600 text-white rounded-full mb-6 shadow-lg">
+                <i class="fas fa-redo-alt mr-2"></i>
+                <span class="text-xs font-bold uppercase tracking-widest">Deep Learning / Secuencias Temporales</span>
+            </div>
+            <h1 class="text-4xl md:text-6xl font-black text-slate-900 mb-6 tracking-tight">
+                Redes Neuronales <span class="text-amber-600">Recurrentes</span>
+            </h1>
+            <p class="text-slate-500 text-lg max-w-3xl mx-auto leading-relaxed">
+                Las RNN son arquitecturas diseñadas para procesar datos donde el orden importa. A diferencia de las
+                redes tradicionales, poseen una "memoria" que les permite recordar información de pasos anteriores para
+                influir en el presente.
+            </p>
+        </header>
+
+        <!-- INFO BANNER -->
+        <div class="bg-amber-50 border-l-4 border-amber-500 p-4 mb-12 rounded-r-xl flex items-center gap-4">
+            <i class="fas fa-info-circle text-amber-500 text-xl"></i>
+            <p class="text-sm text-amber-800"><strong>Guía del Algoritmo:</strong> Haz clic en cada tarjeta para
+                explorar cómo las RNN gestionan el tiempo, mantienen estados ocultos y superan las limitaciones de la
+                memoria corta.</p>
+        </div>
+
+        <!-- GRID DE PASOS -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 relative">
+
+            <!-- STEP 1: DATOS SECUENCIALES -->
+            <div class="relative p-8 rounded-3xl border-2 border-transparent bg-slate-50 cursor-pointer transition-all duration-300 card-active"
+                onclick="toggleStep(this, 'amber')">
+                <div class="step-badge bg-amber-600">1</div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="p-3 rounded-2xl bg-amber-100 text-amber-600">
+                        <i class="fas fa-stream text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">Secuencias (Inputs)</h3>
+                </div>
+                <p class="text-sm text-slate-600">Procesa datos donde la posición de cada elemento depende de los
+                    anteriores (texto, audio, series de tiempo).</p>
+
+                <div class="content-drawer">
+                    <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                        En una RNN, las entradas no son independientes. Cada elemento $X_t$ se procesa en un paso de
+                        tiempo específico. La red entiende que "Hola" seguido de "Mundo" tiene un significado distinto a
+                        las palabras aisladas.
+                    </p>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-amber-500 mr-2"></i> Dependencia Temporal
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-amber-500 mr-2"></i> Longitud Variable
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-amber-500 mr-2"></i> Procesamiento Paso a Paso
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 2: EL BUCLE RECURRENTE -->
+            <div class="relative p-8 rounded-3xl border-2 border-transparent bg-slate-50 cursor-pointer transition-all duration-300"
+                onclick="toggleStep(this, 'orange')">
+                <div class="step-badge bg-orange-500">2</div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="p-3 rounded-2xl bg-orange-100 text-orange-600">
+                        <i class="fas fa-sync text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">Estructura Cíclica</h3>
+                </div>
+                <p class="text-sm text-slate-600">La característica distintiva: conexiones que apuntan hacia atrás,
+                    permitiendo que la información persista.</p>
+
+                <div class="content-drawer">
+                    <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                        Visualmente, una RNN parece un bucle. Para entrenarla, "desenrollamos" este bucle en el tiempo,
+                        creando una cadena de neuronas idénticas donde cada una pasa un mensaje a su sucesora.
+                    </p>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-orange-500 mr-2"></i> Feedback Loops
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-orange-500 mr-2"></i> Parámetros Compartidos
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-orange-500 mr-2"></i> Desenrollado Temporal
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 3: ESTADO OCULTO (MEMORIA) -->
+            <div class="relative p-8 rounded-3xl border-2 border-transparent bg-slate-50 cursor-pointer transition-all duration-300"
+                onclick="toggleStep(this, 'red')">
+                <div class="step-badge bg-red-500">3</div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="p-3 rounded-2xl bg-red-100 text-red-600">
+                        <i class="fas fa-brain text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">Hidden State ($h_t$)</h3>
+                </div>
+                <p class="text-sm text-slate-600">Es la "memoria" de la red. Almacena un resumen de todo lo que ha
+                    ocurrido hasta el momento actual.</p>
+
+                <div class="content-drawer">
+                    <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                        En cada paso $t$, el estado oculto se actualiza: $h_t = f(h_{t-1}, X_t)$. Combina lo que acaba
+                        de ver con lo que ya recordaba. Es el corazón de la capacidad predictiva secuencial.
+                    </p>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-red-500 mr-2"></i> Vector de Memoria
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-red-500 mr-2"></i> Resumen de Contexto
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-red-500 mr-2"></i> Actualización Recurrente
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 4: GRADIENTE DESVANECIENTE -->
+            <div class="relative p-8 rounded-3xl border-2 border-transparent bg-slate-50 cursor-pointer transition-all duration-300"
+                onclick="toggleStep(this, 'rose')">
+                <div class="step-badge bg-rose-500">4</div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="p-3 rounded-2xl bg-rose-100 text-rose-600">
+                        <i class="fas fa-low-vision text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">Vanishing Gradient</h3>
+                </div>
+                <p class="text-sm text-slate-600">El gran obstáculo: a medida que la secuencia es más larga, la red
+                    olvida los primeros elementos.</p>
+
+                <div class="content-drawer">
+                    <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                        Durante el entrenamiento, el error se propaga hacia atrás. En secuencias largas, la señal se
+                        vuelve tan pequeña que los pesos de los primeros pasos no cambian, perdiendo la memoria de largo
+                        plazo.
+                    </p>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-rose-500 mr-2"></i> Pérdida de Contexto
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-rose-500 mr-2"></i> Problema de Dependencia Larga
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-rose-500 mr-2"></i> Limitación de RNN "Vanilla"
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 5: ARQUITECTURAS LSTM / GRU -->
+            <div class="relative p-8 rounded-3xl border-2 border-transparent bg-slate-50 cursor-pointer transition-all duration-300"
+                onclick="toggleStep(this, 'indigo')">
+                <div class="step-badge bg-indigo-500">5</div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="p-3 rounded-2xl bg-indigo-100 text-indigo-600">
+                        <i class="fas fa-door-open text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">Celdas de Memoria</h3>
+                </div>
+                <p class="text-sm text-slate-600">Soluciones avanzadas (Long Short-Term Memory) que usan "compuertas"
+                    para controlar qué recordar.</p>
+
+                <div class="content-drawer">
+                    <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                        Las <strong>LSTM</strong> introducen puertas de entrada, salida y olvido. Esto les permite
+                        decidir activamente qué información borrar y qué mantener durante miles de pasos, resolviendo el
+                        olvido.
+                    </p>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-indigo-500 mr-2"></i> Puerta de Olvido (Forget Gate)
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-indigo-500 mr-2"></i> Estado de Celda Global
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-indigo-500 mr-2"></i> Memoria de Largo Plazo
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 6: BACKPROP THROUGH TIME -->
+            <div class="relative p-8 rounded-3xl border-2 border-transparent bg-slate-50 cursor-pointer transition-all duration-300"
+                onclick="toggleStep(this, 'purple')">
+                <div class="step-badge bg-purple-500">6</div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="p-3 rounded-2xl bg-purple-100 text-purple-600">
+                        <i class="fas fa-history text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">Aprendizaje BPTT</h3>
+                </div>
+                <p class="text-sm text-slate-600">Algoritmo de entrenamiento especializado que calcula gradientes a lo
+                    largo de toda la secuencia.</p>
+
+                <div class="content-drawer">
+                    <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                        Backpropagation Through Time suma los errores de cada paso temporal y los propaga hacia atrás.
+                        Es costoso computacionalmente pero necesario para que la red aprenda la estructura del tiempo.
+                    </p>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-purple-500 mr-2"></i> Optimización Temporal
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-purple-500 mr-2"></i> Acumulación de Error
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-purple-500 mr-2"></i> Entrenamiento Secuencial
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 7: MUCHOS A MUCHOS -->
+            <div class="relative p-8 rounded-3xl border-2 border-transparent bg-slate-50 cursor-pointer transition-all duration-300 lg:col-span-1"
+                onclick="toggleStep(this, 'cyan')">
+                <div class="step-badge bg-cyan-500">7</div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="p-3 rounded-2xl bg-cyan-100 text-cyan-600">
+                        <i class="fas fa-project-diagram text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">Topologías RNN</h3>
+                </div>
+                <p class="text-sm text-slate-600">Versatilidad en mapeos: uno-a-muchos, muchos-a-uno (sentimiento) o
+                    muchos-a-muchos (traducción).</p>
+
+                <div class="content-drawer">
+                    <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                        La RNN puede configurarse para recibir una palabra y generar una frase, o leer un párrafo y
+                        devolver una etiqueta de sentimiento. Es la arquitectura más flexible en cuanto a dimensiones de
+                        E/S.
+                    </p>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-cyan-500 mr-2"></i> Análisis de Sentimiento
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-cyan-500 mr-2"></i> Traducción Automática
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-cyan-500 mr-2"></i> Generación de Texto
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VALOR DE RNN CARD -->
+            <div
+                class="lg:col-span-2 bg-slate-900 rounded-[2rem] p-10 text-white flex flex-col justify-center items-center text-center shadow-2xl relative overflow-hidden">
+                <div class="absolute top-0 right-0 p-10 opacity-10">
+                    <i class="fas fa-hourglass-half text-[150px]"></i>
+                </div>
+                <h2 class="text-3xl font-bold mb-4 relative z-10">El Dominio del Tiempo</h2>
+                <p class="text-slate-400 text-sm mb-8 max-w-lg relative z-10">
+                    Las RNN permitieron que las máquinas comprendieran el lenguaje y predijeran el futuro (bolsa,
+                    clima). Aunque los Transformers son ahora más populares, las RNN siguen siendo vitales para sistemas
+                    de tiempo real y dispositivos con recursos limitados.
+                </p>
+                <div class="flex flex-wrap gap-4 justify-center relative z-10">
+                    <span
+                        class="px-5 py-2 bg-white/10 rounded-xl text-xs font-mono border border-white/20">Secuencial</span>
+                    <span
+                        class="px-5 py-2 bg-white/10 rounded-xl text-xs font-mono border border-white/20">Contextual</span>
+                    <span
+                        class="px-5 py-2 bg-white/10 rounded-xl text-xs font-mono border border-white/20">Dinámico</span>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- FOOTER -->
+        <footer class="mt-20 pt-8 border-t border-slate-200 text-center text-slate-400 text-xs">
+            <p>© 2024 Guía de Algoritmos • Redes Neuronales Recurrentes: Memoria en Movimiento</p>
+        </footer>
+    </div>
+
+    <script>
+        function toggleStep(element, color) {
+            if (element.classList.contains('card-active')) {
+                element.classList.remove('card-active');
+                element.style.borderColor = 'transparent';
+                return;
+            }
+
+            document.querySelectorAll('.card-active').forEach(card => {
+                card.classList.remove('card-active');
+                card.style.borderColor = 'transparent';
+            });
+
+            element.classList.add('card-active');
+
+            const colorMap = {
+                amber: '#d97706',
+                orange: '#f97316',
+                red: '#dc2626',
+                rose: '#e11d48',
+                indigo: '#4f46e5',
+                purple: '#9333ea',
+                cyan: '#0891b2'
+            };
+            element.style.borderColor = colorMap[color];
+        }
+    </script>
+</body>
+
+</html>

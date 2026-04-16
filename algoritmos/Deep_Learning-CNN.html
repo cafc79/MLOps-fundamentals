@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Algoritmo CNN (Convolutional Neural Networks)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+
+        .card-active {
+            background-color: white !important;
+            transform: scale(1.02);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            z-index: 20;
+        }
+
+        .content-drawer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out, opacity 0.3s ease;
+            opacity: 0;
+        }
+
+        .card-active .content-drawer {
+            max-height: 500px;
+            opacity: 1;
+            margin-top: 1.5rem;
+        }
+
+        .step-badge {
+            position: absolute;
+            top: -1rem;
+            left: -1rem;
+            width: 2.5rem;
+            height: 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 9999px;
+            color: white;
+            font-weight: 800;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+
+<body class="text-slate-800 p-4 md:p-10">
+
+    <div class="max-w-6xl mx-auto">
+        <!-- HEADER -->
+        <header class="text-center mb-16">
+            <div class="inline-flex items-center px-4 py-2 bg-rose-600 text-white rounded-full mb-6 shadow-lg">
+                <i class="fas fa-eye mr-2"></i>
+                <span class="text-xs font-bold uppercase tracking-widest">Deep Learning / Computer Vision</span>
+            </div>
+            <h1 class="text-4xl md:text-6xl font-black text-slate-900 mb-6 tracking-tight">
+                Redes Neuronales <span class="text-rose-600">Convolucionales</span>
+            </h1>
+            <p class="text-slate-500 text-lg max-w-3xl mx-auto leading-relaxed">
+                Las CNN son arquitecturas especializadas en procesar datos con estructura de cuadrícula, como imágenes.
+                Su capacidad para extraer patrones espaciales las hace el estándar para el reconocimiento de objetos y
+                rostros.
+            </p>
+        </header>
+
+        <!-- INFO BANNER -->
+        <div class="bg-rose-50 border-l-4 border-rose-500 p-4 mb-12 rounded-r-xl flex items-center gap-4">
+            <i class="fas fa-info-circle text-rose-500 text-xl"></i>
+            <p class="text-sm text-rose-800"><strong>Guía del Algoritmo:</strong> Haz clic en cada tarjeta para explorar
+                cómo las CNN "ven" y descomponen una imagen en píxeles, bordes y objetos complejos.</p>
+        </div>
+
+        <!-- GRID DE PASOS -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 relative">
+
+            <!-- STEP 1: ENTRADA DE IMAGEN -->
+            <div class="relative p-8 rounded-3xl border-2 border-transparent bg-slate-50 cursor-pointer transition-all duration-300 card-active"
+                onclick="toggleStep(this, 'rose')">
+                <div class="step-badge bg-rose-600">1</div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="p-3 rounded-2xl bg-rose-100 text-rose-600">
+                        <i class="fas fa-image text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">Capa de Entrada</h3>
+                </div>
+                <p class="text-sm text-slate-600">Representación de la imagen en tensores numéricos con dimensiones de
+                    Altura, Ancho y Canales (RGB).</p>
+
+                <div class="content-drawer">
+                    <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                        A diferencia de un MLP, la CNN mantiene la estructura espacial. Una imagen de color se
+                        descompone en 3 matrices (Rojo, Verde, Azul). Los valores de píxel (0-255) suelen normalizarse
+                        para facilitar el entrenamiento.
+                    </p>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-rose-500 mr-2"></i> Matriz de Píxeles
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-rose-500 mr-2"></i> Canales de Color
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-rose-500 mr-2"></i> Preservación Espacial
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 2: CONVOLUCIÓN (FILTROS) -->
+            <div class="relative p-8 rounded-3xl border-2 border-transparent bg-slate-50 cursor-pointer transition-all duration-300"
+                onclick="toggleStep(this, 'fuchsia')">
+                <div class="step-badge bg-fuchsia-500">2</div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="p-3 rounded-2xl bg-fuchsia-100 text-fuchsia-600">
+                        <i class="fas fa-search text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">Capa Convolucional</h3>
+                </div>
+                <p class="text-sm text-slate-600">El núcleo del algoritmo. Usa "kernels" o filtros que se deslizan sobre
+                    la imagen para detectar características.</p>
+
+                <div class="content-drawer">
+                    <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                        Los filtros aprenden a detectar bordes, texturas o colores. El resultado es un "Feature Map"
+                        (mapa de características) que resalta dónde aparece cada patrón dentro de la imagen original.
+                    </p>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-fuchsia-500 mr-2"></i> Filtros Aprendibles
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-fuchsia-500 mr-2"></i> Mapas de Características
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-fuchsia-500 mr-2"></i> Operación Matemática Dot
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 3: ACTIVACIÓN (RELU) -->
+            <div class="relative p-8 rounded-3xl border-2 border-transparent bg-slate-50 cursor-pointer transition-all duration-300"
+                onclick="toggleStep(this, 'pink')">
+                <div class="step-badge bg-pink-500">3</div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="p-3 rounded-2xl bg-pink-100 text-pink-600">
+                        <i class="fas fa-wave-square text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">Capa ReLU</h3>
+                </div>
+                <p class="text-sm text-slate-600">Introduce no-linealidad al sistema, eliminando los valores de píxel
+                    negativos (los vuelve cero).</p>
+
+                <div class="content-drawer">
+                    <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                        Crucial para que la red aprenda relaciones complejas. ReLU (Rectified Linear Unit) es la función
+                        estándar porque ayuda a mitigar el problema del gradiente desvaneciente y acelera el
+                        entrenamiento.
+                    </p>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-pink-500 mr-2"></i> No-Linealidad
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-pink-500 mr-2"></i> Eficiencia Computacional
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-pink-500 mr-2"></i> Supresión de Señal Negativa
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 4: POOLING (MUESTREO) -->
+            <div class="relative p-8 rounded-3xl border-2 border-transparent bg-slate-50 cursor-pointer transition-all duration-300"
+                onclick="toggleStep(this, 'violet')">
+                <div class="step-badge bg-violet-500">4</div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="p-3 rounded-2xl bg-violet-100 text-violet-600">
+                        <i class="fas fa-compress-arrows-alt text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">Capa de Pooling</h3>
+                </div>
+                <p class="text-sm text-slate-600">Reduce las dimensiones espaciales de la imagen para disminuir
+                    parámetros y controlar el sobreajuste.</p>
+
+                <div class="content-drawer">
+                    <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                        El <strong>Max Pooling</strong> es el más común: selecciona el valor máximo en una ventana (ej.
+                        2x2). Esto resume la información y hace que la red sea invariante a pequeñas traslaciones de los
+                        objetos.
+                    </p>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-violet-500 mr-2"></i> Downsampling (Submuestreo)
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-violet-500 mr-2"></i> Invarianza Espacial
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-violet-500 mr-2"></i> Reducción de Cómputo
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 5: FLATTENING -->
+            <div class="relative p-8 rounded-3xl border-2 border-transparent bg-slate-50 cursor-pointer transition-all duration-300"
+                onclick="toggleStep(this, 'indigo')">
+                <div class="step-badge bg-indigo-500">5</div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="p-3 rounded-2xl bg-indigo-100 text-indigo-600">
+                        <i class="fas fa-align-justify text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">Flattening</h3>
+                </div>
+                <p class="text-sm text-slate-600">Transforma los mapas de características 2D resultantes en un vector
+                    unidimensional largo.</p>
+
+                <div class="content-drawer">
+                    <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                        Este paso es el puente entre la extracción de características visuales y la clasificación
+                        lógica. Los datos "aplanados" se preparan para ser entregados a una red neuronal tradicional.
+                    </p>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-indigo-500 mr-2"></i> Conversión 2D a 1D
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-indigo-500 mr-2"></i> Vector de Atributos
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-indigo-500 mr-2"></i> Preparación de Datos
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 6: FULLY CONNECTED -->
+            <div class="relative p-8 rounded-3xl border-2 border-transparent bg-slate-50 cursor-pointer transition-all duration-300"
+                onclick="toggleStep(this, 'purple')">
+                <div class="step-badge bg-purple-500">6</div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="p-3 rounded-2xl bg-purple-100 text-purple-600">
+                        <i class="fas fa-network-wired text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">Capa Densa (FC)</h3>
+                </div>
+                <p class="text-sm text-slate-600">Red Neuronal tradicional que utiliza las características extraídas
+                    para tomar la decisión final.</p>
+
+                <div class="content-drawer">
+                    <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                        Aquí se realiza la clasificación basada en el razonamiento de alto nivel. La red combina las
+                        formas detectadas (ej. orejas, hocico, ojos) para determinar qué objeto hay en la imagen.
+                    </p>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-purple-500 mr-2"></i> Clasificación de Alto Nivel
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-purple-500 mr-2"></i> Votación de Características
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-purple-500 mr-2"></i> Integración Total
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 7: SALIDA (SOFTMAX) -->
+            <div class="relative p-8 rounded-3xl border-2 border-transparent bg-slate-50 cursor-pointer transition-all duration-300 lg:col-span-1"
+                onclick="toggleStep(this, 'amber')">
+                <div class="step-badge bg-amber-500">7</div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="p-3 rounded-2xl bg-amber-100 text-amber-600">
+                        <i class="fas fa-bullseye text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">Softmax / Predicción</h3>
+                </div>
+                <p class="text-sm text-slate-600">Genera probabilidades finales para cada categoría (ej: Gato: 98%,
+                    Perro: 1%, Ave: 1%).</p>
+
+                <div class="content-drawer">
+                    <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                        La función Softmax asegura que la suma de todas las salidas sea igual a 1 (100%). El modelo
+                        elige la clase con el porcentaje más alto como su predicción oficial.
+                    </p>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-amber-500 mr-2"></i> Distribución de Probabilidad
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-amber-500 mr-2"></i> Etiquetado de Imagen
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-amber-500 mr-2"></i> Confianza de Salida
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- POR QUÉ ELEGIR CNN -->
+            <div
+                class="lg:col-span-2 bg-slate-900 rounded-[2rem] p-10 text-white flex flex-col justify-center items-center text-center shadow-2xl relative overflow-hidden">
+                <div class="absolute top-0 right-0 p-10 opacity-10">
+                    <i class="fas fa-microchip text-[150px]"></i>
+                </div>
+                <h2 class="text-3xl font-bold mb-4 relative z-10">El Poder de la Jerarquía Visual</h2>
+                <p class="text-slate-400 text-sm mb-8 max-w-lg relative z-10">
+                    Las CNN revolucionaron la IA porque eliminaron la necesidad de extraer características a mano. El
+                    modelo aprende automáticamente qué es importante en una imagen, superando el desempeño humano en
+                    muchas tareas de visión.
+                </p>
+                <div class="flex flex-wrap gap-4 justify-center relative z-10">
+                    <span class="px-5 py-2 bg-white/10 rounded-xl text-xs font-mono border border-white/20">Visión por
+                        Computadora</span>
+                    <span class="px-5 py-2 bg-white/10 rounded-xl text-xs font-mono border border-white/20">Auto-Feature
+                        Extraction</span>
+                    <span class="px-5 py-2 bg-white/10 rounded-xl text-xs font-mono border border-white/20">Deep
+                        Learning</span>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- FOOTER -->
+        <footer class="mt-20 pt-8 border-t border-slate-200 text-center text-slate-400 text-xs">
+            <p>© 2024 Guía de Algoritmos • Redes Neuronales Convolucionales: La Mirada Digital</p>
+        </footer>
+    </div>
+
+    <script>
+        function toggleStep(element, color) {
+            if (element.classList.contains('card-active')) {
+                element.classList.remove('card-active');
+                element.style.borderColor = 'transparent';
+                return;
+            }
+
+            document.querySelectorAll('.card-active').forEach(card => {
+                card.classList.remove('card-active');
+                card.style.borderColor = 'transparent';
+            });
+
+            element.classList.add('card-active');
+
+            const colorMap = {
+                rose: '#e11d48',
+                fuchsia: '#d946ef',
+                pink: '#ec4899',
+                violet: '#7c3aed',
+                indigo: '#4f46e5',
+                purple: '#9333ea',
+                amber: '#d97706'
+            };
+            element.style.borderColor = colorMap[color];
+        }
+    </script>
+</body>
+
+</html>

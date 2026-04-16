@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Algoritmo Q-Learning</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+
+        .card-active {
+            background-color: white !important;
+            transform: scale(1.02);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            z-index: 20;
+        }
+
+        .content-drawer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out, opacity 0.3s ease;
+            opacity: 0;
+        }
+
+        .card-active .content-drawer {
+            max-height: 500px;
+            opacity: 1;
+            margin-top: 1.5rem;
+        }
+
+        .step-badge {
+            position: absolute;
+            top: -1rem;
+            left: -1rem;
+            width: 2.5rem;
+            height: 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 9999px;
+            color: white;
+            font-weight: 800;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+
+<body class="text-slate-800 p-4 md:p-10">
+
+    <div class="max-w-6xl mx-auto">
+        <!-- HEADER -->
+        <header class="text-center mb-16">
+            <div class="inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-full mb-6 shadow-lg">
+                <i class="fas fa-robot mr-2"></i>
+                <span class="text-xs font-bold uppercase tracking-widest">Aprendizaje por Refuerzo (RL)</span>
+            </div>
+            <h1 class="text-4xl md:text-6xl font-black text-slate-900 mb-6 tracking-tight">
+                Algoritmo <span class="text-indigo-600">Q-Learning</span>
+            </h1>
+            <p class="text-slate-500 text-lg max-w-3xl mx-auto leading-relaxed">
+                Q-Learning es un algoritmo de aprendizaje por refuerzo fuera de política (off-policy) que busca
+                encontrar la mejor acción a tomar dado un estado actual, aprendiendo a través de la interacción directa
+                con un entorno.
+            </p>
+        </header>
+
+        <!-- INFO BANNER -->
+        <div class="bg-indigo-50 border-l-4 border-indigo-500 p-4 mb-12 rounded-r-xl flex items-center gap-4">
+            <i class="fas fa-info-circle text-indigo-500 text-xl"></i>
+            <p class="text-sm text-indigo-800"><strong>Guía del Algoritmo:</strong> Haz clic en cada tarjeta para
+                explorar cómo un agente autónomo aprende a maximizar sus recompensas mediante la prueba y el error.</p>
+        </div>
+
+        <!-- GRID DE PASOS -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 relative">
+
+            <!-- STEP 1: AGENTE Y ENTORNO -->
+            <div class="relative p-8 rounded-3xl border-2 border-transparent bg-slate-50 cursor-pointer transition-all duration-300 card-active"
+                onclick="toggleStep(this, 'indigo')">
+                <div class="step-badge bg-indigo-600">1</div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="p-3 rounded-2xl bg-indigo-100 text-indigo-600">
+                        <i class="fas fa-exchange-alt text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">Ciclo de Interacción</h3>
+                </div>
+                <p class="text-sm text-slate-600">El núcleo del algoritmo: un agente que observa un estado, ejecuta una
+                    acción y recibe una consecuencia.</p>
+
+                <div class="content-drawer">
+                    <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                        El <strong>Agente</strong> es la entidad que toma decisiones. El <strong>Entorno</strong> es el
+                        mundo donde vive. En cada paso, el agente pasa del Estado $S$ al Estado $S'$ mediante una Acción
+                        $A$, recibiendo una Recompensa $R$.
+                    </p>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-indigo-500 mr-2"></i> Percepción del Estado ($S$)
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-indigo-500 mr-2"></i> Ejecución de Acción ($A$)
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-indigo-500 mr-2"></i> Transición de Entorno
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 2: LA Q-TABLE -->
+            <div class="relative p-8 rounded-3xl border-2 border-transparent bg-slate-50 cursor-pointer transition-all duration-300"
+                onclick="toggleStep(this, 'purple')">
+                <div class="step-badge bg-purple-500">2</div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="p-3 rounded-2xl bg-purple-100 text-purple-600">
+                        <i class="fas fa-table text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">Q-Table (Memoria)</h3>
+                </div>
+                <p class="text-sm text-slate-600">Una matriz de referencia donde el agente guarda el "valor" o calidad
+                    de cada acción en cada estado.</p>
+
+                <div class="content-drawer">
+                    <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                        Es la "hoja de trucos" del agente. Las filas son estados y las columnas son acciones. El valor
+                        <strong>Q(s, a)</strong> representa la recompensa total esperada a largo plazo si se toma la
+                        acción $a$ en el estado $s$.
+                    </p>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-purple-500 mr-2"></i> Mapeo Estado-Acción
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-purple-500 mr-2"></i> Valores de Calidad (Q)
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-purple-500 mr-2"></i> Almacenamiento de Experiencia
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 3: RECOMPENSAS Y CASTIGOS -->
+            <div class="relative p-8 rounded-3xl border-2 border-transparent bg-slate-50 cursor-pointer transition-all duration-300"
+                onclick="toggleStep(this, 'pink')">
+                <div class="step-badge bg-pink-500">3</div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="p-3 rounded-2xl bg-pink-100 text-pink-600">
+                        <i class="fas fa-trophy text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">Feedback Escalar</h3>
+                </div>
+                <p class="text-sm text-slate-600">El sistema de guía. Las recompensas positivas refuerzan acciones, las
+                    negativas las penalizan.</p>
+
+                <div class="content-drawer">
+                    <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                        A diferencia del aprendizaje supervisado, no hay etiquetas. El agente solo sabe que lo hizo
+                        "bien" o "mal" mediante un valor numérico. El objetivo es maximizar la **Recompensa Acumulada**
+                        total.
+                    </p>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-pink-500 mr-2"></i> Refuerzo Positivo
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-pink-500 mr-2"></i> Señal de Error/Acierto
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-pink-500 mr-2"></i> Optimización de Objetivo
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 4: EXPLORACIÓN VS EXPLOTACIÓN -->
+            <div class="relative p-8 rounded-3xl border-2 border-transparent bg-slate-50 cursor-pointer transition-all duration-300"
+                onclick="toggleStep(this, 'orange')">
+                <div class="step-badge bg-orange-500">4</div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="p-3 rounded-2xl bg-orange-100 text-orange-600">
+                        <i class="fas fa-compass text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">Epsilon-Greedy</h3>
+                </div>
+                <p class="text-sm text-slate-600">El dilema constante: ¿Usar lo que ya sé (Explotar) o probar algo nuevo
+                    (Explorar)?</p>
+
+                <div class="content-drawer">
+                    <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                        Mediante el parámetro $\epsilon$, el agente elige acciones al azar un porcentaje del tiempo para
+                        descubrir mejores caminos, reduciendo esta curiosidad a medida que se vuelve experto.
+                    </p>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-orange-500 mr-2"></i> Factor de Curiosidad ($\epsilon$)
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-orange-500 mr-2"></i> Descubrimiento de Estrategias
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-orange-500 mr-2"></i> Salida de Mínimos Locales
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 5: ECUACIÓN DE BELLMAN -->
+            <div class="relative p-8 rounded-3xl border-2 border-transparent bg-slate-50 cursor-pointer transition-all duration-300"
+                onclick="toggleStep(this, 'rose')">
+                <div class="step-badge bg-rose-500">5</div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="p-3 rounded-2xl bg-rose-100 text-rose-600">
+                        <i class="fas fa-calculator text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">Fórmula de Actualización</h3>
+                </div>
+                <p class="text-sm text-slate-600">La regla matemática que permite al agente aprender de sus errores y
+                    actualizar la Q-Table.</p>
+
+                <div class="content-drawer">
+                    <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                        $Q(s,a) = Q(s,a) + \alpha [R + \gamma \max Q(s', a') - Q(s,a)]$. Combina la recompensa actual
+                        con la mejor estimación de recompensas futuras, ajustada por un factor de aprendizaje
+                        ($\alpha$).
+                    </p>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-rose-500 mr-2"></i> Tasa de Aprendizaje ($\alpha$)
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-rose-500 mr-2"></i> Factor de Descuento ($\gamma$)
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-rose-500 mr-2"></i> Valor Temporal
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 6: DIFERENCIA TEMPORAL (TD) -->
+            <div class="relative p-8 rounded-3xl border-2 border-transparent bg-slate-50 cursor-pointer transition-all duration-300"
+                onclick="toggleStep(this, 'fuchsia')">
+                <div class="step-badge bg-fuchsia-500">6</div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="p-3 rounded-2xl bg-fuchsia-100 text-fuchsia-600">
+                        <i class="fas fa-history text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">Aprendizaje TD</h3>
+                </div>
+                <p class="text-sm text-slate-600">El agente no espera al final de la partida para aprender; se
+                    auto-corrige en cada paso individual.</p>
+
+                <div class="content-drawer">
+                    <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                        Es la diferencia entre lo que el agente esperaba recibir y lo que realmente recibió. Esta
+                        "sorpresa" o error de predicción es lo que impulsa el ajuste constante de los valores en la
+                        memoria.
+                    </p>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-fuchsia-500 mr-2"></i> Actualización Paso a Paso
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-fuchsia-500 mr-2"></i> Reducción de Error de Predicción
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-fuchsia-500 mr-2"></i> Eficiencia Temporal
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 7: POLÍTICA ÓPTIMA -->
+            <div class="relative p-8 rounded-3xl border-2 border-transparent bg-slate-50 cursor-pointer transition-all duration-300 lg:col-span-1"
+                onclick="toggleStep(this, 'cyan')">
+                <div class="step-badge bg-cyan-500">7</div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="p-3 rounded-2xl bg-cyan-100 text-cyan-600">
+                        <i class="fas fa-star text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">Convergencia</h3>
+                </div>
+                <p class="text-sm text-slate-600">El resultado final: una estrategia (política) que garantiza el mejor
+                    desempeño posible en el entorno.</p>
+
+                <div class="content-drawer">
+                    <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                        Una vez que los valores Q dejan de cambiar significativamente, el agente simplemente elige la
+                        acción con el valor más alto en cada estado. Ha aprendido a "jugar a la perfección".
+                    </p>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-cyan-500 mr-2"></i> Política $\pi^*$ Óptima
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-cyan-500 mr-2"></i> Comportamiento Maestro
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-cyan-500 mr-2"></i> Estabilidad de Decisiones
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VALOR DE Q-LEARNING CARD -->
+            <div
+                class="lg:col-span-2 bg-slate-900 rounded-[2rem] p-10 text-white flex flex-col justify-center items-center text-center shadow-2xl relative overflow-hidden">
+                <div class="absolute top-0 right-0 p-10 opacity-10">
+                    <i class="fas fa-brain text-[150px]"></i>
+                </div>
+                <h2 class="text-3xl font-bold mb-4 relative z-10">La Meta: Autonomía Total</h2>
+                <p class="text-slate-400 text-sm mb-8 max-w-lg relative z-10">
+                    Q-Learning es la base de la robótica, los videojuegos inteligentes y la logística compleja. Permite
+                    que las máquinas aprendan a resolver problemas donde no hay ejemplos previos, solo metas y reglas.
+                </p>
+                <div class="flex flex-wrap gap-4 justify-center relative z-10">
+                    <span
+                        class="px-5 py-2 bg-white/10 rounded-xl text-xs font-mono border border-white/20">Auto-Aprendizaje</span>
+                    <span
+                        class="px-5 py-2 bg-white/10 rounded-xl text-xs font-mono border border-white/20">Robusto</span>
+                    <span
+                        class="px-5 py-2 bg-white/10 rounded-xl text-xs font-mono border border-white/20">Dinámico</span>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- FOOTER -->
+        <footer class="mt-20 pt-8 border-t border-slate-200 text-center text-slate-400 text-xs">
+            <p>© 2024 Guía de Algoritmos • Q-Learning: La Inteligencia del Refuerzo</p>
+        </footer>
+    </div>
+
+    <script>
+        function toggleStep(element, color) {
+            // Si ya está activo, lo cerramos
+            if (element.classList.contains('card-active')) {
+                element.classList.remove('card-active');
+                element.style.borderColor = 'transparent';
+                return;
+            }
+
+            // Cerramos otros
+            document.querySelectorAll('.card-active').forEach(card => {
+                card.classList.remove('card-active');
+                card.style.borderColor = 'transparent';
+            });
+
+            // Abrimos el actual
+            element.classList.add('card-active');
+
+            // Colores dinámicos para el borde (basados en Tailwind)
+            const colorMap = {
+                indigo: '#4f46e5',
+                purple: '#a855f7',
+                pink: '#ec4899',
+                orange: '#f97316',
+                rose: '#f43f5e',
+                fuchsia: '#d946ef',
+                cyan: '#06b6d4'
+            };
+            element.style.borderColor = colorMap[color];
+        }
+    </script>
+</body>
+
+</html>

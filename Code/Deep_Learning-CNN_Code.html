@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pipeline Industrial: Redes Convolucionales & MLOps</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Fira+Code:wght@400;500&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: #0f172a;
+            line-height: 1.6;
+        }
+
+        .code-block {
+            font-family: 'Fira Code', monospace;
+            background-color: #0f172a;
+            color: #e2e8f0;
+            padding: 1.25rem;
+            border-radius: 0.75rem;
+            font-size: 0.85rem;
+            line-height: 1.6;
+            border-left: 4px solid #f43f5e;
+            overflow-x: auto;
+            margin-bottom: 1.5rem;
+        }
+
+        .py-comment {
+            color: #64748b;
+            font-style: italic;
+        }
+
+        .py-keyword {
+            color: #f472b6;
+        }
+
+        .py-func {
+            color: #38bdf8;
+        }
+
+        .py-str {
+            color: #fbbf24;
+        }
+
+        .py-val {
+            color: #bd93f9;
+        }
+
+        .phase-indicator {
+            @apply inline-block px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest mb-4 bg-rose-600 text-white shadow-sm;
+        }
+
+        .alert-card {
+            @apply bg-rose-50 border-l-4 border-rose-500 p-5 rounded-r-xl mb-8 shadow-sm;
+        }
+
+        .best-practice {
+            @apply bg-emerald-50 border-l-4 border-emerald-500 p-5 rounded-r-xl mb-8 shadow-sm;
+        }
+
+        .health-badge {
+            @apply px-2 py-0.5 rounded text-[10px] font-bold border flex items-center gap-1 bg-white;
+        }
+    </style>
+</head>
+
+<body class="p-4 md:p-12 lg:p-20">
+
+    <div class="max-w-5xl mx-auto">
+        <!-- CABECERA TÉCNICA -->
+        <header class="mb-20 border-b border-slate-200 pb-12">
+            <div class="flex flex-col md:flex-row items-center gap-6 mb-8">
+                <div class="p-4 bg-slate-900 text-white rounded-2xl shadow-2xl text-center">
+                    <i class="fas fa-eye text-3xl text-rose-400"></i>
+                </div>
+                <div>
+                    <h1 class="text-4xl md:text-6xl font-black tracking-tighter text-slate-900">CNN <span
+                            class="text-rose-600">Industrial</span></h1>
+                    <p class="text-slate-500 font-bold text-lg uppercase tracking-widest">Visión Artificial y Ecosistema
+                        MLOps</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="p-6 bg-white rounded-2xl shadow-sm border border-slate-200">
+                    <h4 class="text-xs font-black text-slate-400 uppercase mb-3">Lógica de Selección: ¿Por qué CNN?</h4>
+                    <p class="text-sm text-slate-600 leading-relaxed">
+                        Es la arquitectura mandatoria para datos con estructura de cuadrícula cuando:
+                        <br>• Se requiere **invarianza a la traslación** (detectar el objeto esté donde esté).
+                        <br>• El dataset tiene **jerarquías espaciales** (bordes -> formas -> objetos).
+                        <br>• Se busca reducir parámetros mediante **pesos compartidos** (vs. capas densas).
+                        <br>• El problema exige el estado del arte en **Computer Vision**.
+                    </p>
+                </div>
+                <div class="p-6 bg-rose-900 rounded-2xl shadow-xl text-white">
+                    <h4 class="text-xs font-black text-rose-300 uppercase mb-3">Elemento Distintivo: Convolución</h4>
+                    <p class="text-sm italic opacity-90">
+                        "A diferencia de un MLP que intenta aprender cada píxel por separado, la CNN utiliza 'filtros'
+                        que escanean la imagen buscando patrones locales. Esto imita la corteza visual humana y es la
+                        clave de su eficiencia."
+                    </p>
+                </div>
+            </div>
+        </header>
+
+        <!-- FASE 1: DATA OPS -->
+        <section class="mb-24">
+            <span class="phase-indicator bg-blue-600">Fase 1: Ingesta & Data Lineage</span>
+            <h2 class="text-3xl font-extrabold mb-6">Gestión de Repositorios de Imágenes</h2>
+            <p class="text-slate-600 mb-8">En visión, el dato es pesado. Usamos linaje de carpetas y versionado de
+                artefactos para asegurar que el entrenamiento sea auditable.</p>
+
+            <div class="code-block">
+                <span class="py-keyword">import</span> tensorflow <span class="py-keyword">as</span> tf
+                <span class="py-keyword">from</span> tensorflow.keras.preprocessing <span
+                    class="py-keyword">import</span> image_dataset_from_directory
+
+                <span class="py-comment"># Ingesta desde S3/Cloud Storage montado</span>
+                <span class="py-comment"># image_size debe ser uniforme para el tensor de entrada</span>
+                train_ds = <span class="py-func">image_dataset_from_directory</span>(
+                <span class="py-str">'data/factory_inspection_v2/train'</span>,
+                image_size=(<span class="py-val">224</span>, <span class="py-val">224</span>),
+                batch_size=<span class="py-val">32</span>,
+                label_mode=<span class="py-str">'binary'</span>,
+                seed=<span class="py-val">42</span> <span class="py-comment"># Inmutabilidad del split</span>
+                )
+
+                <span class="py-comment"># Optimización de lectura en disco (Prefetching)</span>
+                train_ds = train_ds.<span class="py-func">prefetch</span>(buffer_size=tf.data.AUTOTUNE)
+            </div>
+
+            <div class="alert-card">
+                <h4 class="text-rose-800 font-bold text-sm uppercase mb-2"><i
+                        class="fas fa-exclamation-triangle mr-2"></i>Error Común: Resoluciones Mixtas</h4>
+                <p class="text-xs text-rose-700 leading-relaxed">Entrenar con imágenes de diferentes tamaños sin un paso
+                    de redimensionamiento (Resizing) consistente. Esto causa errores de dimensiones en las capas de
+                    pooling y flatten.</p>
+            </div>
+        </section>
+
+        <!-- FASE 2: FEATURE ENGINEERING -->
+        <section class="mb-24">
+            <span class="phase-indicator bg-indigo-600">Fase 2: Preprocessing & Augmentation</span>
+            <h2 class="text-3xl font-extrabold mb-6">Normalización y Aumento de Datos</h2>
+            <p class="text-slate-600 mb-8">Las CNN sufren si los píxeles (0-255) no se escalan. Además, usamos
+                Augmentation para que el modelo sea robusto ante giros o cambios de luz.</p>
+
+            <div class="code-block">
+                <span class="py-keyword">from</span> tensorflow.keras <span class="py-keyword">import</span> layers
+
+                <span class="py-comment"># Pipeline de Preprocesamiento Integrado</span>
+                data_augmentation = tf.keras.<span class="py-func">Sequential</span>([
+                layers.<span class="py-func">Rescaling</span>(<span class="py-val">1.</span>/<span
+                    class="py-val">255</span>), <span class="py-comment"># Normalización a rango [0, 1]</span>
+                layers.<span class="py-func">RandomFlip</span>(<span class="py-str">"horizontal_and_vertical"</span>),
+                layers.<span class="py-func">RandomRotation</span>(<span class="py-val">0.2</span>),
+                layers.<span class="py-func">RandomContrast</span>(<span class="py-val">0.1</span>)
+                ])
+            </div>
+
+            <div class="best-practice">
+                <h4 class="text-indigo-800 font-bold text-sm uppercase mb-2"><i
+                        class="fas fa-check-double mr-2"></i>Validación Crucial: Leakage en Augmentation</h4>
+                <p class="text-xs text-indigo-700 leading-relaxed">El aumento de datos (rotaciones, brillo) debe
+                    aplicarse **exclusivamente al set de entrenamiento**. El set de validación debe mantenerse puro y
+                    representar imágenes reales de la cámara de la fábrica.</p>
+            </div>
+        </section>
+
+        <!-- FASE 3: MODEL DEVELOPMENT -->
+        <section class="mb-24">
+            <span class="phase-indicator bg-purple-600">Fase 3: Model Training & Architecture</span>
+            <h2 class="text-3xl font-extrabold mb-6">Arquitectura de Extracción Jerárquica</h2>
+            <p class="text-slate-600 mb-8">Diseñamos el "esqueleto" de la red. Cada bloque Conv-Pool profundiza en la
+                complejidad de los rasgos visuales.</p>
+
+            <div class="code-block">
+                <span class="py-keyword">import</span> mlflow
+
+                <span class="py-keyword">with</span> mlflow.<span class="py-func">start_run</span>(run_name=<span
+                    class="py-str">"cnn_quality_v1"</span>):
+                model = tf.keras.<span class="py-func">Sequential</span>([
+                data_augmentation,
+                <span class="py-comment"># Bloque 1: Bordes y Texturas</span>
+                layers.<span class="py-func">Conv2D</span>(<span class="py-val">32</span>, (<span
+                    class="py-val">3</span>, <span class="py-val">3</span>), activation=<span
+                    class="py-str">'relu'</span>, input_shape=(<span class="py-val">224</span>, <span
+                    class="py-val">224</span>, <span class="py-val">3</span>)),
+                layers.<span class="py-func">MaxPooling2D</span>((<span class="py-val">2</span>, <span
+                    class="py-val">2</span>)),
+                <span class="py-comment"># Bloque 2: Formas Complejas</span>
+                layers.<span class="py-func">Conv2D</span>(<span class="py-val">64</span>, (<span
+                    class="py-val">3</span>, <span class="py-val">3</span>), activation=<span
+                    class="py-str">'relu'</span>),
+                layers.<span class="py-func">GlobalAveragePooling2D</span>(), <span class="py-comment"># Alternativa
+                    robusta a Flatten</span>
+                <span class="py-comment"># Capa Densa Final</span>
+                layers.<span class="py-func">Dense</span>(<span class="py-val">1</span>, activation=<span
+                    class="py-str">'sigmoid'</span>)
+                ])
+
+                <span class="py-comment"># Log de arquitectura en MLOps</span>
+                mlflow.<span class="py-func">log_param</span>(<span class="py-str">"optimizer"</span>, <span
+                    class="py-str">"adam"</span>)
+                model.<span class="py-func">compile</span>(optimizer=<span class="py-str">'adam'</span>, loss=<span
+                    class="py-str">'binary_crossentropy'</span>, metrics=[<span class="py-str">'accuracy'</span>])
+            </div>
+        </section>
+
+        <!-- FASE 4: VALIDATION & HEALTH CHECK -->
+        <section class="mb-24">
+            <span class="phase-indicator bg-rose-600">Fase 4: Evaluación & Model Health</span>
+            <h2 class="text-3xl font-extrabold mb-8">Diagnóstico Visual del Error</h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                <div class="p-8 bg-slate-900 rounded-3xl text-white shadow-2xl border border-rose-500/30">
+                    <h3 class="text-xl font-bold mb-6 flex items-center gap-2 text-rose-400">
+                        <i class="fas fa-heartbeat"></i> CNN Health Check
+                    </h3>
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center border-b border-white/10 pb-2">
+                            <span class="text-xs">Activation Maps (Grad-CAM)</span>
+                            <span class="health-badge border-emerald-400 text-emerald-400">Focalizado en objeto</span>
+                        </div>
+                        <div class="flex justify-between items-center border-b border-white/10 pb-2">
+                            <span class="text-xs">Saturation Gap</span>
+                            <span class="health-badge border-blue-400 text-blue-400">Delta Loss < 0.1</span>
+                        </div>
+                        <div class="flex justify-between items-center border-b border-white/10 pb-2">
+                            <span class="text-xs">Pixel Distribution Shift</span>
+                            <span class="health-badge border-amber-400 text-amber-400">Estable</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs">Inferencia Latency (ms)</span>
+                            <span class="health-badge border-purple-400 text-purple-400">Objetivo < 50ms</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                    <h4 class="text-xs font-black text-slate-400 uppercase mb-3">Validación Crítica: Grad-CAM</h4>
+                    <p class="text-sm text-slate-600 mb-4 italic">"Una CNN es saludable si 'mira' el lugar correcto. Si
+                        clasifica una pieza como defectuosa basándose en el fondo de la imagen, el modelo no es
+                        robusto."</p>
+                    <div class="p-3 bg-slate-50 rounded-lg text-center">
+                        <i class="fas fa-bullseye text-rose-500 text-4xl mb-2"></i>
+                        <p class="text-[10px] font-mono text-slate-400">AUDIT VISUAL: HEATMAPS OK</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="alert-card mt-8">
+                <h4 class="text-rose-800 font-bold text-sm uppercase mb-2"><i
+                        class="fas fa-skull-crossbones mr-2"></i>La Trampa del Pooling Temprano</h4>
+                <p class="text-xs text-rose-700">Reducir el tamaño de la imagen demasiado rápido (pooling agresivo)
+                    puede destruir rasgos finos como micro-grietas en piezas industriales. **Mantén resoluciones altas
+                    en las primeras capas.**</p>
+            </div>
+        </section>
+
+        <!-- FASE 5: OPERATIONALIZATION -->
+        <section class="mb-24">
+            <span class="phase-indicator bg-emerald-600">Fase 5: Serving & Artifact Registry</span>
+            <h2 class="text-3xl font-extrabold mb-6">Exportación a Formatos de Inferencia</h2>
+            <p class="text-slate-600 mb-8">El modelo de visión suele ser pesado. Para producción industrial (Edge),
+                convertimos a formatos optimizados como ONNX o TFLite.</p>
+
+            <div class="code-block">
+                <span class="py-keyword">import</span> tensorflow_model_optimization <span class="py-keyword">as</span>
+                tfmot
+
+                <span class="py-comment"># Serialización inmutable del artefacto</span>
+                model.<span class="py-func">save</span>(<span class="py-str">'models/cnn_quality_prod_v1.h5'</span>)
+
+                <span class="py-comment"># Mejor Práctica: Cuantización (INT8) para ejecución en GPUs de borde
+                    (Edge)</span>
+                converter = tf.lite.<span class="py-func">TFLiteConverter.from_keras_model</span>(model)
+                converter.optimizations = [tf.lite.Optimize.DEFAULT]
+                tflite_model = converter.<span class="py-func">convert</span>()
+            </div>
+        </section>
+
+        <!-- FASE 6: MONITORING -->
+        <section class="mb-24">
+            <span class="phase-indicator bg-slate-900 text-white">Fase 6: Monitoring & Image Drift</span>
+            <h2 class="text-3xl font-extrabold mb-6">Vigilancia del Entorno de Captura</h2>
+            <p class="text-slate-600 mb-8">Si el operario mueve la cámara o cambia la iluminación de la planta, los
+                píxeles cambian y el modelo falla. Monitoreamos la "Deriva de Píxeles".</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="p-6 bg-white border border-slate-200 rounded-2xl shadow-sm">
+                    <h4 class="font-bold text-slate-800 mb-4 uppercase text-xs">Alertas MLOps (Vision):</h4>
+                    <div class="space-y-4">
+                        <div class="flex items-start gap-3">
+                            <i class="fas fa-lightbulb text-rose-500 mt-1"></i>
+                            <div>
+                                <h5 class="text-xs font-bold">Illumination Drift</h5>
+                                <p class="text-[10px] text-slate-500">Si el histograma de brillo de las imágenes de
+                                    producción cambia > 20%.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <i class="fas fa-video-slash text-indigo-500 mt-1"></i>
+                            <div>
+                                <h5 class="text-xs font-bold">Sensor Decay</h5>
+                                <p class="text-[10px] text-slate-500">Detección de "píxeles muertos" o desenfoque en la
+                                    lente física de la cámara.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div
+                    class="flex items-center justify-center bg-rose-50 rounded-3xl border-2 border-dashed border-rose-200">
+                    <div class="text-center p-8 text-rose-700">
+                        <i class="fas fa-camera-retro text-4xl mb-4 animate-pulse"></i>
+                        <p class="text-[10px] font-mono uppercase">Vision Pipeline Health: ACTIVE</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHECKLIST DE VALIDACIÓN FINAL -->
+        <section
+            class="bg-slate-900 rounded-[2.5rem] p-10 text-white shadow-2xl relative overflow-hidden border border-slate-700">
+            <div class="absolute -right-20 -bottom-20 opacity-10">
+                <i class="fas fa-check-double text-[250px]"></i>
+            </div>
+            <div class="relative z-10">
+                <h2 class="text-3xl font-black mb-10 flex items-center gap-4 text-rose-400">
+                    <i class="fas fa-clipboard-check"></i> Checklist de Validación MLOps (CNN)
+                </h2>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-12 text-sm leading-relaxed text-slate-300">
+                    <div class="space-y-6">
+                        <div class="flex gap-4">
+                            <div
+                                class="w-8 h-8 rounded-lg bg-rose-500/20 flex items-center justify-center shrink-0 border border-rose-500/40 text-rose-400">
+                                <i class="fas fa-check"></i></div>
+                            <div>
+                                <h5 class="font-bold text-white uppercase text-xs">Normalización Z-Score/MinMax</h5>
+                                <p class="text-[11px]">¿Se garantizó que los tensores de entrada estén en rango [0, 1] o
+                                    [-1, 1]?</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <div
+                                class="w-8 h-8 rounded-lg bg-rose-500/20 flex items-center justify-center shrink-0 border border-rose-500/40 text-rose-400">
+                                <i class="fas fa-check"></i></div>
+                            <div>
+                                <h5 class="font-bold text-white uppercase text-xs">Grad-CAM Visual Audit</h5>
+                                <p class="text-[11px]">¿Los mapas de calor confirman que la red mira los defectos y no
+                                    el ruido de fondo?</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <div
+                                class="w-8 h-8 rounded-lg bg-rose-500/20 flex items-center justify-center shrink-0 border border-rose-500/40 text-rose-400">
+                                <i class="fas fa-check"></i></div>
+                            <div>
+                                <h5 class="font-bold text-white uppercase text-xs">Augmentation Bias Check</h5>
+                                <p class="text-[11px]">¿Se validó que el aumento de datos no está introduciendo patrones
+                                    irreales?</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div class="flex gap-4">
+                            <div
+                                class="w-8 h-8 rounded-lg bg-rose-500/20 flex items-center justify-center shrink-0 border border-rose-500/40 text-rose-400">
+                                <i class="fas fa-check"></i></div>
+                            <div>
+                                <h5 class="font-bold text-white uppercase text-xs">Cuantización Validada</h5>
+                                <p class="text-[11px]">¿La pérdida de precisión tras convertir a INT8/FP16 es aceptable
+                                    para el negocio?</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <div
+                                class="w-8 h-8 rounded-lg bg-rose-500/20 flex items-center justify-center shrink-0 border border-rose-500/40 text-rose-400">
+                                <i class="fas fa-check"></i></div>
+                            <div>
+                                <h5 class="font-bold text-white uppercase text-xs">Latency SLA (Edge)</h5>
+                                <p class="text-[11px]">¿El tiempo de predicción es menor al tiempo que tarda la pieza en
+                                    pasar por la cinta?</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <div
+                                class="w-8 h-8 rounded-lg bg-rose-500/20 flex items-center justify-center shrink-0 border border-rose-500/40 text-rose-400">
+                                <i class="fas fa-check"></i></div>
+                            <div>
+                                <h5 class="font-bold text-white uppercase text-xs">Linaje de Imágenes</h5>
+                                <p class="text-[11px]">¿Está el hash del dataset vinculado a la versión del modelo en el
+                                    registro?</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="mt-20 pt-10 border-t border-slate-200 text-center pb-12">
+            <p class="text-slate-400 text-[10px] uppercase font-black tracking-[0.2em] mb-4">
+                Industrial Deep Learning Standard v17.0 • CNN & MLOps • 2024
+            </p>
+            <div class="flex justify-center gap-8 text-slate-300">
+                <i class="fab fa-python text-2xl"></i>
+                <i class="fas fa-microchip text-2xl"></i>
+                <i class="fas fa-camera text-2xl"></i>
+                <i class="fas fa-server text-2xl"></i>
+            </div>
+        </footer>
+    </div>
+
+</body>
+
+</html>
