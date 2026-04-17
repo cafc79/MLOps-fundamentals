@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Masterclass: Despliegue y Serving en MLOps</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Fira+Code:wght@400;500&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: #0f172a;
+            line-height: 1.6;
+        }
+
+        .code-block {
+            font-family: 'Fira Code', monospace;
+            background-color: #0f172a;
+            color: #e2e8f0;
+            padding: 1.25rem;
+            border-radius: 0.75rem;
+            font-size: 0.85rem;
+            line-height: 1.6;
+            border-left: 4px solid #f97316;
+            overflow-x: auto;
+            margin-bottom: 1.5rem;
+        }
+
+        .py-comment {
+            color: #64748b;
+            font-style: italic;
+        }
+
+        .py-keyword {
+            color: #f472b6;
+        }
+
+        .py-func {
+            color: #38bdf8;
+        }
+
+        .py-str {
+            color: #fbbf24;
+        }
+
+        .phase-indicator {
+            @apply inline-block px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest mb-4 bg-orange-600 text-white shadow-sm;
+        }
+
+        .sub-stage {
+            @apply border-l-2 border-slate-200 pl-6 mb-12 relative;
+        }
+
+        .sub-stage::before {
+            content: '';
+            @apply absolute -left-[9px] top-0 w-4 h-4 bg-orange-600 rounded-full border-4 border-white shadow-sm;
+        }
+
+        .alert-card {
+            @apply bg-rose-50 border-l-4 border-rose-500 p-5 rounded-r-xl mb-8 shadow-sm;
+        }
+
+        .best-practice {
+            @apply bg-orange-50 border-l-4 border-orange-500 p-5 rounded-r-xl mb-8 shadow-sm;
+        }
+
+        .health-badge {
+            @apply px-2 py-0.5 rounded text-[10px] font-bold border flex items-center gap-1 bg-white;
+        }
+    </style>
+</head>
+
+<body class="p-4 md:p-12 lg:p-20">
+
+    <div class="max-w-5xl mx-auto">
+        <!-- CABECERA ESTRATÉGICA -->
+        <header class="mb-20 border-b border-slate-200 pb-12">
+            <div class="flex flex-col md:flex-row items-center gap-6 mb-8">
+                <div class="p-4 bg-slate-900 text-white rounded-2xl shadow-2xl text-center">
+                    <i class="fas fa-rocket text-3xl text-orange-400"></i>
+                </div>
+                <div>
+                    <h1 class="text-4xl md:text-6xl font-black tracking-tighter text-slate-900">Serving <span
+                            class="text-orange-600">Industrial</span></h1>
+                    <p class="text-slate-500 font-bold text-lg uppercase tracking-widest">MLOps Pillar #4: El Momento de
+                        la Verdad</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="p-6 bg-white rounded-2xl shadow-sm border border-slate-200">
+                    <h3 class="text-xl font-bold text-slate-800 mb-2">Definición</h3>
+                    <p class="text-sm text-slate-600 leading-relaxed">
+                        Es la fase donde el artefacto del modelo se transforma en un servicio productivo. No solo
+                        implica "exponer una API", sino garantizar <strong>alta disponibilidad, baja latencia y
+                            escalabilidad elástica</strong> frente a la demanda fluctuante del negocio.
+                    </p>
+                </div>
+                <div class="bg-orange-900 rounded-2xl shadow-xl p-6 text-white">
+                    <h4 class="text-xs font-black text-orange-300 uppercase mb-3">Elemento Distintivo</h4>
+                    <p class="text-sm italic opacity-90">
+                        "Un modelo en Serving es software vivo. A diferencia de una app tradicional, el Serving debe
+                        gestionar el <strong>vínculo inquebrantable</strong> entre la versión del código del servidor y
+                        la versión de los pesos del modelo."
+                    </p>
+                </div>
+            </div>
+        </header>
+
+        <!-- CONCEPTOS, VENTAJAS Y DESVENTAJAS -->
+        <section class="mb-24 grid grid-cols-1 md:grid-cols-2 gap-12">
+            <div>
+                <h2 class="text-2xl font-black mb-6 flex items-center gap-2"><i
+                        class="fas fa-layer-group text-orange-600"></i> Conceptos Pilares</h2>
+                <ul class="space-y-4 text-sm text-slate-600">
+                    <li class="p-4 bg-white border border-slate-200 rounded-xl shadow-sm">
+                        <strong class="text-slate-900">Inferencia de Baja Latencia:</strong> Optimización técnica para
+                        que el modelo responda en milisegundos (mínimo P99).
+                    </li>
+                    <li class="p-4 bg-white border border-slate-200 rounded-xl shadow-sm">
+                        <strong class="text-slate-900">Infraestructura Inmutable:</strong> Uso de contenedores para
+                        asegurar que el entorno de predicción sea idéntico al de entrenamiento.
+                    </li>
+                    <li class="p-4 bg-white border border-slate-200 rounded-xl shadow-sm">
+                        <strong class="text-slate-900">Traffic Splitting:</strong> Capacidad de redirigir porcentajes de
+                        usuarios a diferentes versiones del modelo sin caída del servicio.
+                    </li>
+                </ul>
+            </div>
+            <div>
+                <h2 class="text-2xl font-black mb-6 flex items-center gap-2"><i
+                        class="fas fa-balance-scale text-orange-600"></i> Análisis de Valor</h2>
+                <div class="grid grid-cols-1 gap-4">
+                    <div class="bg-emerald-50 p-5 rounded-xl border border-emerald-100 shadow-sm">
+                        <h4 class="text-[10px] font-black text-emerald-700 uppercase mb-2">Ventajas</h4>
+                        <ul class="text-xs text-emerald-800 space-y-1">
+                            <li>• Escalabilidad automática ante picos de demanda.</li>
+                            <li>• Despliegue de modelos sin riesgo (Zero-Downtime).</li>
+                            <li>• Optimización de costos mediante "Scale to Zero".</li>
+                        </ul>
+                    </div>
+                    <div class="bg-rose-50 p-5 rounded-xl border border-rose-100 shadow-sm">
+                        <h4 class="text-[10px] font-black text-rose-700 uppercase mb-2">Desventajas</h4>
+                        <ul class="text-xs text-rose-800 space-y-1">
+                            <li>• Alta complejidad en orquestación (K8s/Istio).</li>
+                            <li>• Latencia introducida por capas de red y contenedores.</li>
+                            <li>• Costo operativo de mantener clústeres activos 24/7.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SUB-ETAPAS DEL SERVING (CON CÓDIGO) -->
+        <section class="mb-24">
+            <h2 class="text-3xl font-black mb-12 text-slate-900">Pipeline de Inferencia Industrial</h2>
+
+            <!-- Etapa 4.1: API Definition -->
+            <div class="sub-stage">
+                <span class="phase-indicator">1. Inferencia en Tiempo Real (FastAPI)</span>
+                <h3 class="text-xl font-bold mb-3">Definición del Endpoint</h3>
+                <p class="text-sm text-slate-600 mb-6">El modelo se expone mediante una interfaz RESTful que valida los
+                    datos de entrada (Pydantic).</p>
+                <div class="code-block">
+                    <span class="py-keyword">from</span> fastapi <span class="py-keyword">import</span> FastAPI
+                    <span class="py-keyword">from</span> pydantic <span class="py-keyword">import</span> BaseModel
+                    <span class="py-keyword">import</span> joblib
+
+                    app = <span class="py-func">FastAPI</span>()
+                    model = joblib.<span class="py-func">load</span>(<span class="py-str">"model_v4.pkl"</span>)
+
+                    <span class="py-keyword">class</span> <span class="py-func">InputData</span>(BaseModel):
+                    feature_1: float
+                    feature_2: float
+
+                    <span class="py-keyword">@app.post</span>(<span class="py-str">"/predict"</span>)
+                    <span class="py-keyword">def</span> <span class="py-func">predict</span>(data: InputData):
+                    prediction = model.<span class="py-func">predict</span>([[data.feature_1, data.feature_2]])
+                    <span class="py-keyword">return</span> {<span class="py-str">"prediction"</span>: <span
+                        class="py-func">float</span>(prediction[<span class="py-val">0</span>])}
+                </div>
+            </div>
+
+            <!-- Etapa 4.2: K8s Deployment -->
+            <div class="sub-stage">
+                <span class="phase-indicator">2. Orquestación (Kubernetes)</span>
+                <h3 class="text-xl font-bold mb-3">Manifiesto de Despliegue y HPA</h3>
+                <p class="text-sm text-slate-600 mb-6">Configuramos el <strong>Escalado Automático</strong> basado en
+                    CPU para soportar carga masiva.</p>
+                <div class="code-block">
+                    <span class="py-comment"># deployment.yaml (Snippet conceptual)</span>
+                    apiVersion: autoscaling/v2
+                    kind: HorizontalPodAutoscaler
+                    metadata:
+                    name: ml-model-hpa
+                    spec:
+                    maxReplicas: <span class="py-val">10</span>
+                    metrics:
+                    - type: Resource
+                    resource:
+                    name: cpu
+                    target:
+                    type: Utilization
+                    averageUtilization: <span class="py-val">70</span>
+                </div>
+            </div>
+
+            <!-- Etapa 4.3: Canary Deployment -->
+            <div class="sub-stage">
+                <span class="phase-indicator">3. Canary & A/B Testing</span>
+                <h3 class="text-xl font-bold mb-3">Estrategias de Reducción de Riesgo</h3>
+                <p class="text-sm text-slate-600 mb-6">Dividimos el tráfico para validar el nuevo modelo (Challenger)
+                    contra el actual (Champion).</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-indigo-50 p-4 rounded-xl border border-indigo-100">
+                        <h4 class="font-bold text-xs text-indigo-700 uppercase">Canary Deployment</h4>
+                        <p class="text-[11px] text-indigo-600">Lanzar la V2 al 5% de usuarios. Si las métricas de salud
+                            técnica son estables, escalar al 100%.</p>
+                    </div>
+                    <div class="bg-blue-50 p-4 rounded-xl border border-blue-100">
+                        <h4 class="font-bold text-xs text-blue-700 uppercase">A/B Testing</h4>
+                        <p class="text-[11px] text-blue-600">Comparar dos algoritmos distintos en producción para ver
+                            cuál genera mejor conversión de negocio.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ZOOM TÉCNICO: VALIDACIÓN CRUZADA EN MLOPS -->
+        <section class="mb-24">
+            <h2 class="text-3xl font-black mb-10 text-slate-900">Gatekeeper: Validación Cruzada (K-Fold)</h2>
+            <div
+                class="p-8 bg-slate-900 rounded-[2.5rem] text-white shadow-2xl relative overflow-hidden border border-slate-700">
+                <div class="absolute -right-20 -top-20 opacity-10"><i class="fas fa-microchip text-[250px]"></i></div>
+                <div class="relative z-10">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                        <div>
+                            <h3 class="text-xl font-bold text-orange-400 mb-4 uppercase tracking-widest">Definición
+                                Industrial</h3>
+                            <p class="text-sm text-slate-300 leading-relaxed mb-6">
+                                La Validación Cruzada divide los datos en <strong>K particiones</strong>. El modelo se
+                                entrena y valida K veces, asegurando que su capacidad predictiva sea consistente en todo
+                                el espectro de datos y no dependa de un "golpe de suerte" aleatorio.
+                            </p>
+                            <div class="bg-white/5 p-4 rounded-2xl border border-white/10 text-xs italic">
+                                <span class="text-orange-400 font-bold">Por qué en Serving:</span> Es el paso final del
+                                pipeline automatizado (CT) antes de que el CI/CD autorice el despliegue de un
+                                contenedor.
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-emerald-400 mb-4 uppercase tracking-widest">Pros & Contras
+                            </h3>
+                            <div class="space-y-4">
+                                <div class="p-3 bg-emerald-500/10 rounded-xl border border-emerald-500/20">
+                                    <h4 class="text-xs font-bold text-emerald-400">Ventajas</h4>
+                                    <p class="text-[10px] text-slate-400">Estimación de error imparcial. Máximo
+                                        aprovechamiento de datos limitados. Robustez garantizada.</p>
+                                </div>
+                                <div class="p-3 bg-rose-500/10 rounded-xl border border-rose-500/20">
+                                    <h4 class="text-xs font-bold text-rose-400">Desventajas</h4>
+                                    <p class="text-[10px] text-slate-400">Coste computacional lineal ($O(K)$).
+                                        Complejidad en series temporales (requiere orden cronológico).</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ERRORES COMUNES Y SALUD DE LA FASE -->
+        <section class="mb-24">
+            <h2 class="text-2xl font-black mb-8 text-slate-900">Higiene de la Infraestructura de Serving</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="alert-card">
+                    <h4 class="text-rose-800 font-bold text-xs uppercase mb-1">Error: Cold Starts en Serverless</h4>
+                    <p class="text-xs text-rose-700 leading-relaxed">
+                        Desplegar modelos pesados (ej. Deep Learning) en funciones Lambda/Cloud Run.
+                        <strong>Impacto:</strong> Los primeros usuarios esperan 30 segundos mientras el contenedor carga
+                        los pesos. <strong>Solución:</strong> Usar "Warm Instances" o despliegues persistentes en K8s.
+                    </p>
+                </div>
+                <div class="best-practice">
+                    <h4 class="text-emerald-800 font-bold text-xs uppercase mb-1">Práctica: Liveness & Readiness Probes
+                    </h4>
+                    <p class="text-xs text-emerald-700 leading-relaxed">
+                        Configurar Kubernetes para que no envíe tráfico al modelo hasta que los pesos estén 100%
+                        cargados en memoria RAM.
+                    </p>
+                </div>
+            </div>
+
+            <!-- HEALTH CHECK DE LA FASE -->
+            <div class="bg-white border border-slate-200 rounded-[2.5rem] p-10 shadow-sm mt-12">
+                <h3 class="text-2xl font-black mb-8 text-center text-orange-600">Health Check: Model Serving</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="text-center">
+                        <div
+                            class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-bolt"></i></div>
+                        <h5 class="font-bold text-sm mb-1">Latencia P99</h5>
+                        <span class="health-badge border-emerald-400 text-emerald-400">
+                            < 150ms</span>
+                    </div>
+                    <div class="text-center border-x border-slate-100">
+                        <div
+                            class="w-12 h-12 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-check-circle"></i></div>
+                        <h5 class="font-bold text-sm mb-1">Success Rate</h5>
+                        <span class="health-badge border-blue-400 text-blue-400">> 99.9%</span>
+                    </div>
+                    <div class="text-center">
+                        <div
+                            class="w-12 h-12 bg-rose-100 text-rose-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-dollar-sign"></i></div>
+                        <h5 class="font-bold text-sm mb-1">Cost Efficiency</h5>
+                        <span class="health-badge border-rose-400 text-rose-400">Optimizado</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHECKLIST DE VALIDACIÓN FINAL -->
+        <section class="bg-white rounded-[2.5rem] p-10 shadow-xl border border-slate-200">
+            <h2 class="text-3xl font-black mb-10 flex items-center gap-4 text-orange-600">
+                <i class="fas fa-clipboard-check"></i> Checklist MLOps: Serving y Despliegue
+            </h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 text-sm leading-relaxed text-slate-500">
+                <div class="space-y-6">
+                    <div class="flex gap-4">
+                        <i class="fas fa-check-circle text-emerald-500 mt-1"></i>
+                        <div>
+                            <h5 class="font-bold text-slate-900 uppercase text-xs">Carga Progresiva (Canary) Configurada
+                            </h5>
+                            <p class="text-[11px]">¿Tenemos la capacidad de revertir automáticamente si el error rate
+                                sube al 1%?</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-4">
+                        <i class="fas fa-check-circle text-emerald-500 mt-1"></i>
+                        <div>
+                            <h5 class="font-bold text-slate-900 uppercase text-xs">Esquema de API Versionado</h5>
+                            <p class="text-[11px]">¿El endpoint maneja versiones (ej. /v1/predict) para evitar romper
+                                apps clientes?</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-4">
+                        <i class="fas fa-check-circle text-emerald-500 mt-1"></i>
+                        <div>
+                            <h5 class="font-bold text-slate-900 uppercase text-xs">Cuantización / Optimización de Grafo
+                            </h5>
+                            <p class="text-[11px]">¿Se ha reducido el peso del modelo (ONNX/TFLite) para optimizar la
+                                RAM del servidor?</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <div class="flex gap-4">
+                        <i class="fas fa-check-circle text-emerald-500 mt-1"></i>
+                        <div>
+                            <h5 class="font-bold text-slate-900 uppercase text-xs">Validación de Esquema en Inferencia
+                            </h5>
+                            <p class="text-[11px]">¿La API rechaza peticiones con datos nulos o tipos incorrectos antes
+                                de tocar el modelo?</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-4">
+                        <i class="fas fa-check-circle text-emerald-500 mt-1"></i>
+                        <div>
+                            <h5 class="font-bold text-slate-900 uppercase text-xs">Seguridad y Rate Limiting</h5>
+                            <p class="text-[11px]">¿Se han implementado API Keys y cuotas para evitar ataques de
+                                denegación de servicio?</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-4">
+                        <i class="fas fa-check-circle text-emerald-500 mt-1"></i>
+                        <div>
+                            <h5 class="font-bold text-slate-900 uppercase text-xs">Linaje de Inferencia (Logs)</h5>
+                            <p class="text-[11px]">¿Se guardan las predicciones (request/response) para el futuro
+                                análisis de Data Drift?</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="mt-20 pt-10 border-t border-slate-200 text-center pb-12">
+            <p class="text-slate-400 text-[10px] uppercase font-black tracking-[0.2em] mb-4">
+                Industrial Standard v17.0 • MLOps Serving Ecosystem • 2024
+            </p>
+            <div class="flex justify-center gap-8 text-slate-300">
+                <i class="fas fa-server text-2xl"></i>
+                <i class="fab fa-kubernetes text-2xl"></i>
+                <i class="fab fa-docker text-2xl"></i>
+                <i class="fas fa-shield-alt text-2xl"></i>
+            </div>
+        </footer>
+    </div>
+
+</body>
+
+</html>

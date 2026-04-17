@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Masterclass: CI/CD/CT en MLOps</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Fira+Code:wght@400;500&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: #0f172a;
+            line-height: 1.6;
+        }
+
+        .code-block {
+            font-family: 'Fira Code', monospace;
+            background-color: #0f172a;
+            color: #e2e8f0;
+            padding: 1.25rem;
+            border-radius: 0.75rem;
+            font-size: 0.85rem;
+            line-height: 1.6;
+            border-left: 4px solid #6366f1;
+            overflow-x: auto;
+            margin-bottom: 1.5rem;
+        }
+
+        .py-comment {
+            color: #64748b;
+            font-style: italic;
+        }
+
+        .py-keyword {
+            color: #f472b6;
+        }
+
+        .py-func {
+            color: #38bdf8;
+        }
+
+        .py-str {
+            color: #fbbf24;
+        }
+
+        .phase-indicator {
+            @apply inline-block px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest mb-4 bg-indigo-600 text-white shadow-sm;
+        }
+
+        .sub-stage {
+            @apply border-l-2 border-slate-200 pl-6 mb-12 relative;
+        }
+
+        .sub-stage::before {
+            content: '';
+            @apply absolute -left-[9px] top-0 w-4 h-4 bg-indigo-600 rounded-full border-4 border-white shadow-sm;
+        }
+
+        .alert-card {
+            @apply bg-rose-50 border-l-4 border-rose-500 p-5 rounded-r-xl mb-8 shadow-sm;
+        }
+
+        .best-practice {
+            @apply bg-emerald-50 border-l-4 border-emerald-500 p-5 rounded-r-xl mb-8 shadow-sm;
+        }
+
+        .health-badge {
+            @apply px-2 py-0.5 rounded text-[10px] font-bold border flex items-center gap-1 bg-white;
+        }
+    </style>
+</head>
+
+<body class="p-4 md:p-12 lg:p-20">
+
+    <div class="max-w-5xl mx-auto">
+        <!-- CABECERA ESTRATÉGICA -->
+        <header class="mb-20 border-b border-slate-200 pb-12">
+            <div class="flex flex-col md:flex-row items-center gap-6 mb-8">
+                <div class="p-4 bg-slate-900 text-white rounded-2xl shadow-2xl text-center">
+                    <i class="fas fa-sync text-3xl text-indigo-400"></i>
+                </div>
+                <div>
+                    <h1 class="text-4xl md:text-6xl font-black tracking-tighter text-slate-900">CI/CD/CT <span
+                            class="text-indigo-600">Industrial</span></h1>
+                    <p class="text-slate-500 font-bold text-lg uppercase tracking-widest">MLOps Pillar #3: El Puente a
+                        Producción</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="p-6 bg-white rounded-2xl shadow-sm border border-slate-200">
+                    <h3 class="text-xl font-bold text-slate-800 mb-2">Definición</h3>
+                    <p class="text-sm text-slate-600 leading-relaxed">
+                        Es la automatización del ciclo de vida del ML. A diferencia del software tradicional, aquí
+                        integramos no solo <strong>código</strong>, sino también <strong>datos</strong> y
+                        <strong>modelos</strong>. El objetivo es que cualquier cambio en la lógica o en la distribución
+                        de datos dispare automáticamente un flujo de pruebas y despliegue confiable.
+                    </p>
+                </div>
+                <div class="bg-indigo-900 rounded-2xl shadow-xl p-6 text-white">
+                    <h4 class="text-xs font-black text-indigo-300 uppercase mb-3">Elemento Distintivo: CT</h4>
+                    <p class="text-sm italic opacity-90">
+                        "En DevOps el despliegue es el fin. En MLOps, el despliegue es el inicio del
+                        <strong>Entrenamiento Continuo (CT)</strong>: el sistema debe ser capaz de re-entrenarse solo
+                        cuando el mundo real cambia."
+                    </p>
+                </div>
+            </div>
+        </header>
+
+        <!-- CONCEPTOS, VENTAJAS Y DESVENTAJAS -->
+        <section class="mb-24 grid grid-cols-1 md:grid-cols-2 gap-12">
+            <div>
+                <h2 class="text-2xl font-black mb-6 flex items-center gap-2"><i
+                        class="fas fa-project-diagram text-indigo-600"></i> Conceptos Pilares</h2>
+                <ul class="space-y-4 text-sm text-slate-600">
+                    <li class="p-4 bg-white border border-slate-200 rounded-xl shadow-sm">
+                        <strong class="text-slate-900">CI (Integración Continua):</strong> Pruebas unitarias de scripts
+                        y validación de la integridad de los nuevos datos de entrenamiento.
+                    </li>
+                    <li class="p-4 bg-white border border-slate-200 rounded-xl shadow-sm">
+                        <strong class="text-slate-900">CD (Entrega Continua):</strong> Despliegue automático de
+                        servicios de inferencia (APIs) en entornos de Staging/Prod.
+                    </li>
+                    <li class="p-4 bg-white border border-slate-200 rounded-xl shadow-sm">
+                        <strong class="text-slate-900">Model Registry:</strong> Inventario centralizado donde los
+                        modelos aprobados se etiquetan y se versionan semánticamente.
+                    </li>
+                </ul>
+            </div>
+            <div>
+                <h2 class="text-2xl font-black mb-6 flex items-center gap-2"><i
+                        class="fas fa-balance-scale text-indigo-600"></i> Análisis de Valor</h2>
+                <div class="grid grid-cols-1 gap-4">
+                    <div class="bg-emerald-50 p-5 rounded-xl border border-emerald-100 shadow-sm">
+                        <h4 class="text-[10px] font-black text-emerald-700 uppercase mb-2">Ventajas</h4>
+                        <ul class="text-xs text-emerald-800 space-y-1">
+                            <li>• Cero tiempo de inactividad en actualizaciones.</li>
+                            <li>• Mitigación de "Training-Serving Skew".</li>
+                            <li>• Auditoría total de quién puso qué modelo en producción.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-rose-50 p-5 rounded-xl border border-rose-100 shadow-sm">
+                        <h4 class="text-[10px] font-black text-rose-700 uppercase mb-2">Desventajas</h4>
+                        <ul class="text-xs text-rose-800 space-y-1">
+                            <li>• Alta complejidad en orquestación de clústeres.</li>
+                            <li>• Costo de infraestructura para pipelines paralelos.</li>
+                            <li>• Riesgo de automatizar el despliegue de sesgos.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SUB-ETAPAS DEL CICLO CI/CD (CON CÓDIGO) -->
+        <section class="mb-24">
+            <h2 class="text-3xl font-black mb-12 text-slate-900">Pipeline de Automatización</h2>
+
+            <!-- Etapa 3.1: Unit Testing -->
+            <div class="sub-stage">
+                <span class="phase-indicator">1. Pruebas Unitarias de Código</span>
+                <h3 class="text-xl font-bold mb-3">Validación de Lógica de Preprocesamiento</h3>
+                <p class="text-sm text-slate-600 mb-6">Aseguramos que las funciones de ingeniería de características no
+                    rompan los datos.</p>
+                <div class="code-block">
+                    <span class="py-comment"># test_preprocessing.py</span>
+                    <span class="py-keyword">import</span> pytest
+                    <span class="py-keyword">from</span> src.features <span class="py-keyword">import</span> clean_data
+
+                    <span class="py-keyword">def</span> <span class="py-func">test_null_removal</span>():
+                    raw_data = pd.DataFrame({<span class="py-str">'val'</span>: [<span class="py-val">1</span>, <span
+                        class="py-keyword">None</span>, <span class="py-val">3</span>]})
+                    cleaned = <span class="py-func">clean_data</span>(raw_data)
+                    <span class="py-keyword">assert</span> cleaned[<span class="py-str">'val'</span>].isnull().<span
+                        class="py-func">sum</span>() == <span class="py-val">0</span>
+                    <span class="py-keyword">assert</span> <span class="py-func">len</span>(cleaned) == <span
+                        class="py-val">3</span>
+                </div>
+            </div>
+
+            <!-- Etapa 3.2: Model Validation -->
+            <div class="sub-stage">
+                <span class="phase-indicator">2. Validación de Modelos</span>
+                <h3 class="text-xl font-bold mb-3">Gateway de Calidad Predictiva</h3>
+                <p class="text-sm text-slate-600 mb-6">El modelo solo se registra si supera al modelo actual en
+                    producción (Champion vs Challenger).</p>
+                <div class="code-block">
+                    <span class="py-comment"># check_model_performance.py</span>
+                    <span class="py-keyword">def</span> <span class="py-func">validate_model</span>(new_f1, current_f1,
+                    threshold=<span class="py-val">0.01</span>):
+                    <span class="py-comment"># Solo permitimos el despliegue si el modelo es al menos 1% mejor</span>
+                    <span class="py-keyword">if</span> new_f1 > (current_f1 + threshold):
+                    <span class="py-func">print</span>(<span class="py-str">"Model Approved for Production"</span>)
+                    <span class="py-keyword">return</span> <span class="py-keyword">True</span>
+                    <span class="py-keyword">return</span> <span class="py-keyword">False</span>
+                </div>
+            </div>
+
+            <!-- Etapa 3.3: Container Build -->
+            <div class="sub-stage">
+                <span class="phase-indicator">3. Build de Contenedores (Docker)</span>
+                <h3 class="text-xl font-bold mb-3">Empaquetado del Entorno Inmutable</h3>
+                <p class="text-sm text-slate-600 mb-6">Garantizamos que el modelo corra exactamente igual en cualquier
+                    nube.</p>
+                <div class="code-block">
+                    <span class="py-comment"># Dockerfile</span>
+                    FROM python:3.9-slim
+                    COPY requirements.txt .
+                    RUN pip install -r requirements.txt
+                    COPY ./model_artifact /app/model
+                    COPY ./src /app/src
+                    CMD [<span class="py-str">"uvicorn"</span>, <span class="py-str">"src.api:app"</span>, <span
+                        class="py-str">"--host"</span>, <span class="py-str">"0.0.0.0"</span>]
+                </div>
+            </div>
+
+            <!-- Etapa 3.4: Model Registry -->
+            <div class="sub-stage">
+                <span class="phase-indicator">4. Registros de Modelos</span>
+                <h3 class="text-xl font-bold mb-3">Gobernanza de Artefactos</h3>
+                <p class="text-sm text-slate-600 mb-6">Control de versiones semánticas y estados de aprobación.</p>
+                <div class="code-block">
+                    <span class="py-keyword">import</span> mlflow
+
+                    <span class="py-comment"># Transicionar el modelo de Staging a Producción mediante API</span>
+                    client = mlflow.tracking.<span class="py-func">MlflowClient</span>()
+                    client.<span class="py-func">transition_model_version_stage</span>(
+                    name=<span class="py-str">"Fraud_Detector"</span>,
+                    version=<span class="py-val">4</span>,
+                    stage=<span class="py-str">"Production"</span>,
+                    archive_existing_versions=<span class="py-keyword">True</span>
+                    )
+                </div>
+            </div>
+        </section>
+
+        <!-- ZOOM TÉCNICO: VALIDACIÓN CRUZADA -->
+        <section class="mb-24">
+            <h2 class="text-3xl font-black mb-10 text-slate-900">Foco: Validación Cruzada (K-Fold)</h2>
+            <div
+                class="p-8 bg-slate-900 rounded-[2.5rem] text-white shadow-2xl relative overflow-hidden border border-slate-700">
+                <div class="absolute -right-20 -top-20 opacity-10"><i class="fas fa-microchip text-[250px]"></i></div>
+                <div class="relative z-10">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                        <div>
+                            <h3 class="text-xl font-bold text-indigo-400 mb-4 uppercase tracking-widest">Definición y
+                                Concepto</h3>
+                            <p class="text-sm text-slate-300 leading-relaxed mb-6">
+                                La Validación Cruzada divide el dataset en <strong>$K$ particiones</strong>. Entrena $K$
+                                veces, usando cada vez un grupo distinto para validar y el resto para entrenar,
+                                promediando los resultados finales.
+                            </p>
+                            <div class="bg-white/5 p-4 rounded-2xl border border-white/10 text-xs italic">
+                                <span class="text-indigo-400 font-bold">Uso en CI:</span> Se utiliza en el pipeline para
+                                asegurar que el performance del modelo no depende de un split aleatorio afortunado.
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-emerald-400 mb-4 uppercase tracking-widest">Análisis
+                                Crítico</h3>
+                            <div class="space-y-4">
+                                <div class="p-3 bg-emerald-500/10 rounded-xl border border-emerald-500/20">
+                                    <h4 class="text-xs font-bold text-emerald-400">Ventajas</h4>
+                                    <p class="text-[10px] text-slate-400">Estimación de error más realista. Aprovecha
+                                        todos los datos para validar. Reduce el sesgo de selección.</p>
+                                </div>
+                                <div class="p-3 bg-rose-500/10 rounded-xl border border-rose-500/20">
+                                    <h4 class="text-xs font-bold text-rose-400">Desventajas</h4>
+                                    <p class="text-[10px] text-slate-400">Coste computacional $K$ veces mayor. No apto
+                                        para series de tiempo (requiere TimeSeriesSplit).</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ERRORES COMUNES Y SALUD DE LA FASE -->
+        <section class="mb-24">
+            <h2 class="text-2xl font-black mb-8 text-slate-900">Higiene del Pipeline CI/CD</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="alert-card">
+                    <h4 class="text-rose-800 font-bold text-xs uppercase mb-1">Error: Docker Bloat</h4>
+                    <p class="text-xs text-rose-700 leading-relaxed">
+                        Incluir el dataset de entrenamiento dentro de la imagen Docker. <strong>Impacto:</strong>
+                        Imágenes de 10GB que tardan minutos en desplegar. <strong>Solución:</strong> Los datos se
+                        consumen vía API o montaje de volúmenes; la imagen solo lleva código y pesos.
+                    </p>
+                </div>
+                <div class="best-practice">
+                    <h4 class="text-emerald-800 font-bold text-xs uppercase mb-1">Práctica: Smoke Tests de Inferencia
+                    </h4>
+                    <p class="text-xs text-emerald-700 leading-relaxed">
+                        Antes de desplegar, enviar 5 peticiones reales al contenedor en Staging. Si el modelo no
+                        responde en < 100ms, el despliegue se cancela (Rollback). </p>
+                </div>
+            </div>
+
+            <div class="bg-white border border-slate-200 rounded-[2.5rem] p-10 shadow-sm mt-12">
+                <h3 class="text-2xl font-black mb-8 text-center text-indigo-600">Phase Health Check</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="text-center">
+                        <div
+                            class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-check"></i></div>
+                        <h5 class="font-bold text-sm mb-1">Build Success Rate</h5>
+                        <span class="health-badge border-emerald-400 text-emerald-400">> 95%</span>
+                    </div>
+                    <div class="text-center border-x border-slate-100">
+                        <div
+                            class="w-12 h-12 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-clock"></i></div>
+                        <h5 class="font-bold text-sm mb-1">MTTD</h5>
+                        <span class="health-badge border-blue-400 text-blue-600">
+                            < 15 min</span>
+                    </div>
+                    <div class="text-center">
+                        <div
+                            class="w-12 h-12 bg-rose-100 text-rose-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-undo"></i></div>
+                        <h5 class="font-bold text-sm mb-1">Rollback Rate</h5>
+                        <span class="health-badge border-rose-400 text-rose-400">
+                            < 2%</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHECKLIST DE VALIDACIÓN FINAL -->
+        <section class="bg-white rounded-[2.5rem] p-10 shadow-xl border border-slate-200">
+            <h2 class="text-3xl font-black mb-10 flex items-center gap-4 text-indigo-600">
+                <i class="fas fa-clipboard-check"></i> Checklist MLOps: CI/CD/CT
+            </h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 text-sm leading-relaxed text-slate-500">
+                <div class="space-y-6">
+                    <div class="flex gap-4">
+                        <i class="fas fa-check-circle text-emerald-500 mt-1"></i>
+                        <div>
+                            <h5 class="font-bold text-slate-900 uppercase text-xs">Docker Multi-stage Build</h5>
+                            <p class="text-[11px]">¿Se están usando imágenes optimizadas para reducir la superficie de
+                                ataque y el tamaño?</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-4">
+                        <i class="fas fa-check-circle text-emerald-500 mt-1"></i>
+                        <div>
+                            <h5 class="font-bold text-slate-900 uppercase text-xs">Versiones Inmutables</h5>
+                            <p class="text-[11px]">¿Cada modelo en el Registry tiene un hash único vinculado al commit
+                                de Git?</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-4">
+                        <i class="fas fa-check-circle text-emerald-500 mt-1"></i>
+                        <div>
+                            <h5 class="font-bold text-slate-900 uppercase text-xs">Métrica de Negocio en CI</h5>
+                            <p class="text-[11px]">¿El pipeline valida KPIs de negocio (ej. margen de ganancia esperado)
+                                antes de aprobar?</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <div class="flex gap-4">
+                        <i class="fas fa-check-circle text-emerald-500 mt-1"></i>
+                        <div>
+                            <h5 class="font-bold text-slate-900 uppercase text-xs">Data Schema Validation</h5>
+                            <p class="text-[11px]">¿Se ejecuta un test de calidad de datos antes de iniciar el
+                                re-entrenamiento (CT)?</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-4">
+                        <i class="fas fa-check-circle text-emerald-500 mt-1"></i>
+                        <div>
+                            <h5 class="font-bold text-slate-900 uppercase text-xs">Estrategia de Despliegue</h5>
+                            <p class="text-[11px]">¿Se ha definido el uso de Canary o Blue/Green para evitar impacto en
+                                usuarios reales?</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-4">
+                        <i class="fas fa-check-circle text-emerald-500 mt-1"></i>
+                        <div>
+                            <h5 class="font-bold text-slate-900 uppercase text-xs">Rollback Automático</h5>
+                            <p class="text-[11px]">¿El orquestador es capaz de volver a la versión anterior si el
+                                monitoreo detecta anomalías?</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="mt-20 pt-10 border-t border-slate-200 text-center pb-12">
+            <p class="text-slate-400 text-[10px] uppercase font-black tracking-[0.2em] mb-4">
+                Industrial Standard v15.0 • MLOps CI/CD Automation • 2024
+            </p>
+            <div class="flex justify-center gap-8 text-slate-300">
+                <i class="fab fa-docker text-2xl"></i>
+                <i class="fas fa-code-branch text-2xl"></i>
+                <i class="fas fa-shield-alt text-2xl"></i>
+                <i class="fas fa-server text-2xl"></i>
+            </div>
+        </footer>
+    </div>
+
+</body>
+
+</html>

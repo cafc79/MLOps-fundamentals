@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Masterclass: MLOps - Gestión de Datos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Fira+Code:wght@400;500&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: #0f172a;
+            line-height: 1.6;
+        }
+
+        .code-block {
+            font-family: 'Fira Code', monospace;
+            background-color: #0f172a;
+            color: #e2e8f0;
+            padding: 1.25rem;
+            border-radius: 0.75rem;
+            font-size: 0.85rem;
+            line-height: 1.6;
+            border-left: 4px solid #3b82f6;
+            overflow-x: auto;
+            margin-bottom: 1.5rem;
+        }
+
+        .py-comment {
+            color: #64748b;
+            font-style: italic;
+        }
+
+        .py-keyword {
+            color: #f472b6;
+        }
+
+        .py-func {
+            color: #38bdf8;
+        }
+
+        .py-str {
+            color: #fbbf24;
+        }
+
+        .phase-indicator {
+            @apply inline-block px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest mb-4 bg-blue-600 text-white shadow-sm;
+        }
+
+        .sub-stage {
+            @apply border-l-2 border-slate-200 pl-6 mb-12 relative;
+        }
+
+        .sub-stage::before {
+            content: '';
+            @apply absolute -left-[9px] top-0 w-4 h-4 bg-blue-600 rounded-full border-4 border-white shadow-sm;
+        }
+
+        .alert-card {
+            @apply bg-rose-50 border-l-4 border-rose-500 p-5 rounded-r-xl mb-8 shadow-sm;
+        }
+
+        .best-practice {
+            @apply bg-blue-50 border-l-4 border-blue-500 p-5 rounded-r-xl mb-8 shadow-sm;
+        }
+
+        .health-badge {
+            @apply px-2 py-0.5 rounded text-[10px] font-bold border flex items-center gap-1 bg-white;
+        }
+    </style>
+</head>
+
+<body class="p-4 md:p-12 lg:p-20">
+
+    <div class="max-w-5xl mx-auto">
+        <!-- CABECERA ESTRATÉGICA -->
+        <header class="mb-20 border-b border-slate-200 pb-12">
+            <div class="flex flex-col md:flex-row items-center gap-6 mb-8">
+                <div class="p-4 bg-slate-900 text-white rounded-2xl shadow-2xl text-center">
+                    <i class="fas fa-database text-3xl text-blue-400"></i>
+                </div>
+                <div>
+                    <h1 class="text-4xl md:text-6xl font-black tracking-tighter text-slate-900">Data <span
+                            class="text-blue-600">Management</span></h1>
+                    <p class="text-slate-500 font-bold text-lg uppercase tracking-widest">MLOps Pillar #1: Datos como
+                        Código</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="p-6 bg-white rounded-2xl shadow-sm border border-slate-200">
+                    <h3 class="text-xl font-bold text-slate-800 mb-2">Definición</h3>
+                    <p class="text-sm text-slate-600 leading-relaxed">
+                        Es la práctica de ingeniería de aplicar principios de DevOps al manejo de datos (DataOps). En
+                        MLOps, implica garantizar que los datasets sean **inmutables, versionados y validados**,
+                        eliminando la discrepancia entre el entrenamiento y la inferencia en tiempo real.
+                    </p>
+                </div>
+                <div class="bg-blue-900 rounded-2xl shadow-xl p-6 text-white">
+                    <h4 class="text-xs font-black text-blue-300 uppercase mb-3">Filosofía Data-Centric AI</h4>
+                    <p class="text-sm italic opacity-90">
+                        "El rendimiento de la IA mejora más iterando sobre la <strong>calidad de los datos</strong> que
+                        ajustando el algoritmo. Si el dato es ruidoso, el modelo será ruidoso, sin importar su
+                        complejidad."
+                    </p>
+                </div>
+            </div>
+        </header>
+
+        <!-- CONCEPTOS, VENTAJAS Y DESVENTAJAS -->
+        <section class="mb-24 grid grid-cols-1 md:grid-cols-2 gap-12">
+            <div>
+                <h2 class="text-2xl font-black mb-6 flex items-center gap-2"><i
+                        class="fas fa-layer-group text-blue-600"></i> Conceptos Clave</h2>
+                <ul class="space-y-4 text-sm text-slate-600">
+                    <li class="p-4 bg-white border border-slate-200 rounded-xl shadow-sm">
+                        <strong class="text-slate-900">Consistencia Online/Offline:</strong> Garantizar que el modelo
+                        use las mismas transformaciones en entrenamiento que en producción.
+                    </li>
+                    <li class="p-4 bg-white border border-slate-200 rounded-xl shadow-sm">
+                        <strong class="text-slate-900">Feature Store:</strong> Almacén centralizado que sirve como
+                        "fuente de verdad" para las variables predictivas.
+                    </li>
+                    <li class="p-4 bg-white border border-slate-200 rounded-xl shadow-sm">
+                        <strong class="text-slate-900">Data Lineage:</strong> Trazabilidad total del origen del dato y
+                        cada transformación que sufrió hasta llegar al modelo.
+                    </li>
+                </ul>
+            </div>
+            <div>
+                <h2 class="text-2xl font-black mb-6 flex items-center gap-2"><i
+                        class="fas fa-balance-scale text-blue-600"></i> Análisis de Valor</h2>
+                <div class="grid grid-cols-1 gap-4">
+                    <div class="bg-emerald-50 p-5 rounded-xl border border-emerald-100 shadow-sm">
+                        <h4 class="text-[10px] font-black text-emerald-700 uppercase mb-2">Ventajas</h4>
+                        <ul class="text-xs text-emerald-800 space-y-1">
+                            <li>• Reproducibilidad total de experimentos históricos.</li>
+                            <li>• Detección temprana de anomalías en el flujo de entrada.</li>
+                            <li>• Cumplimiento normativo (GDPR/PII) simplificado.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-rose-50 p-5 rounded-xl border border-rose-100 shadow-sm">
+                        <h4 class="text-[10px] font-black text-rose-700 uppercase mb-2">Desventajas</h4>
+                        <ul class="text-xs text-rose-800 space-y-1">
+                            <li>• Alta latencia inicial por procesos de validación.</li>
+                            <li>• Costo elevado de almacenamiento de versiones (Snapshots).</li>
+                            <li>• Curva de aprendizaje técnica (DVC, Feature Stores).</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SUB-ETAPAS DEL CICLO DE DATOS (CON CÓDIGO) -->
+        <section class="mb-24">
+            <h2 class="text-3xl font-black mb-12 text-slate-900">Etapas del Ciclo de Vida de Datos</h2>
+
+            <!-- Etapa 1: Ingesta -->
+            <div class="sub-stage">
+                <span class="phase-indicator">1. Ingesta y Conectividad</span>
+                <h3 class="text-xl font-bold mb-3">Extracción Multifuente</h3>
+                <p class="text-sm text-slate-600 mb-6">Desacoplamiento de fuentes mediante brokers de mensajes o
+                    conectores inmutables.</p>
+                <div class="code-block">
+                    <span class="py-comment"># Ejemplo: Ingesta determinista desde un Feature Store (Feast)</span>
+                    <span class="py-keyword">from</span> feast <span class="py-keyword">import</span> FeatureStore
+
+                    store = <span class="py-func">FeatureStore</span>(repo_path=<span class="py-str">"."</span>)
+                    training_df = store.<span class="py-func">get_historical_features</span>(
+                    entity_df=entity_df,
+                    features=[<span class="py-str">"driver_stats:acc_rate"</span>, <span
+                        class="py-str">"driver_stats:rating"</span>]
+                    ).<span class="py-func">to_df</span>()
+                </div>
+            </div>
+
+            <!-- Etapa 2: ETL & Prep -->
+            <div class="sub-stage">
+                <span class="phase-indicator">2. Pipelines de Ingeniería (ETL)</span>
+                <h3 class="text-xl font-bold mb-3">Limpieza y Transformación a Escala</h3>
+                <p class="text-sm text-slate-600 mb-6">Uso de orquestadores para automatizar la normalización y
+                    escalado.</p>
+                <div class="code-block">
+                    <span class="py-comment"># Transformación modular con dbt o scripts integrados</span>
+                    <span class="py-keyword">def</span> <span class="py-func">preprocess_features</span>(df):
+                    <span class="py-comment"># Tratamos nulos de forma reproducible</span>
+                    df[<span class="py-str">'age'</span>] = df[<span class="py-str">'age'</span>].<span
+                        class="py-func">fillna</span>(df[<span class="py-str">'age'</span>].<span
+                        class="py-func">median</span>())
+                    <span class="py-comment"># Codificación categórica</span>
+                    <span class="py-keyword">return</span> pd.<span class="py-func">get_dummies</span>(df,
+                    columns=[<span class="py-str">'geo'</span>])
+                </div>
+            </div>
+
+            <!-- Etapa 3: Calidad -->
+            <div class="sub-stage">
+                <span class="phase-indicator">3. Validación y Calidad</span>
+                <h3 class="text-xl font-bold mb-3">Unit Tests para Datasets</h3>
+                <p class="text-sm text-slate-600 mb-6">El modelo no debe entrenar si el dato no cumple el contrato de
+                    esquema.</p>
+                <div class="code-block">
+                    <span class="py-keyword">import</span> great_expectations <span class="py-keyword">as</span> ge
+
+                    <span class="py-comment"># Definir expectativas de calidad</span>
+                    df_ge = ge.<span class="py-func">from_pandas</span>(training_df)
+                    df_ge.<span class="py-func">expect_column_values_to_not_be_null</span>(<span
+                        class="py-str">"driver_id"</span>)
+                    df_ge.<span class="py-func">expect_column_values_to_be_between</span>(<span
+                        class="py-str">"rating"</span>, <span class="py-val">0</span>, <span class="py-val">5</span>)
+                </div>
+            </div>
+
+            <!-- Etapa 4: Versionado -->
+            <div class="sub-stage">
+                <span class="phase-indicator">4. Versionado de Datos (DVC)</span>
+                <h3 class="text-xl font-bold mb-3">Git para Big Data</h3>
+                <p class="text-sm text-slate-600 mb-6">Vinculamos el código con el hash inmutable de los datos.</p>
+                <div class="code-block">
+                    <span class="py-comment"># Comando CLI simulado en bloque descriptivo</span>
+                    $ dvc add data/raw_dataset.csv
+                    $ git add data/raw_dataset.csv.dvc .gitignore
+                    $ git commit -m <span class="py-str">"Versionado dataset v1.4 para experimento #42"</span>
+                    $ dvc push <span class="py-comment"># Envía el dataset real a S3/GCS</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- ERRORES COMUNES Y SALUD -->
+        <section class="mb-24">
+            <div class="alert-card">
+                <h4 class="text-rose-800 font-bold text-sm uppercase mb-2"><i
+                        class="fas fa-skull-crossbones mr-2"></i>Error Fatal: Training-Serving Skew</h4>
+                <p class="text-xs text-rose-700 leading-relaxed">
+                    Ocurre cuando la lógica de cálculo de una feature en el notebook de entrenamiento (Pandas) difiere
+                    de la lógica en la API de producción (SQL/Java). **Solución:** Implementar una Feature Store que
+                    centralice el cálculo de la feature para ambos entornos.
+                </p>
+            </div>
+
+            <div
+                class="bg-slate-900 rounded-[2.5rem] p-10 text-white shadow-2xl relative overflow-hidden border border-slate-700">
+                <div class="absolute -right-20 -top-20 opacity-10"><i class="fas fa-heartbeat text-[250px]"></i></div>
+                <div class="relative z-10">
+                    <h2 class="text-2xl font-black mb-8 text-blue-400">Health Check: Fase de Datos</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div class="p-4 bg-white/5 rounded-2xl border border-white/10">
+                            <span class="health-badge border-emerald-400 text-emerald-400">Integridad</span>
+                            <p class="text-[11px] mt-2 text-slate-400">¿El 100% de las columnas cumplen con el tipo de
+                                dato esperado?</p>
+                        </div>
+                        <div class="p-4 bg-white/5 rounded-2xl border border-white/10">
+                            <span class="health-badge border-blue-400 text-blue-400">Frescura</span>
+                            <p class="text-[11px] mt-2 text-slate-400">¿La latencia de los datos en tiempo real es menor
+                                a 500ms?</p>
+                        </div>
+                        <div class="p-4 bg-white/5 rounded-2xl border border-white/10">
+                            <span class="health-badge border-amber-400 text-amber-400">Deriva (Drift)</span>
+                            <p class="text-[11px] mt-2 text-slate-400">¿La distribución estadística de las features ha
+                                cambiado > 10%?</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHECKLIST DE VALIDACIÓN FINAL -->
+        <section class="bg-white rounded-[2.5rem] p-10 shadow-xl border border-slate-200">
+            <h2 class="text-3xl font-black mb-10 flex items-center gap-4 text-blue-600">
+                <i class="fas fa-clipboard-check"></i> Checklist MLOps: Gestión de Datos
+            </h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 text-sm leading-relaxed text-slate-500">
+                <div class="space-y-6">
+                    <div class="flex gap-4">
+                        <i class="fas fa-check-circle text-emerald-500 mt-1"></i>
+                        <div>
+                            <h5 class="font-bold text-slate-900 uppercase text-xs">Inmutabilidad Garantizada</h5>
+                            <p class="text-[11px]">¿Se ha prohibido la sobreescritura de archivos de datos existentes?
+                            </p>
+                        </div>
+                    </div>
+                    <div class="flex gap-4">
+                        <i class="fas fa-check-circle text-emerald-500 mt-1"></i>
+                        <div>
+                            <h5 class="font-bold text-slate-900 uppercase text-xs">Esquema Validado</h5>
+                            <p class="text-[11px]">¿El pipeline de datos falla si se detecta una columna nueva o
+                                faltante?</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-4">
+                        <i class="fas fa-check-circle text-emerald-500 mt-1"></i>
+                        <div>
+                            <h5 class="font-bold text-slate-900 uppercase text-xs">Snapshotting de Experimento</h5>
+                            <p class="text-[11px]">¿Cada corrida de MLflow está vinculada a un hash de datos específico?
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <div class="flex gap-4">
+                        <i class="fas fa-check-circle text-emerald-500 mt-1"></i>
+                        <div>
+                            <h5 class="font-bold text-slate-900 uppercase text-xs">Anonimización (PII)</h5>
+                            <p class="text-[11px]">¿Se han eliminado o cifrado datos sensibles antes de entrar al
+                                Feature Store?</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-4">
+                        <i class="fas fa-check-circle text-emerald-500 mt-1"></i>
+                        <div>
+                            <h5 class="font-bold text-slate-900 uppercase text-xs">Monitoreo de Nulls</h5>
+                            <p class="text-[11px]">¿Existe una alerta automática si el porcentaje de nulos sube del
+                                histórico?</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-4">
+                        <i class="fas fa-check-circle text-emerald-500 mt-1"></i>
+                        <div>
+                            <h5 class="font-bold text-slate-900 uppercase text-xs">Lineage End-to-End</h5>
+                            <p class="text-[11px]">¿Podemos rastrear el dato desde el Dashboard final hasta la DB de
+                                origen?</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="mt-20 pt-10 border-t border-slate-200 text-center pb-12">
+            <p class="text-slate-400 text-[10px] uppercase font-black tracking-[0.2em] mb-4">
+                Industrial Standard v13.0 • MLOps Framework • 2024
+            </p>
+            <div class="flex justify-center gap-8 text-slate-300">
+                <i class="fab fa-python text-2xl"></i>
+                <i class="fas fa-database text-2xl"></i>
+                <i class="fas fa-shield-alt text-2xl"></i>
+                <i class="fas fa-server text-2xl"></i>
+            </div>
+        </footer>
+    </div>
+
+</body>
+
+</html>
