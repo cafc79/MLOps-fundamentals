@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Masterclass: CI/CD/CT en MLOps</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Lucide Icons via CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        /* Estilos para animaciones suaves */
+        .details-content {
+            transition: all 0.3s ease-in-out;
+            overflow: hidden;
+        }
+
+        .details-content.hidden {
+            display: none;
+            opacity: 0;
+            max-height: 0;
+        }
+
+        .details-content.visible {
+            opacity: 1;
+            max-height: 600px;
+        }
+
+        .topic-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+    </style>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Fira+Code:wght@400;500&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: #0f172a;
+            line-height: 1.6;
+        }
+
+        .code-block {
+            font-family: 'Fira Code', monospace;
+            background-color: #0f172a;
+            color: #e2e8f0;
+            padding: 1.25rem;
+            border-radius: 0.75rem;
+            font-size: 0.85rem;
+            line-height: 1.6;
+            border-left: 4px solid #6366f1;
+            overflow-x: auto;
+            margin-bottom: 1.5rem;
+        }
+
+        .py-comment {
+            color: #64748b;
+            font-style: italic;
+        }
+
+        .py-keyword {
+            color: #f472b6;
+        }
+
+        .py-func {
+            color: #38bdf8;
+        }
+
+        .py-str {
+            color: #fbbf24;
+        }
+
+        .phase-indicator {
+            @apply inline-block px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest mb-4 bg-indigo-600 text-white shadow-sm;
+        }
+
+        .sub-stage {
+            @apply border-l-2 border-slate-200 pl-6 mb-12 relative;
+        }
+
+        .sub-stage::before {
+            content: '';
+            @apply absolute -left-[9px] top-0 w-4 h-4 bg-indigo-600 rounded-full border-4 border-white shadow-sm;
+        }
+
+        .alert-card {
+            @apply bg-rose-50 border-l-4 border-rose-500 p-5 rounded-r-xl mb-8 shadow-sm;
+        }
+
+        .best-practice {
+            @apply bg-emerald-50 border-l-4 border-emerald-500 p-5 rounded-r-xl mb-8 shadow-sm;
+        }
+
+        .health-badge {
+            @apply px-2 py-0.5 rounded text-[10px] font-bold border flex items-center gap-1 bg-white;
+        }
+    </style>
+</head>
+
+<body class="p-4 md:p-12 lg:p-20">
+
+    <div class="max-w-5xl mx-auto">
+        <!-- CABECERA ESTRATÉGICA -->
+        <header class="mb-20 border-b border-slate-200 pb-12">
+            <div class="flex flex-col md:flex-row items-center gap-6 mb-8">
+                <div class="p-4 bg-slate-900 text-white rounded-2xl shadow-2xl text-center">
+                    <i class="fas fa-sync text-3xl text-indigo-400"></i>
+                </div>
+                <div>
+                    <h1 class="text-4xl md:text-6xl font-black tracking-tighter text-slate-900">CI/CD/CT <span
+                            class="text-indigo-600">Industrial</span></h1>
+                    <p class="text-slate-500 font-bold text-lg uppercase tracking-widest">MLOps Pillar #3: El Puente a
+                        Producción</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="p-6 bg-white rounded-2xl shadow-sm border border-slate-200">
+                    <h3 class="text-xl font-bold text-slate-800 mb-2">Definición</h3>
+                    <p class="text-sm text-slate-600 leading-relaxed">
+                        Es la automatización del ciclo de vida del ML. A diferencia del software tradicional, aquí
+                        integramos no solo <strong>código</strong>, sino también <strong>datos</strong> y
+                        <strong>modelos</strong>. El objetivo es que cualquier cambio en la lógica o en la distribución
+                        de datos dispare automáticamente un flujo de pruebas y despliegue confiable.
+                    </p>
+                </div>
+                <div class="bg-indigo-900 rounded-2xl shadow-xl p-6 text-white">
+                    <h4 class="text-xs font-black text-indigo-300 uppercase mb-3">Elemento Distintivo: CT</h4>
+                    <p class="text-sm italic opacity-90">
+                        "En DevOps el despliegue es el fin. En MLOps, el despliegue es el inicio del
+                        <strong>Entrenamiento Continuo (CT)</strong>: el sistema debe ser capaz de re-entrenarse solo
+                        cuando el mundo real cambia."
+                    </p>
+                </div>
+            </div>
+        </header>
+
+        <!-- CONCEPTOS, VENTAJAS Y DESVENTAJAS -->
+        <section class="mb-24 grid grid-cols-1 md:grid-cols-2 gap-12">
+            <div>
+                <h2 class="text-2xl font-black mb-6 flex items-center gap-2"><i
+                        class="fas fa-project-diagram text-indigo-600"></i> Conceptos Pilares</h2>
+                <ul class="space-y-4 text-sm text-slate-600">
+                    <li class="p-4 bg-white border border-slate-200 rounded-xl shadow-sm">
+                        <strong class="text-slate-900">CI (Integración Continua):</strong> Pruebas unitarias de scripts
+                        y validación de la integridad de los nuevos datos de entrenamiento.
+                    </li>
+                    <li class="p-4 bg-white border border-slate-200 rounded-xl shadow-sm">
+                        <strong class="text-slate-900">CD (Entrega Continua):</strong> Despliegue automático de
+                        servicios de inferencia (APIs) en entornos de Staging/Prod.
+                    </li>
+                    <li class="p-4 bg-white border border-slate-200 rounded-xl shadow-sm">
+                        <strong class="text-slate-900">Model Registry:</strong> Inventario centralizado donde los
+                        modelos aprobados se etiquetan y se versionan semánticamente.
+                    </li>
+                </ul>
+            </div>
+            <div>
+                <h2 class="text-2xl font-black mb-6 flex items-center gap-2"><i
+                        class="fas fa-balance-scale text-indigo-600"></i> Análisis de Valor</h2>
+                <div class="grid grid-cols-1 gap-4">
+                    <div class="bg-emerald-50 p-5 rounded-xl border border-emerald-100 shadow-sm">
+                        <h4 class="text-[10px] font-black text-emerald-700 uppercase mb-2">Ventajas</h4>
+                        <ul class="text-xs text-emerald-800 space-y-1">
+                            <li>• Cero tiempo de inactividad en actualizaciones.</li>
+                            <li>• Mitigación de "Training-Serving Skew".</li>
+                            <li>• Auditoría total de quién puso qué modelo en producción.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-rose-50 p-5 rounded-xl border border-rose-100 shadow-sm">
+                        <h4 class="text-[10px] font-black text-rose-700 uppercase mb-2">Desventajas</h4>
+                        <ul class="text-xs text-rose-800 space-y-1">
+                            <li>• Alta complejidad en orquestación de clústeres.</li>
+                            <li>• Costo de infraestructura para pipelines paralelos.</li>
+                            <li>• Riesgo de automatizar el despliegue de sesgos.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Layout Principal -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+            <!-- Columna de Temas (Izquierda) -->
+            <div class="lg:col-span-7 space-y-4">
+
+                <!-- Card 1: CI -->
+                <div class="topic-card group relative p-6 rounded-xl border-l-4 cursor-pointer bg-white shadow-xl border-indigo-500 translate-x-2 active"
+                    data-index="0" data-color="indigo">
+                    <div class="flex items-start gap-4">
+                        <div
+                            class="p-3 rounded-lg bg-indigo-100 text-indigo-600 group-hover:rotate-12 transition-transform">
+                            <i data-lucide="code" class="w-6 h-6"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-lg font-bold text-slate-900">CI: Integración Continua de ML</h3>
+                            <p class="text-sm text-slate-500">Pruebas de código, datos y modelos</p>
+
+                            <div class="details-content visible mt-4 space-y-3">
+                                <ul class="space-y-2">
+                                    <li class="flex items-start text-sm text-slate-600">
+                                        <i data-lucide="shield-check"
+                                            class="w-3.5 h-3.5 mr-2 mt-1 text-indigo-500 shrink-0"></i>
+                                        Pruebas unitarias para scripts de preprocesamiento
+                                    </li>
+                                    <li class="flex items-start text-sm text-slate-600">
+                                        <i data-lucide="shield-check"
+                                            class="w-3.5 h-3.5 mr-2 mt-1 text-indigo-500 shrink-0"></i>
+                                        Validación de calidad de datos en el pipeline
+                                    </li>
+                                    <li class="flex items-start text-sm text-slate-600">
+                                        <i data-lucide="shield-check"
+                                            class="w-3.5 h-3.5 mr-2 mt-1 text-indigo-500 shrink-0"></i>
+                                        Pruebas de integridad del modelo (smoke tests)
+                                    </li>
+                                    <li class="flex items-start text-sm text-slate-600">
+                                        <i data-lucide="shield-check"
+                                            class="w-3.5 h-3.5 mr-2 mt-1 text-indigo-500 shrink-0"></i>
+                                        Generación automática de artefactos de entrenamiento
+                                    </li>
+                                </ul>
+                                <div class="pt-3 border-t border-slate-100">
+                                    <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">Stack
+                                        Tecnológico:</p>
+                                    <div class="flex flex-wrap gap-2">
+                                        <span
+                                            class="px-2 py-1 rounded bg-slate-100 text-slate-700 text-xs font-mono">GitHub
+                                            Actions</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-slate-100 text-slate-700 text-xs font-mono">GitLab
+                                            CI</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-slate-100 text-slate-700 text-xs font-mono">Pytest</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-slate-100 text-slate-700 text-xs font-mono">Great
+                                            Expectations</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2: CD -->
+                <div class="topic-card group relative p-6 rounded-xl border-l-4 cursor-pointer bg-slate-50 border-slate-200 hover:bg-white hover:border-blue-300"
+                    data-index="1" data-color="blue">
+                    <div class="flex items-start gap-4">
+                        <div
+                            class="p-3 rounded-lg bg-blue-100 text-blue-600 group-hover:rotate-12 transition-transform">
+                            <i data-lucide="rocket" class="w-6 h-6"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-lg font-bold text-slate-900">CD: Entrega Continua de Modelos</h3>
+                            <p class="text-sm text-slate-500">Automatización del despliegue</p>
+
+                            <div class="details-content hidden mt-4 space-y-3">
+                                <ul class="space-y-2">
+                                    <li class="flex items-start text-sm text-slate-600">
+                                        <i data-lucide="shield-check"
+                                            class="w-3.5 h-3.5 mr-2 mt-1 text-blue-500 shrink-0"></i>
+                                        Despliegue automático en entornos de Staging
+                                    </li>
+                                    <li class="flex items-start text-sm text-slate-600">
+                                        <i data-lucide="shield-check"
+                                            class="w-3.5 h-3.5 mr-2 mt-1 text-blue-500 shrink-0"></i>
+                                        Empaquetado en contenedores inmutables
+                                    </li>
+                                    <li class="flex items-start text-sm text-slate-600">
+                                        <i data-lucide="shield-check"
+                                            class="w-3.5 h-3.5 mr-2 mt-1 text-blue-500 shrink-0"></i>
+                                        Promoción de modelos basada en métricas
+                                    </li>
+                                    <li class="flex items-start text-sm text-slate-600">
+                                        <i data-lucide="shield-check"
+                                            class="w-3.5 h-3.5 mr-2 mt-1 text-blue-500 shrink-0"></i>
+                                        Infraestructura como Código (IaC)
+                                    </li>
+                                </ul>
+                                <div class="pt-3 border-t border-slate-100">
+                                    <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">Stack
+                                        Tecnológico:</p>
+                                    <div class="flex flex-wrap gap-2">
+                                        <span
+                                            class="px-2 py-1 rounded bg-slate-100 text-slate-700 text-xs font-mono">Argo
+                                            CD</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-slate-100 text-slate-700 text-xs font-mono">Jenkins</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-slate-100 text-slate-700 text-xs font-mono">Terraform</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-slate-100 text-slate-700 text-xs font-mono">Kubernetes</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3: CT -->
+                <div class="topic-card group relative p-6 rounded-xl border-l-4 cursor-pointer bg-slate-50 border-slate-200 hover:bg-white hover:border-emerald-300"
+                    data-index="2" data-color="emerald">
+                    <div class="flex items-start gap-4">
+                        <div
+                            class="p-3 rounded-lg bg-emerald-100 text-emerald-600 group-hover:rotate-12 transition-transform">
+                            <i data-lucide="refresh-ccw" class="w-6 h-6"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-lg font-bold text-slate-900">CT: Entrenamiento Continuo</h3>
+                            <p class="text-sm text-slate-500">El corazón de MLOps</p>
+
+                            <div class="details-content hidden mt-4 space-y-3">
+                                <ul class="space-y-2">
+                                    <li class="flex items-start text-sm text-slate-600">
+                                        <i data-lucide="shield-check"
+                                            class="w-3.5 h-3.5 mr-2 mt-1 text-emerald-500 shrink-0"></i>
+                                        Triggers basados en tiempo o eventos
+                                    </li>
+                                    <li class="flex items-start text-sm text-slate-600">
+                                        <i data-lucide="shield-check"
+                                            class="w-3.5 h-3.5 mr-2 mt-1 text-emerald-500 shrink-0"></i>
+                                        Re-entrenamiento automático ante Data Drift
+                                    </li>
+                                    <li class="flex items-start text-sm text-slate-600">
+                                        <i data-lucide="shield-check"
+                                            class="w-3.5 h-3.5 mr-2 mt-1 text-emerald-500 shrink-0"></i>
+                                        Pipelines de orquestación extremo a extremo
+                                    </li>
+                                    <li class="flex items-start text-sm text-slate-600">
+                                        <i data-lucide="shield-check"
+                                            class="w-3.5 h-3.5 mr-2 mt-1 text-emerald-500 shrink-0"></i>
+                                        Validación comparativa vs. modelo actual (Champion/Challenger)
+                                    </li>
+                                </ul>
+                                <div class="pt-3 border-t border-slate-100">
+                                    <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">Stack
+                                        Tecnológico:</p>
+                                    <div class="flex flex-wrap gap-2">
+                                        <span
+                                            class="px-2 py-1 rounded bg-slate-100 text-slate-700 text-xs font-mono">Kubeflow
+                                            Pipelines</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-slate-100 text-slate-700 text-xs font-mono">TFX</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-slate-100 text-slate-700 text-xs font-mono">Vertex
+                                            AI</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-slate-100 text-slate-700 text-xs font-mono">Airflow</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 4: Estrategias -->
+                <div class="topic-card group relative p-6 rounded-xl border-l-4 cursor-pointer bg-slate-50 border-slate-200 hover:bg-white hover:border-orange-300"
+                    data-index="3" data-color="orange">
+                    <div class="flex items-start gap-4">
+                        <div
+                            class="p-3 rounded-lg bg-orange-100 text-orange-600 group-hover:rotate-12 transition-transform">
+                            <i data-lucide="arrow-right-left" class="w-6 h-6"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-lg font-bold text-slate-900">Estrategias de Despliegue</h3>
+                            <p class="text-sm text-slate-500">Minimizando el riesgo en producción</p>
+
+                            <div class="details-content hidden mt-4 space-y-3">
+                                <ul class="space-y-2">
+                                    <li class="flex items-start text-sm text-slate-600">
+                                        <i data-lucide="shield-check"
+                                            class="w-3.5 h-3.5 mr-2 mt-1 text-orange-500 shrink-0"></i>
+                                        Canary Deployments (tráfico progresivo)
+                                    </li>
+                                    <li class="flex items-start text-sm text-slate-600">
+                                        <i data-lucide="shield-check"
+                                            class="w-3.5 h-3.5 mr-2 mt-1 text-orange-500 shrink-0"></i>
+                                        Blue/Green Deployments (cero tiempo de inactividad)
+                                    </li>
+                                    <li class="flex items-start text-sm text-slate-600">
+                                        <i data-lucide="shield-check"
+                                            class="w-3.5 h-3.5 mr-2 mt-1 text-orange-500 shrink-0"></i>
+                                        Shadow Deployments (pruebas en silencio)
+                                    </li>
+                                    <li class="flex items-start text-sm text-slate-600">
+                                        <i data-lucide="shield-check"
+                                            class="w-3.5 h-3.5 mr-2 mt-1 text-orange-500 shrink-0"></i>
+                                        A/B Testing de modelos
+                                    </li>
+                                </ul>
+                                <div class="pt-3 border-t border-slate-100">
+                                    <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">Stack
+                                        Tecnológico:</p>
+                                    <div class="flex flex-wrap gap-2">
+                                        <span
+                                            class="px-2 py-1 rounded bg-slate-100 text-slate-700 text-xs font-mono">Istio</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-slate-100 text-slate-700 text-xs font-mono">Seldon
+                                            Core</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-slate-100 text-slate-700 text-xs font-mono">KServe</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-slate-100 text-slate-700 text-xs font-mono">AWS
+                                            SageMaker</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 5: Contenedores -->
+                <div class="topic-card group relative p-6 rounded-xl border-l-4 cursor-pointer bg-slate-50 border-slate-200 hover:bg-white hover:border-cyan-300"
+                    data-index="4" data-color="cyan">
+                    <div class="flex items-start gap-4">
+                        <div
+                            class="p-3 rounded-lg bg-cyan-100 text-cyan-600 group-hover:rotate-12 transition-transform">
+                            <i data-lucide="container" class="w-6 h-6"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-lg font-bold text-slate-900">Automatización de Contenedores</h3>
+                            <p class="text-sm text-slate-500">Entornos reproducibles</p>
+
+                            <div class="details-content hidden mt-4 space-y-3">
+                                <ul class="space-y-2">
+                                    <li class="flex items-start text-sm text-slate-600">
+                                        <i data-lucide="shield-check"
+                                            class="w-3.5 h-3.5 mr-2 mt-1 text-cyan-500 shrink-0"></i>
+                                        Creación de imágenes Docker optimizadas
+                                    </li>
+                                    <li class="flex items-start text-sm text-slate-600">
+                                        <i data-lucide="shield-check"
+                                            class="w-3.5 h-3.5 mr-2 mt-1 text-cyan-500 shrink-0"></i>
+                                        Gestión de dependencias de sistema y GPU
+                                    </li>
+                                    <li class="flex items-start text-sm text-slate-600">
+                                        <i data-lucide="shield-check"
+                                            class="w-3.5 h-3.5 mr-2 mt-1 text-cyan-500 shrink-0"></i>
+                                        Seguridad y escaneo de vulnerabilidades
+                                    </li>
+                                    <li class="flex items-start text-sm text-slate-600">
+                                        <i data-lucide="shield-check"
+                                            class="w-3.5 h-3.5 mr-2 mt-1 text-cyan-500 shrink-0"></i>
+                                        Orquestación en clústeres elásticos
+                                    </li>
+                                </ul>
+                                <div class="pt-3 border-t border-slate-100">
+                                    <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">Stack
+                                        Tecnológico:</p>
+                                    <div class="flex flex-wrap gap-2">
+                                        <span
+                                            class="px-2 py-1 rounded bg-slate-100 text-slate-700 text-xs font-mono">Docker</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-slate-100 text-slate-700 text-xs font-mono">Podman</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-slate-100 text-slate-700 text-xs font-mono">Helm</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-slate-100 text-slate-700 text-xs font-mono">Google
+                                            Artifact Registry</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Columna de Conceptos (Derecha) -->
+            <div class="lg:col-span-5">
+                <div class="sticky top-8 space-y-6">
+
+                    <!-- Card Niveles de Madurez -->
+                    <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+                        <h3 class="text-xl font-bold mb-4 flex items-center text-slate-800">
+                            <i data-lucide="activity" class="text-indigo-600 mr-2 w-5 h-5"></i>
+                            Niveles de Madurez
+                        </h3>
+
+                        <div class="space-y-4">
+                            <div class="p-3 bg-slate-50 rounded-lg border-l-4 border-slate-300">
+                                <h4 class="font-bold text-xs text-slate-500 uppercase">Nivel 0: Manual</h4>
+                                <p class="text-sm text-slate-700">Entrenamiento manual en notebooks. Sin automatización.
+                                </p>
+                            </div>
+                            <div class="p-3 bg-indigo-50 rounded-lg border-l-4 border-indigo-400">
+                                <h4 class="font-bold text-xs text-indigo-500 uppercase">Nivel 1: CT Automatizado</h4>
+                                <p class="text-sm text-slate-700">Pipelines de entrenamiento automáticos ante nuevos
+                                    datos.</p>
+                            </div>
+                            <div class="p-3 bg-emerald-50 rounded-lg border-l-4 border-emerald-400">
+                                <h4 class="font-bold text-xs text-emerald-500 uppercase">Nivel 2: CI/CD Pleno</h4>
+                                <p class="text-sm text-slate-700">Automatización total desde el código hasta el
+                                    monitoreo.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card Diferencia CT -->
+                    <div class="bg-amber-50 border border-amber-200 rounded-2xl p-6">
+                        <h4 class="text-amber-800 font-bold mb-3 flex items-center text-sm">
+                            <i data-lucide="alert-circle" class="mr-2 w-4 h-4"></i>
+                            Diferencia Clave: CT
+                        </h4>
+                        <p class="text-xs text-amber-700 leading-relaxed">
+                            A diferencia de DevOps, donde el despliegue es el final, en MLOps el <strong>Entrenamiento
+                                Continuo (CT)</strong> asegura que el sistema aprenda de los nuevos datos que llegan a
+                            producción, manteniendo la relevancia del modelo sin intervención humana constante.
+                        </p>
+                    </div>
+
+                    <!-- Card Quote -->
+                    <div class="bg-slate-800 rounded-2xl p-6 text-white text-center">
+                        <i data-lucide="terminal" class="mx-auto mb-4 text-indigo-400 w-8 h-8"></i>
+                        <p class="text-xs font-mono text-slate-400">
+                            "Desplegar código es fácil, desplegar confianza es MLOps."
+                        </p>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- SUB-ETAPAS DEL CICLO CI/CD (CON CÓDIGO) -->
+        <section class="mb-24">
+            <h2 class="text-3xl font-black mb-12 text-slate-900">Pipeline de Automatización</h2>
+
+            <!-- Etapa 3.1: Unit Testing -->
+            <div class="sub-stage">
+                <span class="phase-indicator">1. Pruebas Unitarias de Código</span>
+                <h3 class="text-xl font-bold mb-3">Validación de Lógica de Preprocesamiento</h3>
+                <p class="text-sm text-slate-600 mb-6">Aseguramos que las funciones de ingeniería de características no
+                    rompan los datos.</p>
+                <div class="code-block">
+                    <span class="py-comment"># test_preprocessing.py</span>
+                    <span class="py-keyword">import</span> pytest
+                    <span class="py-keyword">from</span> src.features <span class="py-keyword">import</span> clean_data
+
+                    <span class="py-keyword">def</span> <span class="py-func">test_null_removal</span>():
+                    raw_data = pd.DataFrame({<span class="py-str">'val'</span>: [<span class="py-val">1</span>, <span
+                        class="py-keyword">None</span>, <span class="py-val">3</span>]})
+                    cleaned = <span class="py-func">clean_data</span>(raw_data)
+                    <span class="py-keyword">assert</span> cleaned[<span class="py-str">'val'</span>].isnull().<span
+                        class="py-func">sum</span>() == <span class="py-val">0</span>
+                    <span class="py-keyword">assert</span> <span class="py-func">len</span>(cleaned) == <span
+                        class="py-val">3</span>
+                </div>
+            </div>
+
+            <!-- Etapa 3.2: Model Validation -->
+            <div class="sub-stage">
+                <span class="phase-indicator">2. Validación de Modelos</span>
+                <h3 class="text-xl font-bold mb-3">Gateway de Calidad Predictiva</h3>
+                <p class="text-sm text-slate-600 mb-6">El modelo solo se registra si supera al modelo actual en
+                    producción (Champion vs Challenger).</p>
+                <div class="code-block">
+                    <span class="py-comment"># check_model_performance.py</span>
+                    <span class="py-keyword">def</span> <span class="py-func">validate_model</span>(new_f1, current_f1,
+                    threshold=<span class="py-val">0.01</span>):
+                    <span class="py-comment"># Solo permitimos el despliegue si el modelo es al menos 1% mejor</span>
+                    <span class="py-keyword">if</span> new_f1 > (current_f1 + threshold):
+                    <span class="py-func">print</span>(<span class="py-str">"Model Approved for Production"</span>)
+                    <span class="py-keyword">return</span> <span class="py-keyword">True</span>
+                    <span class="py-keyword">return</span> <span class="py-keyword">False</span>
+                </div>
+            </div>
+
+            <!-- Etapa 3.3: Container Build -->
+            <div class="sub-stage">
+                <span class="phase-indicator">3. Build de Contenedores (Docker)</span>
+                <h3 class="text-xl font-bold mb-3">Empaquetado del Entorno Inmutable</h3>
+                <p class="text-sm text-slate-600 mb-6">Garantizamos que el modelo corra exactamente igual en cualquier
+                    nube.</p>
+                <div class="code-block">
+                    <span class="py-comment"># Dockerfile</span>
+                    FROM python:3.9-slim
+                    COPY requirements.txt .
+                    RUN pip install -r requirements.txt
+                    COPY ./model_artifact /app/model
+                    COPY ./src /app/src
+                    CMD [<span class="py-str">"uvicorn"</span>, <span class="py-str">"src.api:app"</span>, <span
+                        class="py-str">"--host"</span>, <span class="py-str">"0.0.0.0"</span>]
+                </div>
+            </div>
+
+            <!-- Etapa 3.4: Model Registry -->
+            <div class="sub-stage">
+                <span class="phase-indicator">4. Registros de Modelos</span>
+                <h3 class="text-xl font-bold mb-3">Gobernanza de Artefactos</h3>
+                <p class="text-sm text-slate-600 mb-6">Control de versiones semánticas y estados de aprobación.</p>
+                <div class="code-block">
+                    <span class="py-keyword">import</span> mlflow
+
+                    <span class="py-comment"># Transicionar el modelo de Staging a Producción mediante API</span>
+                    client = mlflow.tracking.<span class="py-func">MlflowClient</span>()
+                    client.<span class="py-func">transition_model_version_stage</span>(
+                    name=<span class="py-str">"Fraud_Detector"</span>,
+                    version=<span class="py-val">4</span>,
+                    stage=<span class="py-str">"Production"</span>,
+                    archive_existing_versions=<span class="py-keyword">True</span>
+                    )
+                </div>
+            </div>
+        </section>
+
+        <!-- ZOOM TÉCNICO: VALIDACIÓN CRUZADA -->
+        <section class="mb-24">
+            <h2 class="text-3xl font-black mb-10 text-slate-900">Foco: Validación Cruzada (K-Fold)</h2>
+            <div
+                class="p-8 bg-slate-900 rounded-[2.5rem] text-white shadow-2xl relative overflow-hidden border border-slate-700">
+                <div class="absolute -right-20 -top-20 opacity-10"><i class="fas fa-microchip text-[250px]"></i></div>
+                <div class="relative z-10">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                        <div>
+                            <h3 class="text-xl font-bold text-indigo-400 mb-4 uppercase tracking-widest">Definición y
+                                Concepto</h3>
+                            <p class="text-sm text-slate-300 leading-relaxed mb-6">
+                                La Validación Cruzada divide el dataset en <strong>$K$ particiones</strong>. Entrena $K$
+                                veces, usando cada vez un grupo distinto para validar y el resto para entrenar,
+                                promediando los resultados finales.
+                            </p>
+                            <div class="bg-white/5 p-4 rounded-2xl border border-white/10 text-xs italic">
+                                <span class="text-indigo-400 font-bold">Uso en CI:</span> Se utiliza en el pipeline para
+                                asegurar que el performance del modelo no depende de un split aleatorio afortunado.
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-emerald-400 mb-4 uppercase tracking-widest">Análisis
+                                Crítico</h3>
+                            <div class="space-y-4">
+                                <div class="p-3 bg-emerald-500/10 rounded-xl border border-emerald-500/20">
+                                    <h4 class="text-xs font-bold text-emerald-400">Ventajas</h4>
+                                    <p class="text-[10px] text-slate-400">Estimación de error más realista. Aprovecha
+                                        todos los datos para validar. Reduce el sesgo de selección.</p>
+                                </div>
+                                <div class="p-3 bg-rose-500/10 rounded-xl border border-rose-500/20">
+                                    <h4 class="text-xs font-bold text-rose-400">Desventajas</h4>
+                                    <p class="text-[10px] text-slate-400">Coste computacional $K$ veces mayor. No apto
+                                        para series de tiempo (requiere TimeSeriesSplit).</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ERRORES COMUNES Y SALUD DE LA FASE -->
+        <section class="mb-24">
+            <h2 class="text-2xl font-black mb-8 text-slate-900">Higiene del Pipeline CI/CD</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="alert-card">
+                    <h4 class="text-rose-800 font-bold text-xs uppercase mb-1">Error: Docker Bloat</h4>
+                    <p class="text-xs text-rose-700 leading-relaxed">
+                        Incluir el dataset de entrenamiento dentro de la imagen Docker. <strong>Impacto:</strong>
+                        Imágenes de 10GB que tardan minutos en desplegar. <strong>Solución:</strong> Los datos se
+                        consumen vía API o montaje de volúmenes; la imagen solo lleva código y pesos.
+                    </p>
+                </div>
+                <div class="best-practice">
+                    <h4 class="text-emerald-800 font-bold text-xs uppercase mb-1">Práctica: Smoke Tests de Inferencia
+                    </h4>
+                    <p class="text-xs text-emerald-700 leading-relaxed">
+                        Antes de desplegar, enviar 5 peticiones reales al contenedor en Staging. Si el modelo no
+                        responde en < 100ms, el despliegue se cancela (Rollback). </p>
+                </div>
+            </div>
+
+            <div class="bg-white border border-slate-200 rounded-[2.5rem] p-10 shadow-sm mt-12">
+                <h3 class="text-2xl font-black mb-8 text-center text-indigo-600">Phase Health Check</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="text-center">
+                        <div
+                            class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-check"></i></div>
+                        <h5 class="font-bold text-sm mb-1">Build Success Rate</h5>
+                        <span class="health-badge border-emerald-400 text-emerald-400">> 95%</span>
+                    </div>
+                    <div class="text-center border-x border-slate-100">
+                        <div
+                            class="w-12 h-12 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-clock"></i></div>
+                        <h5 class="font-bold text-sm mb-1">MTTD</h5>
+                        <span class="health-badge border-blue-400 text-blue-600">
+                            < 15 min</span>
+                    </div>
+                    <div class="text-center">
+                        <div
+                            class="w-12 h-12 bg-rose-100 text-rose-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-undo"></i></div>
+                        <h5 class="font-bold text-sm mb-1">Rollback Rate</h5>
+                        <span class="health-badge border-rose-400 text-rose-400">
+                            < 2%</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHECKLIST DE VALIDACIÓN FINAL -->
+        <section class="bg-white rounded-[2.5rem] p-10 shadow-xl border border-slate-200">
+            <h2 class="text-3xl font-black mb-10 flex items-center gap-4 text-indigo-600">
+                <i class="fas fa-clipboard-check"></i> Checklist MLOps: CI/CD/CT
+            </h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 text-sm leading-relaxed text-slate-500">
+                <div class="space-y-6">
+                    <div class="flex gap-4">
+                        <i class="fas fa-check-circle text-emerald-500 mt-1"></i>
+                        <div>
+                            <h5 class="font-bold text-slate-900 uppercase text-xs">Docker Multi-stage Build</h5>
+                            <p class="text-[11px]">¿Se están usando imágenes optimizadas para reducir la superficie de
+                                ataque y el tamaño?</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-4">
+                        <i class="fas fa-check-circle text-emerald-500 mt-1"></i>
+                        <div>
+                            <h5 class="font-bold text-slate-900 uppercase text-xs">Versiones Inmutables</h5>
+                            <p class="text-[11px]">¿Cada modelo en el Registry tiene un hash único vinculado al commit
+                                de Git?</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-4">
+                        <i class="fas fa-check-circle text-emerald-500 mt-1"></i>
+                        <div>
+                            <h5 class="font-bold text-slate-900 uppercase text-xs">Métrica de Negocio en CI</h5>
+                            <p class="text-[11px]">¿El pipeline valida KPIs de negocio (ej. margen de ganancia esperado)
+                                antes de aprobar?</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <div class="flex gap-4">
+                        <i class="fas fa-check-circle text-emerald-500 mt-1"></i>
+                        <div>
+                            <h5 class="font-bold text-slate-900 uppercase text-xs">Data Schema Validation</h5>
+                            <p class="text-[11px]">¿Se ejecuta un test de calidad de datos antes de iniciar el
+                                re-entrenamiento (CT)?</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-4">
+                        <i class="fas fa-check-circle text-emerald-500 mt-1"></i>
+                        <div>
+                            <h5 class="font-bold text-slate-900 uppercase text-xs">Estrategia de Despliegue</h5>
+                            <p class="text-[11px]">¿Se ha definido el uso de Canary o Blue/Green para evitar impacto en
+                                usuarios reales?</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-4">
+                        <i class="fas fa-check-circle text-emerald-500 mt-1"></i>
+                        <div>
+                            <h5 class="font-bold text-slate-900 uppercase text-xs">Rollback Automático</h5>
+                            <p class="text-[11px]">¿El orquestador es capaz de volver a la versión anterior si el
+                                monitoreo detecta anomalías?</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="mt-20 pt-10 border-t border-slate-200 text-center pb-12">
+            <p class="text-slate-400 text-[10px] uppercase font-black tracking-[0.2em] mb-4">
+                Industrial Standard v15.0 • MLOps CI/CD Automation • 2024
+            </p>
+            <div class="flex justify-center gap-8 text-slate-300">
+                <i class="fab fa-docker text-2xl"></i>
+                <i class="fas fa-code-branch text-2xl"></i>
+                <i class="fas fa-shield-alt text-2xl"></i>
+                <i class="fas fa-server text-2xl"></i>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Script de Interactividad -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Inicializar iconos
+            lucide.createIcons();
+
+            const cards = document.querySelectorAll('.topic-card');
+
+            cards.forEach(card => {
+                card.addEventListener('click', () => {
+                    const index = card.dataset.index;
+                    const color = card.dataset.color;
+
+                    // Resetear todas las tarjetas
+                    cards.forEach(c => {
+                        const cColor = c.dataset.color;
+                        // Clases inactivas
+                        c.classList.remove('bg-white', 'shadow-xl', 'border-' + cColor + '-500', 'translate-x-2', 'active');
+                        c.classList.add('bg-slate-50', 'border-slate-200');
+
+                        // Ocultar detalles
+                        const details = c.querySelector('.details-content');
+                        details.classList.remove('visible');
+                        details.classList.add('hidden');
+                    });
+
+                    // Activar tarjeta clickeada
+                    card.classList.remove('bg-slate-50', 'border-slate-200');
+                    card.classList.add('bg-white', 'shadow-xl', 'border-' + color + '-500', 'translate-x-2', 'active');
+
+                    // Mostrar detalles
+                    const details = card.querySelector('.details-content');
+                    details.classList.remove('hidden');
+                    details.classList.add('visible');
+                });
+            });
+        });
+    </script>
+
+</body>
+
+</html>

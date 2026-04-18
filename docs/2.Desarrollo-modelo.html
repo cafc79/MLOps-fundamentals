@@ -7,6 +7,31 @@
     <title>Masterclass: MLOps - Desarrollo del Modelo</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Lucide Icons via CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        /* Estilos para animaciones suaves */
+        .details-content {
+            transition: all 0.3s ease-in-out;
+            overflow: hidden;
+        }
+
+        .details-content.hidden {
+            display: none;
+            opacity: 0;
+            max-height: 0;
+        }
+
+        .details-content.visible {
+            opacity: 1;
+            max-height: 500px;
+        }
+
+        .topic-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+    </style>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Fira+Code:wght@400;500&display=swap');
 
@@ -153,6 +178,377 @@
                 </div>
             </div>
         </section>
+
+        <!-- Layout Principal -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+            <!-- Columna de Temas (Izquierda) -->
+            <div class="lg:col-span-7 space-y-4">
+
+                <!-- Card 1: Tracking -->
+                <div class="topic-card group relative p-6 rounded-xl border-l-4 cursor-pointer bg-white shadow-xl border-purple-500 translate-x-2 active"
+                    data-index="0" data-color="purple">
+                    <div class="flex items-start gap-4">
+                        <div
+                            class="p-3 rounded-lg bg-purple-100 text-purple-600 group-hover:scale-110 transition-transform">
+                            <i data-lucide="beaker" class="w-6 h-6"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-lg font-bold text-slate-900">Tracking de Experimentos</h3>
+                            <p class="text-sm text-slate-500">El laboratorio digital</p>
+
+                            <div class="details-content visible mt-4 space-y-3">
+                                <ul class="space-y-2">
+                                    <li class="flex items-center text-sm text-slate-600">
+                                        <div class="w-1.5 h-1.5 rounded-full bg-purple-400 mr-2 shrink-0"></div>
+                                        Registro automático de parámetros y métricas
+                                    </li>
+                                    <li class="flex items-center text-sm text-slate-600">
+                                        <div class="w-1.5 h-1.5 rounded-full bg-purple-400 mr-2 shrink-0"></div>
+                                        Comparación visual de corridas de entrenamiento
+                                    </li>
+                                    <li class="flex items-center text-sm text-slate-600">
+                                        <div class="w-1.5 h-1.5 rounded-full bg-purple-400 mr-2 shrink-0"></div>
+                                        Almacenamiento de artefactos (modelos, plots)
+                                    </li>
+                                    <li class="flex items-center text-sm text-slate-600">
+                                        <div class="w-1.5 h-1.5 rounded-full bg-purple-400 mr-2 shrink-0"></div>
+                                        Trazabilidad: código exacto vs. resultado
+                                    </li>
+                                </ul>
+                                <div class="pt-3 border-t border-slate-100">
+                                    <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">
+                                        Herramientas Clave:</p>
+                                    <div class="flex flex-wrap gap-2">
+                                        <span
+                                            class="px-2 py-1 rounded bg-purple-50 text-purple-700 text-xs font-semibold">MLflow</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-purple-50 text-purple-700 text-xs font-semibold">Weights
+                                            & Biases</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-purple-50 text-purple-700 text-xs font-semibold">Neptune.ai</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-purple-50 text-purple-700 text-xs font-semibold">Comet</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2: Hiperparámetros -->
+                <div class="topic-card group relative p-6 rounded-xl border-l-4 cursor-pointer bg-slate-50 border-slate-200 hover:bg-white hover:border-pink-300"
+                    data-index="1" data-color="pink">
+                    <div class="flex items-start gap-4">
+                        <div
+                            class="p-3 rounded-lg bg-pink-100 text-pink-600 group-hover:scale-110 transition-transform">
+                            <i data-lucide="settings" class="w-6 h-6"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-lg font-bold text-slate-900">Optimización de Hiperparámetros</h3>
+                            <p class="text-sm text-slate-500">Búsqueda del mejor rendimiento</p>
+
+                            <div class="details-content hidden mt-4 space-y-3">
+                                <ul class="space-y-2">
+                                    <li class="flex items-center text-sm text-slate-600">
+                                        <div class="w-1.5 h-1.5 rounded-full bg-pink-400 mr-2 shrink-0"></div>
+                                        Búsqueda Grid, Random y Bayesiana
+                                    </li>
+                                    <li class="flex items-center text-sm text-slate-600">
+                                        <div class="w-1.5 h-1.5 rounded-full bg-pink-400 mr-2 shrink-0"></div>
+                                        Pruning: detener entrenamientos no prometedores
+                                    </li>
+                                    <li class="flex items-center text-sm text-slate-600">
+                                        <div class="w-1.5 h-1.5 rounded-full bg-pink-400 mr-2 shrink-0"></div>
+                                        Orquestación distribuida para tuning masivo
+                                    </li>
+                                    <li class="flex items-center text-sm text-slate-600">
+                                        <div class="w-1.5 h-1.5 rounded-full bg-pink-400 mr-2 shrink-0"></div>
+                                        Gestión de recursos computacionales (GPUs)
+                                    </li>
+                                </ul>
+                                <div class="pt-3 border-t border-slate-100">
+                                    <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">
+                                        Herramientas Clave:</p>
+                                    <div class="flex flex-wrap gap-2">
+                                        <span
+                                            class="px-2 py-1 rounded bg-pink-50 text-pink-700 text-xs font-semibold">Optuna</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-pink-50 text-pink-700 text-xs font-semibold">Ray
+                                            Tune</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-pink-50 text-pink-700 text-xs font-semibold">Scikit-Optimize</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-pink-50 text-pink-700 text-xs font-semibold">Katib</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3: Validación -->
+                <div class="topic-card group relative p-6 rounded-xl border-l-4 cursor-pointer bg-slate-50 border-slate-200 hover:bg-white hover:border-indigo-300"
+                    data-index="2" data-color="indigo">
+                    <div class="flex items-start gap-4">
+                        <div
+                            class="p-3 rounded-lg bg-indigo-100 text-indigo-600 group-hover:scale-110 transition-transform">
+                            <i data-lucide="check-square" class="w-6 h-6"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-lg font-bold text-slate-900">Validación y Evaluación Progresiva</h3>
+                            <p class="text-sm text-slate-500">Más allá del Accuracy</p>
+
+                            <div class="details-content hidden mt-4 space-y-3">
+                                <ul class="space-y-2">
+                                    <li class="flex items-center text-sm text-slate-600">
+                                        <div class="w-1.5 h-1.5 rounded-full bg-indigo-400 mr-2 shrink-0"></div>
+                                        Backtesting y Cross-validation
+                                    </li>
+                                    <li class="flex items-center text-sm text-slate-600">
+                                        <div class="w-1.5 h-1.5 rounded-full bg-indigo-400 mr-2 shrink-0"></div>
+                                        Métricas de negocio vs. métricas técnicas
+                                    </li>
+                                    <li class="flex items-center text-sm text-slate-600">
+                                        <div class="w-1.5 h-1.5 rounded-full bg-indigo-400 mr-2 shrink-0"></div>
+                                        Análisis de errores por segmentos (Slicing)
+                                    </li>
+                                    <li class="flex items-center text-sm text-slate-600">
+                                        <div class="w-1.5 h-1.5 rounded-full bg-indigo-400 mr-2 shrink-0"></div>
+                                        Detección de sesgos y Fairness
+                                    </li>
+                                </ul>
+                                <div class="pt-3 border-t border-slate-100">
+                                    <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">
+                                        Herramientas Clave:</p>
+                                    <div class="flex flex-wrap gap-2">
+                                        <span
+                                            class="px-2 py-1 rounded bg-indigo-50 text-indigo-700 text-xs font-semibold">Deepchecks</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-indigo-50 text-indigo-700 text-xs font-semibold">Evidently
+                                            AI</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-indigo-50 text-indigo-700 text-xs font-semibold">TF
+                                            Data Validation</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-indigo-50 text-indigo-700 text-xs font-semibold">Fairlearn</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 4: Empaquetado -->
+                <div class="topic-card group relative p-6 rounded-xl border-l-4 cursor-pointer bg-slate-50 border-slate-200 hover:bg-white hover:border-rose-300"
+                    data-index="3" data-color="rose">
+                    <div class="flex items-start gap-4">
+                        <div
+                            class="p-3 rounded-lg bg-rose-100 text-rose-600 group-hover:scale-110 transition-transform">
+                            <i data-lucide="binary" class="w-6 h-6"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-lg font-bold text-slate-900">Empaquetado y Serialización</h3>
+                            <p class="text-sm text-slate-500">Preparando para el mundo real</p>
+
+                            <div class="details-content hidden mt-4 space-y-3">
+                                <ul class="space-y-2">
+                                    <li class="flex items-center text-sm text-slate-600">
+                                        <div class="w-1.5 h-1.5 rounded-full bg-rose-400 mr-2 shrink-0"></div>
+                                        Formatos de intercambio (ONNX, PMML)
+                                    </li>
+                                    <li class="flex items-center text-sm text-slate-600">
+                                        <div class="w-1.5 h-1.5 rounded-full bg-rose-400 mr-2 shrink-0"></div>
+                                        Serialización segura (evitar pickle inseguro)
+                                    </li>
+                                    <li class="flex items-center text-sm text-slate-600">
+                                        <div class="w-1.5 h-1.5 rounded-full bg-rose-400 mr-2 shrink-0"></div>
+                                        Contenerización del entorno (Docker)
+                                    </li>
+                                    <li class="flex items-center text-sm text-slate-600">
+                                        <div class="w-1.5 h-1.5 rounded-full bg-rose-400 mr-2 shrink-0"></div>
+                                        Optimización de grafos para inferencia
+                                    </li>
+                                </ul>
+                                <div class="pt-3 border-t border-slate-100">
+                                    <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">
+                                        Herramientas Clave:</p>
+                                    <div class="flex flex-wrap gap-2">
+                                        <span
+                                            class="px-2 py-1 rounded bg-rose-50 text-rose-700 text-xs font-semibold">BentoML</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-rose-50 text-rose-700 text-xs font-semibold">ONNX</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-rose-50 text-rose-700 text-xs font-semibold">TorchScript</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-rose-50 text-rose-700 text-xs font-semibold">Triton</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 5: Registry -->
+                <div class="topic-card group relative p-6 rounded-xl border-l-4 cursor-pointer bg-slate-50 border-slate-200 hover:bg-white hover:border-violet-300"
+                    data-index="4" data-color="violet">
+                    <div class="flex items-start gap-4">
+                        <div
+                            class="p-3 rounded-lg bg-violet-100 text-violet-600 group-hover:scale-110 transition-transform">
+                            <i data-lucide="archive" class="w-6 h-6"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-lg font-bold text-slate-900">Model Registry</h3>
+                            <p class="text-sm text-slate-500">El inventario de activos</p>
+
+                            <div class="details-content hidden mt-4 space-y-3">
+                                <ul class="space-y-2">
+                                    <li class="flex items-center text-sm text-slate-600">
+                                        <div class="w-1.5 h-1.5 rounded-full bg-violet-400 mr-2 shrink-0"></div>
+                                        Versionado semántico de modelos
+                                    </li>
+                                    <li class="flex items-center text-sm text-slate-600">
+                                        <div class="w-1.5 h-1.5 rounded-full bg-violet-400 mr-2 shrink-0"></div>
+                                        Gestión del ciclo de vida (Staging, Prod, Archive)
+                                    </li>
+                                    <li class="flex items-center text-sm text-slate-600">
+                                        <div class="w-1.5 h-1.5 rounded-full bg-violet-400 mr-2 shrink-0"></div>
+                                        Aprobaciones y firmas electrónicas
+                                    </li>
+                                    <li class="flex items-center text-sm text-slate-600">
+                                        <div class="w-1.5 h-1.5 rounded-full bg-violet-400 mr-2 shrink-0"></div>
+                                        Centralización de metadatos de despliegue
+                                    </li>
+                                </ul>
+                                <div class="pt-3 border-t border-slate-100">
+                                    <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">
+                                        Herramientas Clave:</p>
+                                    <div class="flex flex-wrap gap-2">
+                                        <span
+                                            class="px-2 py-1 rounded bg-violet-50 text-violet-700 text-xs font-semibold">MLflow
+                                            Registry</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-violet-50 text-violet-700 text-xs font-semibold">DVC</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-violet-50 text-violet-700 text-xs font-semibold">SageMaker
+                                            Registry</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-violet-50 text-violet-700 text-xs font-semibold">Azure
+                                            ML</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 6: Model Cards -->
+                <div class="topic-card group relative p-6 rounded-xl border-l-4 cursor-pointer bg-slate-50 border-slate-200 hover:bg-white hover:border-fuchsia-300"
+                    data-index="5" data-color="fuchsia">
+                    <div class="flex items-start gap-4">
+                        <div
+                            class="p-3 rounded-lg bg-fuchsia-100 text-fuchsia-600 group-hover:scale-110 transition-transform">
+                            <i data-lucide="book-open" class="w-6 h-6"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-lg font-bold text-slate-900">Model Cards y Documentación</h3>
+                            <p class="text-sm text-slate-500">Transparencia y Explicabilidad</p>
+
+                            <div class="details-content hidden mt-4 space-y-3">
+                                <ul class="space-y-2">
+                                    <li class="flex items-center text-sm text-slate-600">
+                                        <div class="w-1.5 h-1.5 rounded-full bg-fuchsia-400 mr-2 shrink-0"></div>
+                                        Generación automática de Model Cards
+                                    </li>
+                                    <li class="flex items-center text-sm text-slate-600">
+                                        <div class="w-1.5 h-1.5 rounded-full bg-fuchsia-400 mr-2 shrink-0"></div>
+                                        Documentación de limitaciones y uso previsto
+                                    </li>
+                                    <li class="flex items-center text-sm text-slate-600">
+                                        <div class="w-1.5 h-1.5 rounded-full bg-fuchsia-400 mr-2 shrink-0"></div>
+                                        Análisis de explicabilidad (SHAP, LIME)
+                                    </li>
+                                    <li class="flex items-center text-sm text-slate-600">
+                                        <div class="w-1.5 h-1.5 rounded-full bg-fuchsia-400 mr-2 shrink-0"></div>
+                                        Linaje: del dato al modelo final
+                                    </li>
+                                </ul>
+                                <div class="pt-3 border-t border-slate-100">
+                                    <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">
+                                        Herramientas Clave:</p>
+                                    <div class="flex flex-wrap gap-2">
+                                        <span
+                                            class="px-2 py-1 rounded bg-fuchsia-50 text-fuchsia-700 text-xs font-semibold">SHAP</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-fuchsia-50 text-fuchsia-700 text-xs font-semibold">LIME</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-fuchsia-50 text-fuchsia-700 text-xs font-semibold">InterpretML</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-fuchsia-50 text-fuchsia-700 text-xs font-semibold">Giskard</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Columna de Conceptos (Derecha) -->
+            <div class="lg:col-span-5">
+                <div class="sticky top-8 space-y-6">
+
+                    <!-- Card Filosofía -->
+                    <div class="bg-slate-900 rounded-2xl p-6 text-white shadow-xl">
+                        <h3 class="text-xl font-bold mb-4 flex items-center">
+                            <i data-lucide="play-circle" class="text-pink-400 mr-2 w-5 h-5"></i>
+                            Filosofía: De Notebook a Script
+                        </h3>
+                        <p class="text-slate-400 text-sm mb-6 leading-relaxed">
+                            Los notebooks son para explorar. MLOps exige que el entrenamiento final sea un <strong
+                                class="text-white">script modular</strong> capaz de ejecutarse en la nube sin
+                            intervención humana.
+                        </p>
+
+                        <div class="space-y-4">
+                            <div class="flex gap-4 p-3 bg-white/5 rounded-xl">
+                                <div class="text-indigo-400 shrink-0">
+                                    <i data-lucide="git-branch" class="w-5 h-5"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-sm">Reproducibilidad</h4>
+                                    <p class="text-xs text-slate-500">Mismo código + mismos datos = mismo modelo.</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-4 p-3 bg-white/5 rounded-xl">
+                                <div class="text-rose-400 shrink-0">
+                                    <i data-lucide="layers" class="w-5 h-5"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-sm">Modularización</h4>
+                                    <p class="text-xs text-slate-500">Separar entrenamiento, evaluación y
+                                        preprocesamiento.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card Peligro Black Box -->
+                    <div class="bg-rose-50 border border-rose-200 rounded-2xl p-6">
+                        <h4 class="text-rose-800 font-bold mb-3 flex items-center text-sm">
+                            <i data-lucide="shield-alert" class="mr-2 w-4 h-4"></i>
+                            El Peligro: "Black Box"
+                        </h4>
+                        <p class="text-xs text-rose-700 leading-relaxed">
+                            Un modelo sin explicabilidad es un riesgo. MLOps integra herramientas de interpretabilidad
+                            desde el diseño para entender por qué el modelo predice lo que predice antes de que llegue a
+                            producción.
+                        </p>
+                    </div>
+
+                </div>
+            </div>
+        </div>
 
         <!-- SUB-ETAPAS DEL DESARROLLO (CON CÓDIGO) -->
         <section class="mb-24">
@@ -403,6 +799,45 @@
             </div>
         </footer>
     </div>
+
+    <!-- Script de Interactividad -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Inicializar iconos
+            lucide.createIcons();
+
+            const cards = document.querySelectorAll('.topic-card');
+
+            cards.forEach(card => {
+                card.addEventListener('click', () => {
+                    const index = card.dataset.index;
+                    const color = card.dataset.color;
+
+                    // Resetear todas las tarjetas
+                    cards.forEach(c => {
+                        const cColor = c.dataset.color;
+                        // Clases inactivas
+                        c.classList.remove('bg-white', 'shadow-xl', 'border-' + cColor + '-500', 'translate-x-2', 'active');
+                        c.classList.add('bg-slate-50', 'border-slate-200');
+
+                        // Ocultar detalles
+                        const details = c.querySelector('.details-content');
+                        details.classList.remove('visible');
+                        details.classList.add('hidden');
+                    });
+
+                    // Activar tarjeta clickeada
+                    card.classList.remove('bg-slate-50', 'border-slate-200');
+                    card.classList.add('bg-white', 'shadow-xl', 'border-' + color + '-500', 'translate-x-2', 'active');
+
+                    // Mostrar detalles
+                    const details = card.querySelector('.details-content');
+                    details.classList.remove('hidden');
+                    details.classList.add('visible');
+                });
+            });
+        });
+    </script>
 
 </body>
 

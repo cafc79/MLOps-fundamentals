@@ -7,6 +7,47 @@
     <title>Masterclass: Despliegue y Serving en MLOps</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Lucide Icons via CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        /* Estilos para animaciones suaves */
+        .details-content {
+            transition: all 0.3s ease-in-out;
+            overflow: hidden;
+        }
+
+        .details-content.hidden {
+            display: none;
+            opacity: 0;
+            max-height: 0;
+        }
+
+        .details-content.visible {
+            opacity: 1;
+            max-height: 600px;
+        }
+
+        .topic-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes bounce {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .animate-bounce-custom {
+            animation: bounce 2s infinite;
+        }
+    </style>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Fira+Code:wght@400;500&display=swap');
 
@@ -154,6 +195,378 @@
                 </div>
             </div>
         </section>
+
+        <!-- Layout Principal -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+            <!-- Columna de Temas (Izquierda) -->
+            <div class="lg:col-span-7 space-y-4">
+
+                <!-- Card 1: Tiempo Real -->
+                <div class="topic-card group relative p-6 rounded-xl border-l-4 cursor-pointer bg-white shadow-xl border-orange-500 translate-x-2 active"
+                    data-index="0" data-color="orange">
+                    <div class="flex items-start gap-4">
+                        <div
+                            class="p-3 rounded-lg bg-orange-100 text-orange-600 group-hover:scale-110 transition-transform">
+                            <i data-lucide="zap" class="w-6 h-6"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-lg font-bold text-slate-900">Servicio en Tiempo Real (Online)</h3>
+                            <p class="text-sm text-slate-500">Baja latencia y alta disponibilidad</p>
+
+                            <div class="details-content visible mt-4 space-y-3">
+                                <ul class="space-y-2">
+                                    <li class="flex items-center text-sm text-slate-600">
+                                        <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 mr-2 text-orange-500"></i>
+                                        Inferencia mediante APIs REST o gRPC
+                                    </li>
+                                    <li class="flex items-center text-sm text-slate-600">
+                                        <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 mr-2 text-orange-500"></i>
+                                        Gestión de colas para picos de tráfico
+                                    </li>
+                                    <li class="flex items-center text-sm text-slate-600">
+                                        <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 mr-2 text-orange-500"></i>
+                                        Caché de predicciones comunes
+                                    </li>
+                                    <li class="flex items-center text-sm text-slate-600">
+                                        <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 mr-2 text-orange-500"></i>
+                                        Soporte para microservicios independientes
+                                    </li>
+                                </ul>
+                                <div class="pt-3 border-t border-slate-100">
+                                    <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">
+                                        Infraestructura Sugerida:</p>
+                                    <div class="flex flex-wrap gap-2">
+                                        <span
+                                            class="px-2 py-1 rounded bg-orange-50 text-orange-700 text-xs font-semibold">FastAPI</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-orange-50 text-orange-700 text-xs font-semibold">KServe</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-orange-50 text-orange-700 text-xs font-semibold">Seldon</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-orange-50 text-orange-700 text-xs font-semibold">NVIDIA
+                                            Triton</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2: Batch -->
+                <div class="topic-card group relative p-6 rounded-xl border-l-4 cursor-pointer bg-slate-50 border-slate-200 hover:bg-white hover:border-blue-300"
+                    data-index="1" data-color="blue">
+                    <div class="flex items-start gap-4">
+                        <div
+                            class="p-3 rounded-lg bg-blue-100 text-blue-600 group-hover:scale-110 transition-transform">
+                            <i data-lucide="layers" class="w-6 h-6"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-lg font-bold text-slate-900">Procesamiento por Lotes (Batch)</h3>
+                            <p class="text-sm text-slate-500">Escalabilidad para grandes volúmenes</p>
+
+                            <div class="details-content hidden mt-4 space-y-3">
+                                <ul class="space-y-2">
+                                    <li class="flex items-center text-sm text-slate-600">
+                                        <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 mr-2 text-blue-500"></i>
+                                        Inferencia masiva programada (ej. cada 24h)
+                                    </li>
+                                    <li class="flex items-center text-sm text-slate-600">
+                                        <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 mr-2 text-blue-500"></i>
+                                        Escritura directa en bases de datos o Data Lakes
+                                    </li>
+                                    <li class="flex items-center text-sm text-slate-600">
+                                        <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 mr-2 text-blue-500"></i>
+                                        Optimización de costos mediante Spark/Ray
+                                    </li>
+                                    <li class="flex items-center text-sm text-slate-600">
+                                        <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 mr-2 text-blue-500"></i>
+                                        Ideal para recomendaciones o scoring de riesgo
+                                    </li>
+                                </ul>
+                                <div class="pt-3 border-t border-slate-100">
+                                    <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">
+                                        Infraestructura Sugerida:</p>
+                                    <div class="flex flex-wrap gap-2">
+                                        <span
+                                            class="px-2 py-1 rounded bg-blue-50 text-blue-700 text-xs font-semibold">Apache
+                                            Spark</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-blue-50 text-blue-700 text-xs font-semibold">Airflow</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-blue-50 text-blue-700 text-xs font-semibold">Metaflow</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-blue-50 text-blue-700 text-xs font-semibold">Ray</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3: Edge -->
+                <div class="topic-card group relative p-6 rounded-xl border-l-4 cursor-pointer bg-slate-50 border-slate-200 hover:bg-white hover:border-emerald-300"
+                    data-index="2" data-color="emerald">
+                    <div class="flex items-start gap-4">
+                        <div
+                            class="p-3 rounded-lg bg-emerald-100 text-emerald-600 group-hover:scale-110 transition-transform">
+                            <i data-lucide="smartphone" class="w-6 h-6"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-lg font-bold text-slate-900">Inferencia en el Borde (Edge)</h3>
+                            <p class="text-sm text-slate-500">Privacidad y respuesta instantánea</p>
+
+                            <div class="details-content hidden mt-4 space-y-3">
+                                <ul class="space-y-2">
+                                    <li class="flex items-center text-sm text-slate-600">
+                                        <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 mr-2 text-emerald-500"></i>
+                                        Ejecución en dispositivos móviles o IoT
+                                    </li>
+                                    <li class="flex items-center text-sm text-slate-600">
+                                        <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 mr-2 text-emerald-500"></i>
+                                        Reducción de dependencia de la nube
+                                    </li>
+                                    <li class="flex items-center text-sm text-slate-600">
+                                        <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 mr-2 text-emerald-500"></i>
+                                        Menor latencia de red y mayor privacidad
+                                    </li>
+                                    <li class="flex items-center text-sm text-slate-600">
+                                        <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 mr-2 text-emerald-500"></i>
+                                        Adaptación a hardware limitado
+                                    </li>
+                                </ul>
+                                <div class="pt-3 border-t border-slate-100">
+                                    <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">
+                                        Infraestructura Sugerida:</p>
+                                    <div class="flex flex-wrap gap-2">
+                                        <span
+                                            class="px-2 py-1 rounded bg-emerald-50 text-emerald-700 text-xs font-semibold">TensorFlow
+                                            Lite</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-emerald-50 text-emerald-700 text-xs font-semibold">CoreML</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-emerald-50 text-emerald-700 text-xs font-semibold">ONNX
+                                            Runtime</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-emerald-50 text-emerald-700 text-xs font-semibold">TinyML</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 4: Optimización -->
+                <div class="topic-card group relative p-6 rounded-xl border-l-4 cursor-pointer bg-slate-50 border-slate-200 hover:bg-white hover:border-indigo-300"
+                    data-index="3" data-color="indigo">
+                    <div class="flex items-start gap-4">
+                        <div
+                            class="p-3 rounded-lg bg-indigo-100 text-indigo-600 group-hover:scale-110 transition-transform">
+                            <i data-lucide="minimize-2" class="w-6 h-6"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-lg font-bold text-slate-900">Optimización de Modelos</h3>
+                            <p class="text-sm text-slate-500">Haciendo los modelos más ligeros</p>
+
+                            <div class="details-content hidden mt-4 space-y-3">
+                                <ul class="space-y-2">
+                                    <li class="flex items-center text-sm text-slate-600">
+                                        <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 mr-2 text-indigo-500"></i>
+                                        Cuantización (de FP32 a INT8)
+                                    </li>
+                                    <li class="flex items-center text-sm text-slate-600">
+                                        <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 mr-2 text-indigo-500"></i>
+                                        Poda (Pruning) de pesos innecesarios
+                                    </li>
+                                    <li class="flex items-center text-sm text-slate-600">
+                                        <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 mr-2 text-indigo-500"></i>
+                                        Destilación de conocimiento (Student/Teacher)
+                                    </li>
+                                    <li class="flex items-center text-sm text-slate-600">
+                                        <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 mr-2 text-indigo-500"></i>
+                                        Compilación para hardware específico (GPU/TPU)
+                                    </li>
+                                </ul>
+                                <div class="pt-3 border-t border-slate-100">
+                                    <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">
+                                        Infraestructura Sugerida:</p>
+                                    <div class="flex flex-wrap gap-2">
+                                        <span
+                                            class="px-2 py-1 rounded bg-indigo-50 text-indigo-700 text-xs font-semibold">OpenVINO</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-indigo-50 text-indigo-700 text-xs font-semibold">TensorRT</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-indigo-50 text-indigo-700 text-xs font-semibold">TVM</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-indigo-50 text-indigo-700 text-xs font-semibold">Neural
+                                            Magic</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 5: Escalado -->
+                <div class="topic-card group relative p-6 rounded-xl border-l-4 cursor-pointer bg-slate-50 border-slate-200 hover:bg-white hover:border-cyan-300"
+                    data-index="4" data-color="cyan">
+                    <div class="flex items-start gap-4">
+                        <div
+                            class="p-3 rounded-lg bg-cyan-100 text-cyan-600 group-hover:scale-110 transition-transform">
+                            <i data-lucide="server" class="w-6 h-6"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-lg font-bold text-slate-900">Escalado y Orquestación</h3>
+                            <p class="text-sm text-slate-500">Infraestructura elástica</p>
+
+                            <div class="details-content hidden mt-4 space-y-3">
+                                <ul class="space-y-2">
+                                    <li class="flex items-center text-sm text-slate-600">
+                                        <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 mr-2 text-cyan-500"></i>
+                                        Autoscaling basado en CPU/GPU o tráfico
+                                    </li>
+                                    <li class="flex items-center text-sm text-slate-600">
+                                        <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 mr-2 text-cyan-500"></i>
+                                        Gestión de clústeres elásticos (Kubernetes)
+                                    </li>
+                                    <li class="flex items-center text-sm text-slate-600">
+                                        <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 mr-2 text-cyan-500"></i>
+                                        Servicio sin servidor (Serverless Inference)
+                                    </li>
+                                    <li class="flex items-center text-sm text-slate-600">
+                                        <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 mr-2 text-cyan-500"></i>
+                                        Optimización de costos en la nube
+                                    </li>
+                                </ul>
+                                <div class="pt-3 border-t border-slate-100">
+                                    <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">
+                                        Infraestructura Sugerida:</p>
+                                    <div class="flex flex-wrap gap-2">
+                                        <span
+                                            class="px-2 py-1 rounded bg-cyan-50 text-cyan-700 text-xs font-semibold">Kubernetes</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-cyan-50 text-cyan-700 text-xs font-semibold">Knative</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-cyan-50 text-cyan-700 text-xs font-semibold">AWS
+                                            Lambda</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-cyan-50 text-cyan-700 text-xs font-semibold">GCP
+                                            Vertex</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 6: Seguridad -->
+                <div class="topic-card group relative p-6 rounded-xl border-l-4 cursor-pointer bg-slate-50 border-slate-200 hover:bg-white hover:border-rose-300"
+                    data-index="5" data-color="rose">
+                    <div class="flex items-start gap-4">
+                        <div
+                            class="p-3 rounded-lg bg-rose-100 text-rose-600 group-hover:scale-110 transition-transform">
+                            <i data-lucide="shield-check" class="w-6 h-6"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-lg font-bold text-slate-900">Seguridad y Control de Acceso</h3>
+                            <p class="text-sm text-slate-500">Protegiendo el punto de entrada</p>
+
+                            <div class="details-content hidden mt-4 space-y-3">
+                                <ul class="space-y-2">
+                                    <li class="flex items-center text-sm text-slate-600">
+                                        <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 mr-2 text-rose-500"></i>
+                                        Autenticación JWT y API Keys
+                                    </li>
+                                    <li class="flex items-center text-sm text-slate-600">
+                                        <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 mr-2 text-rose-500"></i>
+                                        Limitación de tasa (Rate Limiting)
+                                    </li>
+                                    <li class="flex items-center text-sm text-slate-600">
+                                        <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 mr-2 text-rose-500"></i>
+                                        Aislamiento de contenedores
+                                    </li>
+                                    <li class="flex items-center text-sm text-slate-600">
+                                        <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 mr-2 text-rose-500"></i>
+                                        Cifrado de datos en tránsito y reposo
+                                    </li>
+                                </ul>
+                                <div class="pt-3 border-t border-slate-100">
+                                    <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">
+                                        Infraestructura Sugerida:</p>
+                                    <div class="flex flex-wrap gap-2">
+                                        <span
+                                            class="px-2 py-1 rounded bg-rose-50 text-rose-700 text-xs font-semibold">Kong</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-rose-50 text-rose-700 text-xs font-semibold">Istio</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-rose-50 text-rose-700 text-xs font-semibold">Auth0</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-rose-50 text-rose-700 text-xs font-semibold">HashiCorp
+                                            Vault</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Columna de Conceptos (Derecha) -->
+            <div class="lg:col-span-5">
+                <div class="sticky top-8 space-y-6">
+
+                    <!-- Card Métricas -->
+                    <div class="bg-slate-900 rounded-2xl p-6 text-white shadow-xl">
+                        <h3 class="text-xl font-bold mb-4 flex items-center">
+                            <i data-lucide="activity" class="text-orange-400 mr-2 w-5 h-5"></i>
+                            Métricas Críticas
+                        </h3>
+                        <p class="text-slate-400 text-sm mb-6 leading-relaxed">
+                            Para evaluar el serving, no miramos la precisión (accuracy), sino la eficiencia del sistema.
+                        </p>
+
+                        <div class="space-y-4">
+                            <div
+                                class="flex justify-between items-center p-3 bg-white/5 rounded-xl border border-white/10">
+                                <span class="text-sm font-medium">Latencia (P99)</span>
+                                <span class="text-xs text-orange-400 font-mono">&lt; 100ms</span>
+                            </div>
+                            <div
+                                class="flex justify-between items-center p-3 bg-white/5 rounded-xl border border-white/10">
+                                <span class="text-sm font-medium">Throughput</span>
+                                <span class="text-xs text-blue-400 font-mono">Req/seg</span>
+                            </div>
+                            <div
+                                class="flex justify-between items-center p-3 bg-white/5 rounded-xl border border-white/10">
+                                <span class="text-sm font-medium">Costo por Inferencia</span>
+                                <span class="text-xs text-emerald-400 font-mono">$ / 1k pred</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card Serverless -->
+                    <div class="bg-blue-50 border border-blue-200 rounded-2xl p-6">
+                        <h4 class="text-blue-800 font-bold mb-3 flex items-center text-sm">
+                            <i data-lucide="cloud" class="mr-2 w-4 h-4"></i>
+                            Inferencia Serverless
+                        </h4>
+                        <p class="text-xs text-blue-700 leading-relaxed">
+                            Ideal para modelos con tráfico esporádico. Escala a cero cuando no se usa, ahorrando costos
+                            significativos, aunque puede sufrir del problema de "Cold Start".
+                        </p>
+                    </div>
+
+                    <!-- Arrow Animation -->
+                    <div class="flex items-center justify-center p-4">
+                        <div class="animate-bounce-custom">
+                            <i data-lucide="arrow-up-right" class="text-slate-300 w-10 h-10"></i>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
 
         <!-- SUB-ETAPAS DEL SERVING (CON CÓDIGO) -->
         <section class="mb-24">
@@ -404,6 +817,45 @@
             </div>
         </footer>
     </div>
+
+    <!-- Script de Interactividad -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Inicializar iconos
+            lucide.createIcons();
+
+            const cards = document.querySelectorAll('.topic-card');
+
+            cards.forEach(card => {
+                card.addEventListener('click', () => {
+                    const index = card.dataset.index;
+                    const color = card.dataset.color;
+
+                    // Resetear todas las tarjetas
+                    cards.forEach(c => {
+                        const cColor = c.dataset.color;
+                        // Clases inactivas
+                        c.classList.remove('bg-white', 'shadow-xl', 'border-' + cColor + '-500', 'translate-x-2', 'active');
+                        c.classList.add('bg-slate-50', 'border-slate-200');
+
+                        // Ocultar detalles
+                        const details = c.querySelector('.details-content');
+                        details.classList.remove('visible');
+                        details.classList.add('hidden');
+                    });
+
+                    // Activar tarjeta clickeada
+                    card.classList.remove('bg-slate-50', 'border-slate-200');
+                    card.classList.add('bg-white', 'shadow-xl', 'border-' + color + '-500', 'translate-x-2', 'active');
+
+                    // Mostrar detalles
+                    const details = card.querySelector('.details-content');
+                    details.classList.remove('hidden');
+                    details.classList.add('visible');
+                });
+            });
+        });
+    </script>
 
 </body>
 

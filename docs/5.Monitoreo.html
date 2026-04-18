@@ -7,6 +7,35 @@
     <title>Masterclass: Monitoreo y Observabilidad en MLOps</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Lucide Icons via CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        /* Estilos para animaciones suaves */
+        .details-content {
+            transition: all 0.3s ease-in-out;
+            overflow: hidden;
+        }
+
+        .details-content.hidden {
+            display: none;
+            opacity: 0;
+            max-height: 0;
+        }
+
+        .details-content.visible {
+            opacity: 1;
+            max-height: 600px;
+        }
+
+        .topic-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .animate-pulse-slow {
+            animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+    </style>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Fira+Code:wght@400;500&display=swap');
 
@@ -155,6 +184,382 @@
                 </div>
             </div>
         </section>
+
+        <!-- Layout Principal -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+            <!-- Columna de Temas (Izquierda) -->
+            <div class="lg:col-span-7 space-y-4">
+
+                <!-- Card 1: Data Drift -->
+                <div class="topic-card group relative p-6 rounded-xl border-l-4 cursor-pointer bg-white shadow-xl border-rose-500 translate-x-2 active"
+                    data-index="0" data-color="rose">
+                    <div class="flex items-start gap-4">
+                        <div
+                            class="p-3 rounded-lg bg-rose-100 text-rose-600 group-hover:animate-pulse-slow transition-transform">
+                            <i data-lucide="trending-up" class="w-6 h-6"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-lg font-bold text-slate-900">Data Drift (Desviación de Datos)</h3>
+                            <p class="text-sm text-slate-500">Vigilando el cambio en el entorno</p>
+
+                            <div class="details-content visible mt-4 space-y-3">
+                                <ul class="space-y-2">
+                                    <li class="flex items-start text-sm text-slate-600">
+                                        <div class="w-1.5 h-1.5 rounded-full bg-rose-400 mr-2 mt-1.5 shrink-0"></div>
+                                        Detección de cambios en la distribución de entrada
+                                    </li>
+                                    <li class="flex items-start text-sm text-slate-600">
+                                        <div class="w-1.5 h-1.5 rounded-full bg-rose-400 mr-2 mt-1.5 shrink-0"></div>
+                                        Validación de esquemas en tiempo real
+                                    </li>
+                                    <li class="flex items-start text-sm text-slate-600">
+                                        <div class="w-1.5 h-1.5 rounded-full bg-rose-400 mr-2 mt-1.5 shrink-0"></div>
+                                        Identificación de valores nulos o atípicos inesperados
+                                    </li>
+                                    <li class="flex items-start text-sm text-slate-600">
+                                        <div class="w-1.5 h-1.5 rounded-full bg-rose-400 mr-2 mt-1.5 shrink-0"></div>
+                                        Comparación de estadísticas: Entrenamiento vs Producción
+                                    </li>
+                                </ul>
+                                <div class="pt-3 border-t border-slate-100">
+                                    <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">Stack
+                                        de Observabilidad:</p>
+                                    <div class="flex flex-wrap gap-2">
+                                        <span
+                                            class="px-2 py-1 rounded bg-rose-50 text-rose-700 text-xs font-semibold">Evidently
+                                            AI</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-rose-50 text-rose-700 text-xs font-semibold">WhyLabs</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-rose-50 text-rose-700 text-xs font-semibold">Great
+                                            Expectations</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-rose-50 text-rose-700 text-xs font-semibold">Arize</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2: Concept Drift -->
+                <div class="topic-card group relative p-6 rounded-xl border-l-4 cursor-pointer bg-slate-50 border-slate-200 hover:bg-white hover:border-amber-300"
+                    data-index="1" data-color="amber">
+                    <div class="flex items-start gap-4">
+                        <div
+                            class="p-3 rounded-lg bg-amber-100 text-amber-600 group-hover:animate-pulse-slow transition-transform">
+                            <i data-lucide="target" class="w-6 h-6"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-lg font-bold text-slate-900">Concept Drift (Desviación del Modelo)</h3>
+                            <p class="text-sm text-slate-500">Cuando el modelo deja de ser preciso</p>
+
+                            <div class="details-content hidden mt-4 space-y-3">
+                                <ul class="space-y-2">
+                                    <li class="flex items-start text-sm text-slate-600">
+                                        <div class="w-1.5 h-1.5 rounded-full bg-amber-400 mr-2 mt-1.5 shrink-0"></div>
+                                        Monitoreo de métricas de rendimiento (Accuracy, F1, RMSE)
+                                    </li>
+                                    <li class="flex items-start text-sm text-slate-600">
+                                        <div class="w-1.5 h-1.5 rounded-full bg-amber-400 mr-2 mt-1.5 shrink-0"></div>
+                                        Detección de cambios en la relación variable-objetivo
+                                    </li>
+                                    <li class="flex items-start text-sm text-slate-600">
+                                        <div class="w-1.5 h-1.5 rounded-full bg-amber-400 mr-2 mt-1.5 shrink-0"></div>
+                                        Análisis de decaimiento del modelo (Model Decay)
+                                    </li>
+                                    <li class="flex items-start text-sm text-slate-600">
+                                        <div class="w-1.5 h-1.5 rounded-full bg-amber-400 mr-2 mt-1.5 shrink-0"></div>
+                                        Vigilancia de sesgos (Fairness) en producción
+                                    </li>
+                                </ul>
+                                <div class="pt-3 border-t border-slate-100">
+                                    <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">Stack
+                                        de Observabilidad:</p>
+                                    <div class="flex flex-wrap gap-2">
+                                        <span
+                                            class="px-2 py-1 rounded bg-amber-50 text-amber-700 text-xs font-semibold">Fiddler</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-amber-50 text-amber-700 text-xs font-semibold">Arthur</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-amber-50 text-amber-700 text-xs font-semibold">MLflow</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-amber-50 text-amber-700 text-xs font-semibold">SageMaker
+                                            Model Monitor</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3: Monitoreo Técnico -->
+                <div class="topic-card group relative p-6 rounded-xl border-l-4 cursor-pointer bg-slate-50 border-slate-200 hover:bg-white hover:border-blue-300"
+                    data-index="2" data-color="blue">
+                    <div class="flex items-start gap-4">
+                        <div
+                            class="p-3 rounded-lg bg-blue-100 text-blue-600 group-hover:animate-pulse-slow transition-transform">
+                            <i data-lucide="activity" class="w-6 h-6"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-lg font-bold text-slate-900">Monitoreo Técnico (SRE)</h3>
+                            <p class="text-sm text-slate-500">Salud de la infraestructura</p>
+
+                            <div class="details-content hidden mt-4 space-y-3">
+                                <ul class="space-y-2">
+                                    <li class="flex items-start text-sm text-slate-600">
+                                        <div class="w-1.5 h-1.5 rounded-full bg-blue-400 mr-2 mt-1.5 shrink-0"></div>
+                                        Latencia de inferencia (milisegundos)
+                                    </li>
+                                    <li class="flex items-start text-sm text-slate-600">
+                                        <div class="w-1.5 h-1.5 rounded-full bg-blue-400 mr-2 mt-1.5 shrink-0"></div>
+                                        Uso de recursos (CPU, GPU, RAM)
+                                    </li>
+                                    <li class="flex items-start text-sm text-slate-600">
+                                        <div class="w-1.5 h-1.5 rounded-full bg-blue-400 mr-2 mt-1.5 shrink-0"></div>
+                                        Tasas de error de API (4xx, 5xx)
+                                    </li>
+                                    <li class="flex items-start text-sm text-slate-600">
+                                        <div class="w-1.5 h-1.5 rounded-full bg-blue-400 mr-2 mt-1.5 shrink-0"></div>
+                                        Disponibilidad y Throughput (peticiones/seg)
+                                    </li>
+                                </ul>
+                                <div class="pt-3 border-t border-slate-100">
+                                    <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">Stack
+                                        de Observabilidad:</p>
+                                    <div class="flex flex-wrap gap-2">
+                                        <span
+                                            class="px-2 py-1 rounded bg-blue-50 text-blue-700 text-xs font-semibold">Prometheus</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-blue-50 text-blue-700 text-xs font-semibold">Grafana</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-blue-50 text-blue-700 text-xs font-semibold">Datadog</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-blue-50 text-blue-700 text-xs font-semibold">New
+                                            Relic</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 4: Observabilidad Negocio -->
+                <div class="topic-card group relative p-6 rounded-xl border-l-4 cursor-pointer bg-slate-50 border-slate-200 hover:bg-white hover:border-emerald-300"
+                    data-index="3" data-color="emerald">
+                    <div class="flex items-start gap-4">
+                        <div
+                            class="p-3 rounded-lg bg-emerald-100 text-emerald-600 group-hover:animate-pulse-slow transition-transform">
+                            <i data-lucide="bar-chart-4" class="w-6 h-6"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-lg font-bold text-slate-900">Observabilidad de Negocio</h3>
+                            <p class="text-sm text-slate-500">Impacto real en la empresa</p>
+
+                            <div class="details-content hidden mt-4 space-y-3">
+                                <ul class="space-y-2">
+                                    <li class="flex items-start text-sm text-slate-600">
+                                        <div class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-2 mt-1.5 shrink-0"></div>
+                                        Seguimiento de KPIs (Conversión, CTR, ROI)
+                                    </li>
+                                    <li class="flex items-start text-sm text-slate-600">
+                                        <div class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-2 mt-1.5 shrink-0"></div>
+                                        A/B Testing en tiempo real
+                                    </li>
+                                    <li class="flex items-start text-sm text-slate-600">
+                                        <div class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-2 mt-1.5 shrink-0"></div>
+                                        Impacto de las predicciones en el flujo de usuario
+                                    </li>
+                                    <li class="flex items-start text-sm text-slate-600">
+                                        <div class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-2 mt-1.5 shrink-0"></div>
+                                        Dashboarding para stakeholders no técnicos
+                                    </li>
+                                </ul>
+                                <div class="pt-3 border-t border-slate-100">
+                                    <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">Stack
+                                        de Observabilidad:</p>
+                                    <div class="flex flex-wrap gap-2">
+                                        <span
+                                            class="px-2 py-1 rounded bg-emerald-50 text-emerald-700 text-xs font-semibold">Tableau</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-emerald-50 text-emerald-700 text-xs font-semibold">PowerBI</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-emerald-50 text-emerald-700 text-xs font-semibold">Superset</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-emerald-50 text-emerald-700 text-xs font-semibold">Mixpanel</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 5: Alertas -->
+                <div class="topic-card group relative p-6 rounded-xl border-l-4 cursor-pointer bg-slate-50 border-slate-200 hover:bg-white hover:border-orange-300"
+                    data-index="4" data-color="orange">
+                    <div class="flex items-start gap-4">
+                        <div
+                            class="p-3 rounded-lg bg-orange-100 text-orange-600 group-hover:animate-pulse-slow transition-transform">
+                            <i data-lucide="bell" class="w-6 h-6"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-lg font-bold text-slate-900">Alertas e Incidentes</h3>
+                            <p class="text-sm text-slate-500">Respuesta ante fallos</p>
+
+                            <div class="details-content hidden mt-4 space-y-3">
+                                <ul class="space-y-2">
+                                    <li class="flex items-start text-sm text-slate-600">
+                                        <div class="w-1.5 h-1.5 rounded-full bg-orange-400 mr-2 mt-1.5 shrink-0"></div>
+                                        Configuración de umbrales inteligentes
+                                    </li>
+                                    <li class="flex items-start text-sm text-slate-600">
+                                        <div class="w-1.5 h-1.5 rounded-full bg-orange-400 mr-2 mt-1.5 shrink-0"></div>
+                                        Escalamiento automático de incidentes
+                                    </li>
+                                    <li class="flex items-start text-sm text-slate-600">
+                                        <div class="w-1.5 h-1.5 rounded-full bg-orange-400 mr-2 mt-1.5 shrink-0"></div>
+                                        Análisis de causa raíz (Root Cause Analysis)
+                                    </li>
+                                    <li class="flex items-start text-sm text-slate-600">
+                                        <div class="w-1.5 h-1.5 rounded-full bg-orange-400 mr-2 mt-1.5 shrink-0"></div>
+                                        Integración con flujos de trabajo (Slack, OpsGenie)
+                                    </li>
+                                </ul>
+                                <div class="pt-3 border-t border-slate-100">
+                                    <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">Stack
+                                        de Observabilidad:</p>
+                                    <div class="flex flex-wrap gap-2">
+                                        <span
+                                            class="px-2 py-1 rounded bg-orange-50 text-orange-700 text-xs font-semibold">PagerDuty</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-orange-50 text-orange-700 text-xs font-semibold">Slack</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-orange-50 text-orange-700 text-xs font-semibold">OpsGenie</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-orange-50 text-orange-700 text-xs font-semibold">Sentry</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 6: Feedback Loops -->
+                <div class="topic-card group relative p-6 rounded-xl border-l-4 cursor-pointer bg-slate-50 border-slate-200 hover:bg-white hover:border-indigo-300"
+                    data-index="5" data-color="indigo">
+                    <div class="flex items-start gap-4">
+                        <div
+                            class="p-3 rounded-lg bg-indigo-100 text-indigo-600 group-hover:animate-pulse-slow transition-transform">
+                            <i data-lucide="search" class="w-6 h-6"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-lg font-bold text-slate-900">Feedback Loops e Interpretabilidad</h3>
+                            <p class="text-sm text-slate-500">Entendiendo el porqué</p>
+
+                            <div class="details-content hidden mt-4 space-y-3">
+                                <ul class="space-y-2">
+                                    <li class="flex items-start text-sm text-slate-600">
+                                        <div class="w-1.5 h-1.5 rounded-full bg-indigo-400 mr-2 mt-1.5 shrink-0"></div>
+                                        Captura de etiquetas reales (Ground Truth)
+                                    </li>
+                                    <li class="flex items-start text-sm text-slate-600">
+                                        <div class="w-1.5 h-1.5 rounded-full bg-indigo-400 mr-2 mt-1.5 shrink-0"></div>
+                                        Explicabilidad local para predicciones críticas
+                                    </li>
+                                    <li class="flex items-start text-sm text-slate-600">
+                                        <div class="w-1.5 h-1.5 rounded-full bg-indigo-400 mr-2 mt-1.5 shrink-0"></div>
+                                        Auditoría de decisiones automatizadas
+                                    </li>
+                                    <li class="flex items-start text-sm text-slate-600">
+                                        <div class="w-1.5 h-1.5 rounded-full bg-indigo-400 mr-2 mt-1.5 shrink-0"></div>
+                                        Almacenamiento de predicciones para re-entrenamiento
+                                    </li>
+                                </ul>
+                                <div class="pt-3 border-t border-slate-100">
+                                    <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">Stack
+                                        de Observabilidad:</p>
+                                    <div class="flex flex-wrap gap-2">
+                                        <span
+                                            class="px-2 py-1 rounded bg-indigo-50 text-indigo-700 text-xs font-semibold">SHAP</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-indigo-50 text-indigo-700 text-xs font-semibold">LIME</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-indigo-50 text-indigo-700 text-xs font-semibold">Honeycomb</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-indigo-50 text-indigo-700 text-xs font-semibold">Weights
+                                            & Biases</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Columna de Conceptos (Derecha) -->
+            <div class="lg:col-span-5">
+                <div class="sticky top-8 space-y-6">
+
+                    <!-- Card Fallo Silencioso -->
+                    <div class="bg-slate-900 rounded-2xl p-6 text-white shadow-xl">
+                        <h3 class="text-xl font-bold mb-4 flex items-center">
+                            <i data-lucide="shield-alert" class="text-rose-400 mr-2 w-5 h-5"></i>
+                            El "Fallo Silencioso"
+                        </h3>
+                        <p class="text-slate-400 text-sm mb-6 leading-relaxed">
+                            A diferencia de una caída de servidor, un modelo puede seguir respondiendo 200 OK mientras
+                            sus predicciones son basura.
+                        </p>
+
+                        <div class="space-y-4">
+                            <div class="flex gap-4 p-3 bg-white/5 rounded-xl border border-white/10">
+                                <div class="text-amber-400 shrink-0">
+                                    <i data-lucide="line-chart" class="w-5 h-5"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-sm">Data Drift</h4>
+                                    <p class="text-xs text-slate-500">Los datos que entran hoy son distintos a los de
+                                        ayer.</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-4 p-3 bg-white/5 rounded-xl border border-white/10">
+                                <div class="text-blue-400 shrink-0">
+                                    <i data-lucide="refresh-cw" class="w-5 h-5"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-sm">Model Decay</h4>
+                                    <p class="text-xs text-slate-500">El rendimiento baja naturalmente con el tiempo.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card Trigger -->
+                    <div class="bg-rose-50 border border-rose-200 rounded-2xl p-6">
+                        <h4 class="text-rose-800 font-bold mb-3 flex items-center text-sm">
+                            <i data-lucide="zap" class="mr-2 w-4 h-4"></i>
+                            Trigger de Re-entrenamiento
+                        </h4>
+                        <p class="text-xs text-rose-700 leading-relaxed">
+                            La observabilidad es el motor del <strong>Entrenamiento Continuo (CT)</strong>. Cuando el
+                            monitoreo detecta una caída significativa en el rendimiento, dispara automáticamente el
+                            pipeline de entrenamiento para actualizar el modelo.
+                        </p>
+                    </div>
+
+                    <!-- Quote -->
+                    <div class="p-6 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl text-white text-center">
+                        <p class="text-sm font-medium mb-2 opacity-80 italic">"No puedes mejorar lo que no puedes
+                            medir."</p>
+                        <div class="h-1 w-12 bg-white/30 mx-auto rounded-full"></div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
 
         <!-- SUB-ETAPAS DEL MONITOREO (CON CÓDIGO) -->
         <section class="mb-24">
@@ -393,6 +798,45 @@
             </div>
         </footer>
     </div>
+
+    <!-- Script de Interactividad -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Inicializar iconos
+            lucide.createIcons();
+
+            const cards = document.querySelectorAll('.topic-card');
+
+            cards.forEach(card => {
+                card.addEventListener('click', () => {
+                    const index = card.dataset.index;
+                    const color = card.dataset.color;
+
+                    // Resetear todas las tarjetas
+                    cards.forEach(c => {
+                        const cColor = c.dataset.color;
+                        // Clases inactivas
+                        c.classList.remove('bg-white', 'shadow-xl', 'border-' + cColor + '-500', 'translate-x-2', 'active');
+                        c.classList.add('bg-slate-50', 'border-slate-200');
+
+                        // Ocultar detalles
+                        const details = c.querySelector('.details-content');
+                        details.classList.remove('visible');
+                        details.classList.add('hidden');
+                    });
+
+                    // Activar tarjeta clickeada
+                    card.classList.remove('bg-slate-50', 'border-slate-200');
+                    card.classList.add('bg-white', 'shadow-xl', 'border-' + color + '-500', 'translate-x-2', 'active');
+
+                    // Mostrar detalles
+                    const details = card.querySelector('.details-content');
+                    details.classList.remove('hidden');
+                    details.classList.add('visible');
+                });
+            });
+        });
+    </script>
 
 </body>
 

@@ -7,6 +7,33 @@
     <title>Masterclass: MLOps - Gestión de Datos</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+    <!-- Lucide Icons via CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        /* Estilos adicionales para animaciones suaves */
+        .details-content {
+            transition: all 0.3s ease-in-out;
+            overflow: hidden;
+        }
+
+        .details-content.hidden {
+            display: none;
+            opacity: 0;
+            max-height: 0;
+        }
+
+        .details-content.visible {
+            opacity: 1;
+            max-height: 500px;
+            /* Suficiente para el contenido */
+        }
+
+        .topic-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+    </style>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Fira+Code:wght@400;500&display=swap');
 
@@ -154,6 +181,371 @@
                 </div>
             </div>
         </section>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <!-- Columna de Temas (Izquierda) -->
+            <div class="lg:col-span-7 space-y-4">
+
+                <!-- Card 1: Ingesta -->
+                <div class="topic-card group relative p-6 rounded-xl border-l-4 cursor-pointer bg-white shadow-xl border-blue-500 translate-x-2 active"
+                    data-index="0" data-color="blue">
+                    <div class="flex items-start gap-4">
+                        <div
+                            class="p-3 rounded-lg bg-blue-100 text-blue-600 group-hover:scale-110 transition-transform">
+                            <i data-lucide="hard-drive" class="w-6 h-6"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-lg font-bold text-slate-900">Ingesta y Conectividad</h3>
+                            <p class="text-sm text-slate-500">Extracción de fuentes heterogéneas</p>
+
+                            <div class="details-content visible mt-4 space-y-3">
+                                <ul class="space-y-2">
+                                    <li class="flex items-center text-sm text-slate-600">
+                                        <i data-lucide="check-circle" class="w-3.5 h-3.5 mr-2 text-blue-500"></i>
+                                        Conectores para SQL, NoSQL y Data Lakes
+                                    </li>
+                                    <li class="flex items-center text-sm text-slate-600">
+                                        <i data-lucide="check-circle" class="w-3.5 h-3.5 mr-2 text-blue-500"></i>
+                                        Ingesta en tiempo real (Streaming) vs Batch
+                                    </li>
+                                    <li class="flex items-center text-sm text-slate-600">
+                                        <i data-lucide="check-circle" class="w-3.5 h-3.5 mr-2 text-blue-500"></i>
+                                        Estrategias de captura de datos cambiantes (CDC)
+                                    </li>
+                                    <li class="flex items-center text-sm text-slate-600">
+                                        <i data-lucide="check-circle" class="w-3.5 h-3.5 mr-2 text-blue-500"></i>
+                                        Desacoplamiento de fuentes mediante Message Brokers
+                                    </li>
+                                </ul>
+                                <div class="pt-3 border-t border-slate-100">
+                                    <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">
+                                        Herramientas Comunes:</p>
+                                    <div class="flex flex-wrap gap-2">
+                                        <span
+                                            class="px-2 py-1 rounded bg-blue-50 text-blue-700 text-xs font-semibold">Apache
+                                            Kafka</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-blue-50 text-blue-700 text-xs font-semibold">AWS
+                                            Glue</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-blue-50 text-blue-700 text-xs font-semibold">Airbyte</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-blue-50 text-blue-700 text-xs font-semibold">Fivetran</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2: Pipelines -->
+                <div class="topic-card group relative p-6 rounded-xl border-l-4 cursor-pointer bg-slate-50 border-slate-200 hover:bg-white hover:border-indigo-300"
+                    data-index="1" data-color="indigo">
+                    <div class="flex items-start gap-4">
+                        <div
+                            class="p-3 rounded-lg bg-indigo-100 text-indigo-600 group-hover:scale-110 transition-transform">
+                            <i data-lucide="workflow" class="w-6 h-6"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-lg font-bold text-slate-900">Pipelines de Ingeniería (ETL/ELT)</h3>
+                            <p class="text-sm text-slate-500">Transformación y limpieza a escala</p>
+
+                            <div class="details-content hidden mt-4 space-y-3">
+                                <ul class="space-y-2">
+                                    <li class="flex items-center text-sm text-slate-600">
+                                        <i data-lucide="check-circle" class="w-3.5 h-3.5 mr-2 text-indigo-500"></i>
+                                        Normalización y limpieza de valores nulos
+                                    </li>
+                                    <li class="flex items-center text-sm text-slate-600">
+                                        <i data-lucide="check-circle" class="w-3.5 h-3.5 mr-2 text-indigo-500"></i>
+                                        Codificación de variables categóricas
+                                    </li>
+                                    <li class="flex items-center text-sm text-slate-600">
+                                        <i data-lucide="check-circle" class="w-3.5 h-3.5 mr-2 text-indigo-500"></i>
+                                        Escalado y transformación de características
+                                    </li>
+                                    <li class="flex items-center text-sm text-slate-600">
+                                        <i data-lucide="check-circle" class="w-3.5 h-3.5 mr-2 text-indigo-500"></i>
+                                        Orquestación de flujos de trabajo
+                                    </li>
+                                </ul>
+                                <div class="pt-3 border-t border-slate-100">
+                                    <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">
+                                        Herramientas Comunes:</p>
+                                    <div class="flex flex-wrap gap-2">
+                                        <span
+                                            class="px-2 py-1 rounded bg-indigo-50 text-indigo-700 text-xs font-semibold">Apache
+                                            Spark</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-indigo-50 text-indigo-700 text-xs font-semibold">dbt</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-indigo-50 text-indigo-700 text-xs font-semibold">Airflow</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-indigo-50 text-indigo-700 text-xs font-semibold">Prefect</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3: Feature Store -->
+                <div class="topic-card group relative p-6 rounded-xl border-l-4 cursor-pointer bg-slate-50 border-slate-200 hover:bg-white hover:border-purple-300"
+                    data-index="2" data-color="purple">
+                    <div class="flex items-start gap-4">
+                        <div
+                            class="p-3 rounded-lg bg-purple-100 text-purple-600 group-hover:scale-110 transition-transform">
+                            <i data-lucide="share-2" class="w-6 h-6"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-lg font-bold text-slate-900">Feature Store</h3>
+                            <p class="text-sm text-slate-500">El repositorio central de características</p>
+
+                            <div class="details-content hidden mt-4 space-y-3">
+                                <ul class="space-y-2">
+                                    <li class="flex items-center text-sm text-slate-600">
+                                        <i data-lucide="check-circle" class="w-3.5 h-3.5 mr-2 text-purple-500"></i>
+                                        Reutilización de features entre equipos
+                                    </li>
+                                    <li class="flex items-center text-sm text-slate-600">
+                                        <i data-lucide="check-circle" class="w-3.5 h-3.5 mr-2 text-purple-500"></i>
+                                        Consistencia entre entrenamiento y servicio
+                                    </li>
+                                    <li class="flex items-center text-sm text-slate-600">
+                                        <i data-lucide="check-circle" class="w-3.5 h-3.5 mr-2 text-purple-500"></i>
+                                        Servicio de baja latencia para predicciones online
+                                    </li>
+                                    <li class="flex items-center text-sm text-slate-600">
+                                        <i data-lucide="check-circle" class="w-3.5 h-3.5 mr-2 text-purple-500"></i>
+                                        Cálculo automático de características
+                                    </li>
+                                </ul>
+                                <div class="pt-3 border-t border-slate-100">
+                                    <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">
+                                        Herramientas Comunes:</p>
+                                    <div class="flex flex-wrap gap-2">
+                                        <span
+                                            class="px-2 py-1 rounded bg-purple-50 text-purple-700 text-xs font-semibold">Feast</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-purple-50 text-purple-700 text-xs font-semibold">Tecton</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-purple-50 text-purple-700 text-xs font-semibold">Hopsworks</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-purple-50 text-purple-700 text-xs font-semibold">Databricks</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 4: Versionado -->
+                <div class="topic-card group relative p-6 rounded-xl border-l-4 cursor-pointer bg-slate-50 border-slate-200 hover:bg-white hover:border-cyan-300"
+                    data-index="3" data-color="cyan">
+                    <div class="flex items-start gap-4">
+                        <div
+                            class="p-3 rounded-lg bg-cyan-100 text-cyan-600 group-hover:scale-110 transition-transform">
+                            <i data-lucide="history" class="w-6 h-6"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-lg font-bold text-slate-900">Versionado de Datos (DVC)</h3>
+                            <p class="text-sm text-slate-500">Git para tus datasets</p>
+
+                            <div class="details-content hidden mt-4 space-y-3">
+                                <ul class="space-y-2">
+                                    <li class="flex items-center text-sm text-slate-600">
+                                        <i data-lucide="check-circle" class="w-3.5 h-3.5 mr-2 text-cyan-500"></i>
+                                        Seguimiento de versiones de grandes volúmenes de datos
+                                    </li>
+                                    <li class="flex items-center text-sm text-slate-600">
+                                        <i data-lucide="check-circle" class="w-3.5 h-3.5 mr-2 text-cyan-500"></i>
+                                        Vinculación de datos con versiones de código
+                                    </li>
+                                    <li class="flex items-center text-sm text-slate-600">
+                                        <i data-lucide="check-circle" class="w-3.5 h-3.5 mr-2 text-cyan-500"></i>
+                                        Reproducibilidad total de experimentos
+                                    </li>
+                                    <li class="flex items-center text-sm text-slate-600">
+                                        <i data-lucide="check-circle" class="w-3.5 h-3.5 mr-2 text-cyan-500"></i>
+                                        Gestión de almacenamiento en la nube (S3, GCS)
+                                    </li>
+                                </ul>
+                                <div class="pt-3 border-t border-slate-100">
+                                    <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">
+                                        Herramientas Comunes:</p>
+                                    <div class="flex flex-wrap gap-2">
+                                        <span
+                                            class="px-2 py-1 rounded bg-cyan-50 text-cyan-700 text-xs font-semibold">DVC</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-cyan-50 text-cyan-700 text-xs font-semibold">Pachyderm</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-cyan-50 text-cyan-700 text-xs font-semibold">LakeFS</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-cyan-50 text-cyan-700 text-xs font-semibold">Git
+                                            LFS</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 5: Validación -->
+                <div class="topic-card group relative p-6 rounded-xl border-l-4 cursor-pointer bg-slate-50 border-slate-200 hover:bg-white hover:border-emerald-300"
+                    data-index="4" data-color="emerald">
+                    <div class="flex items-start gap-4">
+                        <div
+                            class="p-3 rounded-lg bg-emerald-100 text-emerald-600 group-hover:scale-110 transition-transform">
+                            <i data-lucide="shield-check" class="w-6 h-6"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-lg font-bold text-slate-900">Validación y Calidad</h3>
+                            <p class="text-sm text-slate-500">Garantizando la integridad</p>
+
+                            <div class="details-content hidden mt-4 space-y-3">
+                                <ul class="space-y-2">
+                                    <li class="flex items-center text-sm text-slate-600">
+                                        <i data-lucide="check-circle" class="w-3.5 h-3.5 mr-2 text-emerald-500"></i>
+                                        Validación de esquemas y tipos de datos
+                                    </li>
+                                    <li class="flex items-center text-sm text-slate-600">
+                                        <i data-lucide="check-circle" class="w-3.5 h-3.5 mr-2 text-emerald-500"></i>
+                                        Detección de valores atípicos (Outliers)
+                                    </li>
+                                    <li class="flex items-center text-sm text-slate-600">
+                                        <i data-lucide="check-circle" class="w-3.5 h-3.5 mr-2 text-emerald-500"></i>
+                                        Pruebas de unidad para datasets
+                                    </li>
+                                    <li class="flex items-center text-sm text-slate-600">
+                                        <i data-lucide="check-circle" class="w-3.5 h-3.5 mr-2 text-emerald-500"></i>
+                                        Monitoreo de estadísticas de distribución
+                                    </li>
+                                </ul>
+                                <div class="pt-3 border-t border-slate-100">
+                                    <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">
+                                        Herramientas Comunes:</p>
+                                    <div class="flex flex-wrap gap-2">
+                                        <span
+                                            class="px-2 py-1 rounded bg-emerald-50 text-emerald-700 text-xs font-semibold">Great
+                                            Expectations</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-emerald-50 text-emerald-700 text-xs font-semibold">Deequ</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-emerald-50 text-emerald-700 text-xs font-semibold">Pandera</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-emerald-50 text-emerald-700 text-xs font-semibold">TFDV</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 6: Linaje -->
+                <div class="topic-card group relative p-6 rounded-xl border-l-4 cursor-pointer bg-slate-50 border-slate-200 hover:bg-white hover:border-amber-300"
+                    data-index="5" data-color="amber">
+                    <div class="flex items-start gap-4">
+                        <div
+                            class="p-3 rounded-lg bg-amber-100 text-amber-600 group-hover:scale-110 transition-transform">
+                            <i data-lucide="search" class="w-6 h-6"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-lg font-bold text-slate-900">Linaje y Gobernanza</h3>
+                            <p class="text-sm text-slate-500">Trazabilidad de la procedencia</p>
+
+                            <div class="details-content hidden mt-4 space-y-3">
+                                <ul class="space-y-2">
+                                    <li class="flex items-center text-sm text-slate-600">
+                                        <i data-lucide="check-circle" class="w-3.5 h-3.5 mr-2 text-amber-500"></i>
+                                        Auditoría de origen y transformaciones
+                                    </li>
+                                    <li class="flex items-center text-sm text-slate-600">
+                                        <i data-lucide="check-circle" class="w-3.5 h-3.5 mr-2 text-amber-500"></i>
+                                        Cumplimiento de normativas (GDPR/PII)
+                                    </li>
+                                    <li class="flex items-center text-sm text-slate-600">
+                                        <i data-lucide="check-circle" class="w-3.5 h-3.5 mr-2 text-amber-500"></i>
+                                        Catálogo de metadatos
+                                    </li>
+                                    <li class="flex items-center text-sm text-slate-600">
+                                        <i data-lucide="check-circle" class="w-3.5 h-3.5 mr-2 text-amber-500"></i>
+                                        Control de acceso basado en roles (RBAC)
+                                    </li>
+                                </ul>
+                                <div class="pt-3 border-t border-slate-100">
+                                    <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">
+                                        Herramientas Comunes:</p>
+                                    <div class="flex flex-wrap gap-2">
+                                        <span
+                                            class="px-2 py-1 rounded bg-amber-50 text-amber-700 text-xs font-semibold">Amundsen</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-amber-50 text-amber-700 text-xs font-semibold">Apache
+                                            Atlas</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-amber-50 text-amber-700 text-xs font-semibold">DataHub</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-amber-50 text-amber-700 text-xs font-semibold">Collibra</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Columna de Conceptos (Derecha) -->
+            <div class="lg:col-span-5">
+                <div class="sticky top-8 space-y-6">
+
+                    <!-- Card Data-Centric -->
+                    <div class="bg-slate-900 rounded-2xl p-6 text-white shadow-xl">
+                        <h3 class="text-xl font-bold mb-4 flex items-center">
+                            <i data-lucide="zap" class="text-yellow-400 mr-2 w-5 h-5"></i>
+                            El Concepto "Data-Centric"
+                        </h3>
+                        <p class="text-slate-400 text-sm mb-6 leading-relaxed">
+                            A diferencia del software tradicional, en ML el rendimiento mejora más iterando sobre la
+                            <strong class="text-white">calidad de los datos</strong> que ajustando infinitamente el
+                            algoritmo.
+                        </p>
+
+                        <div class="space-y-4">
+                            <div class="flex gap-4 p-3 bg-white/5 rounded-xl">
+                                <div class="text-blue-400 shrink-0 font-mono font-bold">01</div>
+                                <div>
+                                    <h4 class="font-bold text-sm">Consistencia Online/Offline</h4>
+                                    <p class="text-xs text-slate-500">Evita que el modelo vea datos distintos en
+                                        entrenamiento vs. realidad.</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-4 p-3 bg-white/5 rounded-xl">
+                                <div class="text-purple-400 shrink-0 font-mono font-bold">02</div>
+                                <div>
+                                    <h4 class="font-bold text-sm">Reproducibilidad</h4>
+                                    <p class="text-xs text-slate-500">Poder recrear un modelo exacto de hace 6 meses
+                                        usando el "snapshot" de datos.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card Riesgo Skew -->
+                    <div class="bg-amber-50 border border-amber-200 rounded-2xl p-6">
+                        <h4 class="text-amber-800 font-bold mb-3 flex items-center text-sm">
+                            <i data-lucide="alert-triangle" class="mr-2 w-4 h-4"></i>
+                            Riesgo: Entrenamiento-Servicio (Skew)
+                        </h4>
+                        <p class="text-xs text-amber-700 leading-relaxed">
+                            Ocurre cuando las transformaciones de datos en producción no coinciden exactamente con las
+                            de entrenamiento. Una Feature Store es la solución técnica estándar para este problema.
+                        </p>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
 
         <!-- SUB-ETAPAS DEL CICLO DE DATOS (CON CÓDIGO) -->
         <section class="mb-24">
@@ -344,6 +736,44 @@
             </div>
         </footer>
     </div>
+
+    <!-- Script de Interactividad -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Inicializar iconos
+            lucide.createIcons();
+
+            const cards = document.querySelectorAll('.topic-card');
+
+            cards.forEach(card => {
+                card.addEventListener('click', () => {
+                    const index = card.dataset.index;
+                    const color = card.dataset.color;
+
+                    // Resetear todas las tarjetas
+                    cards.forEach(c => {
+                        // Clases inactivas
+                        c.classList.remove('bg-white', 'shadow-xl', 'border-' + c.dataset.color + '-500', 'translate-x-2', 'active');
+                        c.classList.add('bg-slate-50', 'border-slate-200');
+
+                        // Ocultar detalles
+                        const details = c.querySelector('.details-content');
+                        details.classList.remove('visible');
+                        details.classList.add('hidden');
+                    });
+
+                    // Activar tarjeta clickeada
+                    card.classList.remove('bg-slate-50', 'border-slate-200');
+                    card.classList.add('bg-white', 'shadow-xl', 'border-' + color + '-500', 'translate-x-2', 'active');
+
+                    // Mostrar detalles
+                    const details = card.querySelector('.details-content');
+                    details.classList.remove('hidden');
+                    details.classList.add('visible');
+                });
+            });
+        });
+    </script>
 
 </body>
 

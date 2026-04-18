@@ -7,6 +7,31 @@
     <title>Masterclass: Gobernanza y Seguridad en MLOps</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Lucide Icons via CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        /* Estilos para animaciones suaves */
+        .details-content {
+            transition: all 0.3s ease-in-out;
+            overflow: hidden;
+        }
+
+        .details-content.hidden {
+            display: none;
+            opacity: 0;
+            max-height: 0;
+        }
+
+        .details-content.visible {
+            opacity: 1;
+            max-height: 600px;
+        }
+
+        .topic-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+    </style>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Fira+Code:wght@400;500&display=swap');
 
@@ -154,6 +179,405 @@
                 </div>
             </div>
         </section>
+
+        <!-- Layout Principal -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+            <!-- Columna de Temas (Izquierda) -->
+            <div class="lg:col-span-7 space-y-4">
+
+                <!-- Card 1: Cumplimiento -->
+                <div class="topic-card group relative p-6 rounded-xl border-l-4 cursor-pointer bg-white shadow-xl border-emerald-500 translate-x-2 active"
+                    data-index="0" data-color="emerald">
+                    <div class="flex items-start gap-4">
+                        <div
+                            class="p-3 rounded-lg bg-emerald-100 text-emerald-600 group-hover:scale-110 transition-transform">
+                            <i data-lucide="scale" class="w-6 h-6"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-lg font-bold text-slate-900">Cumplimiento Regulatorio</h3>
+                            <p class="text-sm text-slate-500">Navegando el marco legal</p>
+
+                            <div class="details-content visible mt-4 space-y-3">
+                                <ul class="space-y-2">
+                                    <li class="flex items-start text-sm text-slate-600">
+                                        <i data-lucide="shield-check"
+                                            class="w-3.5 h-3.5 mr-2 mt-1 text-emerald-500 shrink-0"></i>
+                                        Alineación con la AI Act de la UE y GDPR
+                                    </li>
+                                    <li class="flex items-start text-sm text-slate-600">
+                                        <i data-lucide="shield-check"
+                                            class="w-3.5 h-3.5 mr-2 mt-1 text-emerald-500 shrink-0"></i>
+                                        Documentación técnica obligatoria para modelos de alto riesgo
+                                    </li>
+                                    <li class="flex items-start text-sm text-slate-600">
+                                        <i data-lucide="shield-check"
+                                            class="w-3.5 h-3.5 mr-2 mt-1 text-emerald-500 shrink-0"></i>
+                                        Gestión de la privacidad de datos (PII)
+                                    </li>
+                                    <li class="flex items-start text-sm text-slate-600">
+                                        <i data-lucide="shield-check"
+                                            class="w-3.5 h-3.5 mr-2 mt-1 text-emerald-500 shrink-0"></i>
+                                        Registro de conformidad y reportes oficiales
+                                    </li>
+                                </ul>
+                                <div class="pt-3 border-t border-slate-100">
+                                    <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">Marcos
+                                        y Herramientas:</p>
+                                    <div class="flex flex-wrap gap-2">
+                                        <span
+                                            class="px-2 py-1 rounded bg-emerald-50 text-emerald-700 text-xs font-semibold">EU
+                                            AI Act</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-emerald-50 text-emerald-700 text-xs font-semibold">NIST
+                                            AI RMF</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-emerald-50 text-emerald-700 text-xs font-semibold">ISO/IEC
+                                            42001</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2: Seguridad -->
+                <div class="topic-card group relative p-6 rounded-xl border-l-4 cursor-pointer bg-slate-50 border-slate-200 hover:bg-white hover:border-teal-300"
+                    data-index="1" data-color="teal">
+                    <div class="flex items-start gap-4">
+                        <div
+                            class="p-3 rounded-lg bg-teal-100 text-teal-600 group-hover:scale-110 transition-transform">
+                            <i data-lucide="lock" class="w-6 h-6"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-lg font-bold text-slate-900">Seguridad de Modelos</h3>
+                            <p class="text-sm text-slate-500">Protección contra ataques adversarios</p>
+
+                            <div class="details-content hidden mt-4 space-y-3">
+                                <ul class="space-y-2">
+                                    <li class="flex items-start text-sm text-slate-600">
+                                        <i data-lucide="shield-check"
+                                            class="w-3.5 h-3.5 mr-2 mt-1 text-teal-500 shrink-0"></i>
+                                        Defensa contra envenenamiento de datos (Poisoning)
+                                    </li>
+                                    <li class="flex items-start text-sm text-slate-600">
+                                        <i data-lucide="shield-check"
+                                            class="w-3.5 h-3.5 mr-2 mt-1 text-teal-500 shrink-0"></i>
+                                        Prevención de ataques de inversión de modelo
+                                    </li>
+                                    <li class="flex items-start text-sm text-slate-600">
+                                        <i data-lucide="shield-check"
+                                            class="w-3.5 h-3.5 mr-2 mt-1 text-teal-500 shrink-0"></i>
+                                        Escaneo de vulnerabilidades en contenedores y código
+                                    </li>
+                                    <li class="flex items-start text-sm text-slate-600">
+                                        <i data-lucide="shield-check"
+                                            class="w-3.5 h-3.5 mr-2 mt-1 text-teal-500 shrink-0"></i>
+                                        Cifrado de pesos y artefactos del modelo
+                                    </li>
+                                </ul>
+                                <div class="pt-3 border-t border-slate-100">
+                                    <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">Marcos
+                                        y Herramientas:</p>
+                                    <div class="flex flex-wrap gap-2">
+                                        <span
+                                            class="px-2 py-1 rounded bg-teal-50 text-teal-700 text-xs font-semibold">Adversarial
+                                            Robustness Toolbox</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-teal-50 text-teal-700 text-xs font-semibold">OWASP
+                                            ML Top 10</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-teal-50 text-teal-700 text-xs font-semibold">Snyk</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3: Ética -->
+                <div class="topic-card group relative p-6 rounded-xl border-l-4 cursor-pointer bg-slate-50 border-slate-200 hover:bg-white hover:border-cyan-300"
+                    data-index="2" data-color="cyan">
+                    <div class="flex items-start gap-4">
+                        <div
+                            class="p-3 rounded-lg bg-cyan-100 text-cyan-600 group-hover:scale-110 transition-transform">
+                            <i data-lucide="users" class="w-6 h-6"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-lg font-bold text-slate-900">Ética y Fairness (Justicia)</h3>
+                            <p class="text-sm text-slate-500">Mitigación de sesgos algorítmicos</p>
+
+                            <div class="details-content hidden mt-4 space-y-3">
+                                <ul class="space-y-2">
+                                    <li class="flex items-start text-sm text-slate-600">
+                                        <i data-lucide="shield-check"
+                                            class="w-3.5 h-3.5 mr-2 mt-1 text-cyan-500 shrink-0"></i>
+                                        Auditoría de sesgos en datasets de entrenamiento
+                                    </li>
+                                    <li class="flex items-start text-sm text-slate-600">
+                                        <i data-lucide="shield-check"
+                                            class="w-3.5 h-3.5 mr-2 mt-1 text-cyan-500 shrink-0"></i>
+                                        Pruebas de equidad en predicciones (Fairness testing)
+                                    </li>
+                                    <li class="flex items-start text-sm text-slate-600">
+                                        <i data-lucide="shield-check"
+                                            class="w-3.5 h-3.5 mr-2 mt-1 text-cyan-500 shrink-0"></i>
+                                        Análisis de impacto social del modelo
+                                    </li>
+                                    <li class="flex items-start text-sm text-slate-600">
+                                        <i data-lucide="shield-check"
+                                            class="w-3.5 h-3.5 mr-2 mt-1 text-cyan-500 shrink-0"></i>
+                                        Inclusión de grupos minoritarios en la validación
+                                    </li>
+                                </ul>
+                                <div class="pt-3 border-t border-slate-100">
+                                    <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">Marcos
+                                        y Herramientas:</p>
+                                    <div class="flex flex-wrap gap-2">
+                                        <span
+                                            class="px-2 py-1 rounded bg-cyan-50 text-cyan-700 text-xs font-semibold">Aequitas</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-cyan-50 text-cyan-700 text-xs font-semibold">Fairlearn</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-cyan-50 text-cyan-700 text-xs font-semibold">AI
+                                            Fairness 360</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-cyan-50 text-cyan-700 text-xs font-semibold">Google
+                                            What-If Tool</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 4: Explicabilidad -->
+                <div class="topic-card group relative p-6 rounded-xl border-l-4 cursor-pointer bg-slate-50 border-slate-200 hover:bg-white hover:border-indigo-300"
+                    data-index="3" data-color="indigo">
+                    <div class="flex items-start gap-4">
+                        <div
+                            class="p-3 rounded-lg bg-indigo-100 text-indigo-600 group-hover:scale-110 transition-transform">
+                            <i data-lucide="eye" class="w-6 h-6"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-lg font-bold text-slate-900">Explicabilidad e Interpretabilidad</h3>
+                            <p class="text-sm text-slate-500">Derecho a la explicación</p>
+
+                            <div class="details-content hidden mt-4 space-y-3">
+                                <ul class="space-y-2">
+                                    <li class="flex items-start text-sm text-slate-600">
+                                        <i data-lucide="shield-check"
+                                            class="w-3.5 h-3.5 mr-2 mt-1 text-indigo-500 shrink-0"></i>
+                                        Generación de explicaciones locales y globales
+                                    </li>
+                                    <li class="flex items-start text-sm text-slate-600">
+                                        <i data-lucide="shield-check"
+                                            class="w-3.5 h-3.5 mr-2 mt-1 text-indigo-500 shrink-0"></i>
+                                        Identificación de variables críticas en la decisión
+                                    </li>
+                                    <li class="flex items-start text-sm text-slate-600">
+                                        <i data-lucide="shield-check"
+                                            class="w-3.5 h-3.5 mr-2 mt-1 text-indigo-500 shrink-0"></i>
+                                        Trazabilidad: Por qué el modelo tomó una decisión X
+                                    </li>
+                                    <li class="flex items-start text-sm text-slate-600">
+                                        <i data-lucide="shield-check"
+                                            class="w-3.5 h-3.5 mr-2 mt-1 text-indigo-500 shrink-0"></i>
+                                        Model Cards para transparencia hacia el usuario
+                                    </li>
+                                </ul>
+                                <div class="pt-3 border-t border-slate-100">
+                                    <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">Marcos
+                                        y Herramientas:</p>
+                                    <div class="flex flex-wrap gap-2">
+                                        <span
+                                            class="px-2 py-1 rounded bg-indigo-50 text-indigo-700 text-xs font-semibold">SHAP</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-indigo-50 text-indigo-700 text-xs font-semibold">LIME</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-indigo-50 text-indigo-700 text-xs font-semibold">InterpretML</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-indigo-50 text-indigo-700 text-xs font-semibold">Captum</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 5: Auditoría -->
+                <div class="topic-card group relative p-6 rounded-xl border-l-4 cursor-pointer bg-slate-50 border-slate-200 hover:bg-white hover:border-slate-300"
+                    data-index="4" data-color="slate">
+                    <div class="flex items-start gap-4">
+                        <div
+                            class="p-3 rounded-lg bg-slate-100 text-slate-600 group-hover:scale-110 transition-transform">
+                            <i data-lucide="search" class="w-6 h-6"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-lg font-bold text-slate-900">Auditoría y Linaje (Lineage)</h3>
+                            <p class="text-sm text-slate-500">El rastro de papel digital</p>
+
+                            <div class="details-content hidden mt-4 space-y-3">
+                                <ul class="space-y-2">
+                                    <li class="flex items-start text-sm text-slate-600">
+                                        <i data-lucide="shield-check"
+                                            class="w-3.5 h-3.5 mr-2 mt-1 text-slate-500 shrink-0"></i>
+                                        Registro histórico de quién entrenó qué y cuándo
+                                    </li>
+                                    <li class="flex items-start text-sm text-slate-600">
+                                        <i data-lucide="shield-check"
+                                            class="w-3.5 h-3.5 mr-2 mt-1 text-slate-500 shrink-0"></i>
+                                        Trazabilidad total: del dato crudo a la predicción final
+                                    </li>
+                                    <li class="flex items-start text-sm text-slate-600">
+                                        <i data-lucide="shield-check"
+                                            class="w-3.5 h-3.5 mr-2 mt-1 text-slate-500 shrink-0"></i>
+                                        Control de versiones inmutable para auditorías
+                                    </li>
+                                    <li class="flex items-start text-sm text-slate-600">
+                                        <i data-lucide="shield-check"
+                                            class="w-3.5 h-3.5 mr-2 mt-1 text-slate-500 shrink-0"></i>
+                                        Firmas digitales para modelos aprobados
+                                    </li>
+                                </ul>
+                                <div class="pt-3 border-t border-slate-100">
+                                    <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">Marcos
+                                        y Herramientas:</p>
+                                    <div class="flex flex-wrap gap-2">
+                                        <span
+                                            class="px-2 py-1 rounded bg-slate-50 text-slate-700 text-xs font-semibold">MLflow
+                                            Registry</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-slate-50 text-slate-700 text-xs font-semibold">Apache
+                                            Atlas</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-slate-50 text-slate-700 text-xs font-semibold">DVC</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-slate-50 text-slate-700 text-xs font-semibold">W&B
+                                            Artifacts</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 6: RBAC -->
+                <div class="topic-card group relative p-6 rounded-xl border-l-4 cursor-pointer bg-slate-50 border-slate-200 hover:bg-white hover:border-blue-300"
+                    data-index="5" data-color="blue">
+                    <div class="flex items-start gap-4">
+                        <div
+                            class="p-3 rounded-lg bg-blue-100 text-blue-600 group-hover:scale-110 transition-transform">
+                            <i data-lucide="key" class="w-6 h-6"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-lg font-bold text-slate-900">Control de Acceso (RBAC)</h3>
+                            <p class="text-sm text-slate-500">Seguridad de nivel empresarial</p>
+
+                            <div class="details-content hidden mt-4 space-y-3">
+                                <ul class="space-y-2">
+                                    <li class="flex items-start text-sm text-slate-600">
+                                        <i data-lucide="shield-check"
+                                            class="w-3.5 h-3.5 mr-2 mt-1 text-blue-500 shrink-0"></i>
+                                        Gestión de permisos basada en roles
+                                    </li>
+                                    <li class="flex items-start text-sm text-slate-600">
+                                        <i data-lucide="shield-check"
+                                            class="w-3.5 h-3.5 mr-2 mt-1 text-blue-500 shrink-0"></i>
+                                        Aislamiento de entornos (Dev, Staging, Prod)
+                                    </li>
+                                    <li class="flex items-start text-sm text-slate-600">
+                                        <i data-lucide="shield-check"
+                                            class="w-3.5 h-3.5 mr-2 mt-1 text-blue-500 shrink-0"></i>
+                                        Auditoría de accesos a datos sensibles
+                                    </li>
+                                    <li class="flex items-start text-sm text-slate-600">
+                                        <i data-lucide="shield-check"
+                                            class="w-3.5 h-3.5 mr-2 mt-1 text-blue-500 shrink-0"></i>
+                                        Integración con sistemas de identidad corporativa
+                                    </li>
+                                </ul>
+                                <div class="pt-3 border-t border-slate-100">
+                                    <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">Marcos
+                                        y Herramientas:</p>
+                                    <div class="flex flex-wrap gap-2">
+                                        <span
+                                            class="px-2 py-1 rounded bg-blue-50 text-blue-700 text-xs font-semibold">Okta</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-blue-50 text-blue-700 text-xs font-semibold">Active
+                                            Directory</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-blue-50 text-blue-700 text-xs font-semibold">AWS
+                                            IAM</span>
+                                        <span
+                                            class="px-2 py-1 rounded bg-blue-50 text-blue-700 text-xs font-semibold">HashiCorp
+                                            Vault</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Columna de Conceptos (Derecha) -->
+            <div class="lg:col-span-5">
+                <div class="sticky top-8 space-y-6">
+
+                    <!-- Card IA Responsable -->
+                    <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+                        <h3 class="text-xl font-bold mb-4 flex items-center text-slate-800">
+                            <i data-lucide="fingerprint" class="text-emerald-600 mr-2 w-5 h-5"></i>
+                            IA Responsable
+                        </h3>
+                        <p class="text-slate-500 text-sm mb-6 leading-relaxed">
+                            No basta con cumplir la ley; la confianza del usuario depende de la transparencia y la
+                            equidad del sistema.
+                        </p>
+
+                        <div class="space-y-3">
+                            <div class="flex items-center p-3 bg-emerald-50 rounded-lg">
+                                <div class="bg-emerald-500 w-2 h-2 rounded-full mr-3"></div>
+                                <span class="text-xs font-bold text-emerald-800">Transparencia</span>
+                            </div>
+                            <div class="flex items-center p-3 bg-blue-50 rounded-lg">
+                                <div class="bg-blue-500 w-2 h-2 rounded-full mr-3"></div>
+                                <span class="text-xs font-bold text-blue-800">Seguridad por Diseño</span>
+                            </div>
+                            <div class="flex items-center p-3 bg-indigo-50 rounded-lg">
+                                <div class="bg-indigo-500 w-2 h-2 rounded-full mr-3"></div>
+                                <span class="text-xs font-bold text-indigo-800">Rendición de Cuentas</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card AI Act -->
+                    <div class="bg-amber-50 border border-amber-200 rounded-2xl p-6">
+                        <div class="flex items-start gap-3">
+                            <i data-lucide="shield-alert" class="text-amber-600 shrink-0 w-5 h-5"></i>
+                            <div>
+                                <h4 class="text-amber-800 font-bold text-sm mb-1">Impacto de la AI Act</h4>
+                                <p class="text-xs text-amber-700 leading-relaxed">
+                                    La nueva regulación europea clasifica los sistemas según su riesgo. Los sistemas de
+                                    MLOps deben ahora incluir auditorías externas y registros de linaje obligatorios
+                                    para evitar multas millonarias.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card Quote -->
+                    <div class="p-6 bg-slate-800 rounded-2xl text-center">
+                        <i data-lucide="info" class="text-emerald-400 mx-auto mb-3 w-6 h-6"></i>
+                        <p class="text-xs text-slate-400 italic">
+                            "MLOps no está completo hasta que el sistema es auditable y seguro."
+                        </p>
+                    </div>
+
+                </div>
+            </div>
+        </div>
 
         <!-- SUB-ETAPAS DE GOBERNANZA (CON CÓDIGO) -->
         <section class="mb-24">
@@ -393,6 +817,45 @@
             </div>
         </footer>
     </div>
+
+    <!-- Script de Interactividad -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Inicializar iconos
+            lucide.createIcons();
+
+            const cards = document.querySelectorAll('.topic-card');
+
+            cards.forEach(card => {
+                card.addEventListener('click', () => {
+                    const index = card.dataset.index;
+                    const color = card.dataset.color;
+
+                    // Resetear todas las tarjetas
+                    cards.forEach(c => {
+                        const cColor = c.dataset.color;
+                        // Clases inactivas
+                        c.classList.remove('bg-white', 'shadow-xl', 'border-' + cColor + '-500', 'translate-x-2', 'active');
+                        c.classList.add('bg-slate-50', 'border-slate-200');
+
+                        // Ocultar detalles
+                        const details = c.querySelector('.details-content');
+                        details.classList.remove('visible');
+                        details.classList.add('hidden');
+                    });
+
+                    // Activar tarjeta clickeada
+                    card.classList.remove('bg-slate-50', 'border-slate-200');
+                    card.classList.add('bg-white', 'shadow-xl', 'border-' + color + '-500', 'translate-x-2', 'active');
+
+                    // Mostrar detalles
+                    const details = card.querySelector('.details-content');
+                    details.classList.remove('hidden');
+                    details.classList.add('visible');
+                });
+            });
+        });
+    </script>
 
 </body>
 
