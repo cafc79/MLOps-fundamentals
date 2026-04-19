@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Algoritmo PCA (Principal Component Analysis)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+
+        .card-active {
+            background-color: white !important;
+            transform: scale(1.02);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            z-index: 20;
+        }
+
+        .content-drawer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out, opacity 0.3s ease;
+            opacity: 0;
+        }
+
+        .card-active .content-drawer {
+            max-height: 500px;
+            opacity: 1;
+            margin-top: 1.5rem;
+        }
+
+        .step-badge {
+            position: absolute;
+            top: -1rem;
+            left: -1rem;
+            width: 2.5rem;
+            height: 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 9999px;
+            color: white;
+            font-weight: 800;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+
+<body class="text-slate-800 p-4 md:p-10">
+
+    <div class="max-w-6xl mx-auto">
+        <!-- HEADER -->
+        <header class="text-center mb-16">
+            <div class="inline-flex items-center px-4 py-2 bg-slate-700 text-white rounded-full mb-6 shadow-lg">
+                <i class="fas fa-compress-alt mr-2"></i>
+                <span class="text-xs font-bold uppercase tracking-widest">Reducción de Dimensionalidad (No
+                    Supervisado)</span>
+            </div>
+            <h1 class="text-4xl md:text-6xl font-black text-slate-900 mb-6 tracking-tight">
+                Análisis de <span class="text-indigo-600">Componentes Principales</span>
+            </h1>
+            <p class="text-slate-500 text-lg max-w-3xl mx-auto leading-relaxed">
+                PCA es la técnica estadística por excelencia para simplificar datos complejos. Transforma un conjunto de
+                variables correlacionadas en un número menor de variables no correlacionadas llamadas componentes
+                principales.
+            </p>
+        </header>
+
+        <!-- INFO BANNER -->
+        <div class="bg-indigo-50 border-l-4 border-indigo-500 p-4 mb-12 rounded-r-xl flex items-center gap-4">
+            <i class="fas fa-info-circle text-indigo-500 text-xl"></i>
+            <p class="text-sm text-indigo-800"><strong>Guía del Algoritmo:</strong> Haz clic en cada tarjeta para
+                explorar cómo PCA comprime la información eliminando el ruido y resaltando las direcciones de mayor
+                varianza.</p>
+        </div>
+
+        <!-- GRID DE PASOS -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 relative">
+
+            <!-- STEP 1: CONCEPTO DE REDUCCIÓN -->
+            <div class="relative p-8 rounded-3xl border-2 border-transparent bg-slate-50 cursor-pointer transition-all duration-300 card-active"
+                onclick="toggleStep(this, 'indigo')">
+                <div class="step-badge bg-indigo-600">1</div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="p-3 rounded-2xl bg-indigo-100 text-indigo-600">
+                        <i class="fas fa-filter text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">Simplificación</h3>
+                </div>
+                <p class="text-sm text-slate-600">Reduce el número de variables de un dataset manteniendo la mayor
+                    cantidad de información posible.</p>
+
+                <div class="content-drawer">
+                    <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                        En datasets con cientos de columnas, muchas variables suelen ser redundantes. PCA encuentra las
+                        estructuras subyacentes para "resumir" los datos en dimensiones esenciales, facilitando la
+                        visualización y el modelado.
+                    </p>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-indigo-500 mr-2"></i> Eliminación de redundancia
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-indigo-500 mr-2"></i> Compresión de atributos
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-indigo-500 mr-2"></i> Mitigación de ruido
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 2: ESTANDARIZACIÓN -->
+            <div class="relative p-8 rounded-3xl border-2 border-transparent bg-slate-50 cursor-pointer transition-all duration-300"
+                onclick="toggleStep(this, 'violet')">
+                <div class="step-badge bg-violet-500">2</div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="p-3 rounded-2xl bg-violet-100 text-violet-600">
+                        <i class="fas fa-balance-scale text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">Estandarización</h3>
+                </div>
+                <p class="text-sm text-slate-600">Es obligatorio escalar los datos para que todas las variables tengan
+                    el mismo peso matemático.</p>
+
+                <div class="content-drawer">
+                    <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                        Como PCA busca maximizar la varianza, una variable con valores grandes (ej. Ingresos) dominaría
+                        injustamente sobre una con valores pequeños (ej. Edad). Se aplica Z-Score (media 0, varianza 1).
+                    </p>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-violet-500 mr-2"></i> Normalización de escala
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-violet-500 mr-2"></i> Media Centrada en Cero
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-violet-500 mr-2"></i> Comparabilidad de Unidades
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 3: MATRIZ DE COVARIANZA -->
+            <div class="relative p-8 rounded-3xl border-2 border-transparent bg-slate-50 cursor-pointer transition-all duration-300"
+                onclick="toggleStep(this, 'purple')">
+                <div class="step-badge bg-purple-500">3</div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="p-3 rounded-2xl bg-purple-100 text-purple-600">
+                        <i class="fas fa-th text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">Matriz de Relación</h3>
+                </div>
+                <p class="text-sm text-slate-600">Calcula cómo las variables varían respecto a las demás para
+                    identificar correlaciones.</p>
+
+                <div class="content-drawer">
+                    <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                        La matriz de covarianza revela si las variables se mueven juntas. Si dos variables están muy
+                        correlacionadas, contienen información similar; PCA usará esto para combinarlas en una sola.
+                    </p>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-purple-500 mr-2"></i> Medición de Varianza
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-purple-500 mr-2"></i> Detección de Correlación
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-purple-500 mr-2"></i> Estructura Multivariada
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 4: AUTOVECTORES Y AUTOVALORES -->
+            <div class="relative p-8 rounded-3xl border-2 border-transparent bg-slate-50 cursor-pointer transition-all duration-300"
+                onclick="toggleStep(this, 'fuchsia')">
+                <div class="step-badge bg-fuchsia-500">4</div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="p-3 rounded-2xl bg-fuchsia-100 text-fuchsia-600">
+                        <i class="fas fa-arrows-alt text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">Dirección y Magnitud</h3>
+                </div>
+                <p class="text-sm text-slate-600">Encuentra los ejes donde los datos tienen la mayor dispersión o
+                    varianza.</p>
+
+                <div class="content-drawer">
+                    <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                        Los <strong>autovectores</strong> definen la dirección del nuevo eje. Los
+                        <strong>autovalores</strong> indican cuánta varianza hay en esa dirección. El eje con el
+                        autovalor más alto es el Componente Principal 1 (PC1).
+                    </p>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-fuchsia-500 mr-2"></i> Eigenvectors (Direcciones)
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-fuchsia-500 mr-2"></i> Eigenvalues (Importancia)
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-fuchsia-500 mr-2"></i> Álgebra Lineal aplicada
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 5: COMPONENTES PRINCIPALES -->
+            <div class="relative p-8 rounded-3xl border-2 border-transparent bg-slate-50 cursor-pointer transition-all duration-300"
+                onclick="toggleStep(this, 'rose')">
+                <div class="step-badge bg-rose-500">5</div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="p-3 rounded-2xl bg-rose-100 text-rose-600">
+                        <i class="fas fa-project-diagram text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">Nuevas Variables</h3>
+                </div>
+                <p class="text-sm text-slate-600">Construye las nuevas columnas (PC) como combinaciones lineales de las
+                    originales.</p>
+
+                <div class="content-drawer">
+                    <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                        Los componentes principales son ortogonales (están a 90 grados), lo que garantiza que no haya
+                        correlación entre ellos. El PC1 captura la mayor varianza posible, el PC2 la segunda mayor, y
+                        así sucesivamente.
+                    </p>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-rose-500 mr-2"></i> Ortogonalidad Total
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-rose-500 mr-2"></i> Independencia Lineal
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-rose-500 mr-2"></i> Orden de Varianza
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 6: VARIANZA EXPLICADA -->
+            <div class="relative p-8 rounded-3xl border-2 border-transparent bg-slate-50 cursor-pointer transition-all duration-300"
+                onclick="toggleStep(this, 'orange')">
+                <div class="step-badge bg-orange-500">6</div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="p-3 rounded-2xl bg-orange-100 text-orange-600">
+                        <i class="fas fa-chart-bar text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">Criterio de Retención</h3>
+                </div>
+                <p class="text-sm text-slate-600">Decide cuántos componentes conservar mirando el porcentaje de
+                    información que representan.</p>
+
+                <div class="content-drawer">
+                    <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                        Se utiliza el <strong>Scree Plot</strong>. Habitualmente se eligen suficientes componentes para
+                        explicar entre el 70% y el 95% de la varianza total, descartando el resto como ruido
+                        insignificante.
+                    </p>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-orange-500 mr-2"></i> Ratio de Varianza Explicada
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-orange-500 mr-2"></i> Análisis de Scree Plot
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-orange-500 mr-2"></i> Codo de Información
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 7: TRANSFORMACIÓN FINAL -->
+            <div class="relative p-8 rounded-3xl border-2 border-transparent bg-slate-50 cursor-pointer transition-all duration-300 lg:col-span-1"
+                onclick="toggleStep(this, 'cyan')">
+                <div class="step-badge bg-cyan-500">7</div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="p-3 rounded-2xl bg-cyan-100 text-cyan-600">
+                        <i class="fas fa-magic text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">Proyección</h3>
+                </div>
+                <p class="text-sm text-slate-600">Transforma el dataset original al nuevo espacio de menor dimensión.
+                </p>
+
+                <div class="content-drawer">
+                    <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                        Los datos originales se proyectan sobre los autovectores seleccionados. El resultado es un
+                        dataset nuevo con menos columnas, listo para algoritmos de clasificación o visualización en
+                        2D/3D.
+                    </p>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-cyan-500 mr-2"></i> Reducción de Columnas
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-cyan-500 mr-2"></i> Eficiencia Computacional
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-cyan-500 mr-2"></i> Visualización de Clústeres
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- POR QUÉ ELEGIR PCA -->
+            <div
+                class="lg:col-span-2 bg-slate-900 rounded-[2rem] p-10 text-white flex flex-col justify-center items-center text-center shadow-2xl relative overflow-hidden">
+                <div class="absolute top-0 right-0 p-10 opacity-10">
+                    <i class="fas fa-border-all text-[150px]"></i>
+                </div>
+                <h2 class="text-3xl font-bold mb-4 relative z-10">Valor del PCA</h2>
+                <p class="text-slate-400 text-sm mb-8 max-w-lg relative z-10">
+                    Es la herramienta fundamental para combatir la <strong>"Maldición de la Dimensionalidad"</strong>.
+                    Permite entrenar modelos más rápidos, evitar el sobreajuste y visualizar relaciones ocultas en datos
+                    masivos.
+                </p>
+                <div class="flex flex-wrap gap-4 justify-center relative z-10">
+                    <span class="px-5 py-2 bg-white/10 rounded-xl text-xs font-mono border border-white/20">Compresión
+                        Inteligente</span>
+                    <span
+                        class="px-5 py-2 bg-white/10 rounded-xl text-xs font-mono border border-white/20">Visualización
+                        2D/3D</span>
+                    <span class="px-5 py-2 bg-white/10 rounded-xl text-xs font-mono border border-white/20">Velocidad de
+                        Modelado</span>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- FOOTER -->
+        <footer class="mt-20 pt-8 border-t border-slate-200 text-center text-slate-400 text-xs">
+            <p>© 2024 Guía de Algoritmos • PCA: La Ciencia de lo Esencial</p>
+        </footer>
+    </div>
+
+    <script>
+        function toggleStep(element, color) {
+            if (element.classList.contains('card-active')) {
+                element.classList.remove('card-active');
+                element.style.borderColor = 'transparent';
+                return;
+            }
+
+            document.querySelectorAll('.card-active').forEach(card => {
+                card.classList.remove('card-active');
+                card.style.borderColor = 'transparent';
+            });
+
+            element.classList.add('card-active');
+
+            const colorMap = {
+                indigo: '#4f46e5',
+                violet: '#8b5cf6',
+                purple: '#a855f7',
+                fuchsia: '#d946ef',
+                rose: '#f43f5e',
+                orange: '#f97316',
+                cyan: '#06b6d4'
+            };
+            element.style.borderColor = colorMap[color];
+        }
+    </script>
+</body>
+
+</html>

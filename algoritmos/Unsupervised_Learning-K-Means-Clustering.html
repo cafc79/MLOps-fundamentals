@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Algoritmo K-Means Clustering</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+
+        .card-active {
+            background-color: white !important;
+            transform: scale(1.02);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            z-index: 20;
+        }
+
+        .content-drawer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out, opacity 0.3s ease;
+            opacity: 0;
+        }
+
+        .card-active .content-drawer {
+            max-height: 500px;
+            opacity: 1;
+            margin-top: 1.5rem;
+        }
+
+        .step-badge {
+            position: absolute;
+            top: -1rem;
+            left: -1rem;
+            width: 2.5rem;
+            height: 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 9999px;
+            color: white;
+            font-weight: 800;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+
+<body class="text-slate-800 p-4 md:p-10">
+
+    <div class="max-w-6xl mx-auto">
+        <!-- HEADER -->
+        <header class="text-center mb-16">
+            <div class="inline-flex items-center px-4 py-2 bg-orange-600 text-white rounded-full mb-6 shadow-lg">
+                <i class="fas fa-cubes mr-2"></i>
+                <span class="text-xs font-bold uppercase tracking-widest">Aprendizaje No Supervisado (Clustering)</span>
+            </div>
+            <h1 class="text-4xl md:text-6xl font-black text-slate-900 mb-6 tracking-tight">
+                K-Means <span class="text-orange-600">Clustering</span>
+            </h1>
+            <p class="text-slate-500 text-lg max-w-3xl mx-auto leading-relaxed">
+                K-Means es el algoritmo líder para el agrupamiento de datos. Su objetivo es particionar un conjunto de
+                observaciones en 'K' grupos donde cada dato pertenece al grupo con el promedio más cercano.
+            </p>
+        </header>
+
+        <!-- INFO BANNER -->
+        <div class="bg-orange-50 border-l-4 border-orange-500 p-4 mb-12 rounded-r-xl flex items-center gap-4">
+            <i class="fas fa-info-circle text-orange-500 text-xl"></i>
+            <p class="text-sm text-orange-800"><strong>Guía del Algoritmo:</strong> Haz clic en cada tarjeta para
+                explorar cómo las máquinas encuentran patrones ocultos y agrupan datos sin necesidad de etiquetas
+                previas.</p>
+        </div>
+
+        <!-- GRID DE PASOS -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 relative">
+
+            <!-- STEP 1: CONCEPTO DE AGRUPAMIENTO -->
+            <div class="relative p-8 rounded-3xl border-2 border-transparent bg-slate-50 cursor-pointer transition-all duration-300 card-active"
+                onclick="toggleStep(this, 'orange')">
+                <div class="step-badge bg-orange-600">1</div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="p-3 rounded-2xl bg-orange-100 text-orange-600">
+                        <i class="fas fa-object-group text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">Agrupamiento</h3>
+                </div>
+                <p class="text-sm text-slate-600">Descubre estructuras naturales en los datos basándose puramente en su
+                    similitud geométrica.</p>
+
+                <div class="content-drawer">
+                    <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                        A diferencia de la clasificación, aquí no hay "respuestas correctas" iniciales. El algoritmo
+                        busca puntos que estén "cerca" entre sí en el espacio de características para formar clusters
+                        cohesivos.
+                    </p>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-orange-500 mr-2"></i> Sin etiquetas (Unsupervised)
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-orange-500 mr-2"></i> Similitud de Atributos
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-orange-500 mr-2"></i> Descubrimiento de Patrones
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 2: INICIALIZACIÓN -->
+            <div class="relative p-8 rounded-3xl border-2 border-transparent bg-slate-50 cursor-pointer transition-all duration-300"
+                onclick="toggleStep(this, 'amber')">
+                <div class="step-badge bg-amber-500">2</div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="p-3 rounded-2xl bg-amber-100 text-amber-600">
+                        <i class="fas fa-map-marker-alt text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">Centroides Iniciales</h3>
+                </div>
+                <p class="text-sm text-slate-600">El proceso comienza seleccionando 'K' puntos aleatorios que servirán
+                    como los centros de los grupos.</p>
+
+                <div class="content-drawer">
+                    <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                        La ubicación inicial de estos centroides es crucial. Una mala elección puede llevar a resultados
+                        subóptimos. Técnicas modernas como <strong>K-Means++</strong> optimizan esta selección inicial.
+                    </p>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-amber-500 mr-2"></i> Selección de K inicial
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-amber-500 mr-2"></i> K-Means++ Algoritmo
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-amber-500 mr-2"></i> Puntos de Referencia
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 3: ASIGNACIÓN -->
+            <div class="relative p-8 rounded-3xl border-2 border-transparent bg-slate-50 cursor-pointer transition-all duration-300"
+                onclick="toggleStep(this, 'yellow')">
+                <div class="step-badge bg-yellow-500">3</div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="p-3 rounded-2xl bg-yellow-100 text-yellow-600">
+                        <i class="fas fa-compress-arrows-alt text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">Asignación de Puntos</h3>
+                </div>
+                <p class="text-sm text-slate-600">Cada dato del dataset se asigna al centroide más cercano, usualmente
+                    mediante distancia euclidiana.</p>
+
+                <div class="content-drawer">
+                    <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                        Se calcula la distancia matemática entre cada registro y todos los centroides. El registro pasa
+                        a formar parte del cluster cuyo centroide esté a la menor distancia posible.
+                    </p>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-yellow-600 mr-2"></i> Distancia Euclidiana
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-yellow-600 mr-2"></i> Partición de Voronoi
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-yellow-600 mr-2"></i> Pertenencia de Grupo
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 4: ACTUALIZACIÓN -->
+            <div class="relative p-8 rounded-3xl border-2 border-transparent bg-slate-50 cursor-pointer transition-all duration-300"
+                onclick="toggleStep(this, 'emerald')">
+                <div class="step-badge bg-emerald-500">4</div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="p-3 rounded-2xl bg-emerald-100 text-emerald-600">
+                        <i class="fas fa-sync-alt text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">Mover Centroides</h3>
+                </div>
+                <p class="text-sm text-slate-600">Una vez asignados los puntos, el centroide se recalcula moviéndose al
+                    centro promedio del grupo.</p>
+
+                <div class="content-drawer">
+                    <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                        El centroide se desplaza a la posición media (la media aritmética) de todos los puntos que le
+                        fueron asignados. Este paso refina la representatividad de cada cluster.
+                    </p>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-emerald-500 mr-2"></i> Recálculo de Medias
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-emerald-500 mr-2"></i> Optimización de Centro
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-emerald-500 mr-2"></i> Refinamiento de Cluster
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 5: CONVERGENCIA -->
+            <div class="relative p-8 rounded-3xl border-2 border-transparent bg-slate-50 cursor-pointer transition-all duration-300"
+                onclick="toggleStep(this, 'indigo')">
+                <div class="step-badge bg-indigo-500">5</div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="p-3 rounded-2xl bg-indigo-100 text-indigo-600">
+                        <i class="fas fa-flag-checkered text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">Convergencia</h3>
+                </div>
+                <p class="text-sm text-slate-600">El proceso de asignación y actualización se repite hasta que los
+                    centroides dejan de cambiar de posición.</p>
+
+                <div class="content-drawer">
+                    <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                        El algoritmo es iterativo. Se detiene cuando los clusters son estables o se alcanza un número
+                        máximo de iteraciones definido. En este punto, el error (WSS) se ha minimizado localmente.
+                    </p>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-indigo-500 mr-2"></i> Estabilidad de Grupos
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-indigo-500 mr-2"></i> Límite de Iteraciones
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-indigo-500 mr-2"></i> Mínimo Local
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 6: MÉTODO DEL CODO -->
+            <div class="relative p-8 rounded-3xl border-2 border-transparent bg-slate-50 cursor-pointer transition-all duration-300"
+                onclick="toggleStep(this, 'rose')">
+                <div class="step-badge bg-rose-500">6</div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="p-3 rounded-2xl bg-rose-100 text-rose-600">
+                        <i class="fas fa-chart-line text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">Elección de K</h3>
+                </div>
+                <p class="text-sm text-slate-600">¿Cuántos grupos necesito? El Método del Codo ayuda a encontrar el
+                    número óptimo de clusters.</p>
+
+                <div class="content-drawer">
+                    <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                        Se grafica la inercia frente al número de clusters. El "codo" de la gráfica indica el punto
+                        donde añadir más grupos deja de aportar una mejora significativa en la cohesión de los clusters.
+                    </p>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-rose-500 mr-2"></i> Inercia (WSS)
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-rose-500 mr-2"></i> Optimización de K
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-rose-500 mr-2"></i> Análisis de Silueta
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 7: ESCALABILIDAD -->
+            <div class="relative p-8 rounded-3xl border-2 border-transparent bg-slate-50 cursor-pointer transition-all duration-300 lg:col-span-1"
+                onclick="toggleStep(this, 'cyan')">
+                <div class="step-badge bg-cyan-500">7</div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="p-3 rounded-2xl bg-cyan-100 text-cyan-600">
+                        <i class="fas fa-expand-arrows-alt text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">Escalabilidad</h3>
+                </div>
+                <p class="text-sm text-slate-600">Eficiencia computacional para manejar millones de datos en tiempo
+                    récord.</p>
+
+                <div class="content-drawer">
+                    <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                        K-Means es linealmente escalable. Variantes como <strong>Mini-Batch K-Means</strong> permiten
+                        procesar conjuntos de datos masivos usando pequeñas muestras aleatorias, reduciendo
+                        drásticamente el tiempo de cómputo.
+                    </p>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-cyan-500 mr-2"></i> Complejidad O(n)
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-cyan-500 mr-2"></i> Mini-Batch Processing
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-cyan-500 mr-2"></i> Eficiencia en Memoria
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- POR QUÉ ELEGIR K-MEANS -->
+            <div
+                class="lg:col-span-2 bg-slate-900 rounded-[2rem] p-10 text-white flex flex-col justify-center items-center text-center shadow-2xl relative overflow-hidden">
+                <div class="absolute top-0 right-0 p-10 opacity-10">
+                    <i class="fas fa-project-diagram text-[150px]"></i>
+                </div>
+                <h2 class="text-3xl font-bold mb-4 relative z-10">Valor de K-Means</h2>
+                <p class="text-slate-400 text-sm mb-8 max-w-lg relative z-10">
+                    Es la herramienta fundamental para la <strong>Segmentación de Clientes</strong>, compresión de
+                    imágenes y detección de anomalías. Su simplicidad y rapidez lo convierten en el primer paso para
+                    cualquier análisis exploratorio de datos.
+                </p>
+                <div class="flex flex-wrap gap-4 justify-center relative z-10">
+                    <span class="px-5 py-2 bg-white/10 rounded-xl text-xs font-mono border border-white/20">Segmentación
+                        Rápida</span>
+                    <span
+                        class="px-5 py-2 bg-white/10 rounded-xl text-xs font-mono border border-white/20">Escalabilidad
+                        Masiva</span>
+                    <span class="px-5 py-2 bg-white/10 rounded-xl text-xs font-mono border border-white/20">Fácil
+                        Interpretación</span>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- FOOTER -->
+        <footer class="mt-20 pt-8 border-t border-slate-200 text-center text-slate-400 text-xs">
+            <p>© 2024 Guía de Algoritmos • K-Means Clustering: El Arte de Encontrar el Orden en el Caos</p>
+        </footer>
+    </div>
+
+    <script>
+        function toggleStep(element, color) {
+            // Si ya está activo, lo cerramos
+            if (element.classList.contains('card-active')) {
+                element.classList.remove('card-active');
+                element.style.borderColor = 'transparent';
+                return;
+            }
+
+            // Cerramos otros
+            document.querySelectorAll('.card-active').forEach(card => {
+                card.classList.remove('card-active');
+                card.style.borderColor = 'transparent';
+            });
+
+            // Abrimos el actual
+            element.classList.add('card-active');
+
+            // Colores dinámicos para el borde (basados en Tailwind)
+            const colorMap = {
+                orange: '#ea580c',
+                amber: '#f59e0b',
+                yellow: '#eab308',
+                emerald: '#10b981',
+                indigo: '#6366f1',
+                rose: '#f43f5e',
+                cyan: '#06b6d4'
+            };
+            element.style.borderColor = colorMap[color];
+        }
+    </script>
+</body>
+
+</html>

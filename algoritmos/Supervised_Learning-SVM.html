@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Algoritmo SVM (Support Vector Machines)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+
+        .card-active {
+            background-color: white !important;
+            transform: scale(1.02);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            z-index: 20;
+        }
+
+        .content-drawer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out, opacity 0.3s ease;
+            opacity: 0;
+        }
+
+        .card-active .content-drawer {
+            max-height: 500px;
+            opacity: 1;
+            margin-top: 1.5rem;
+        }
+
+        .step-badge {
+            position: absolute;
+            top: -1rem;
+            left: -1rem;
+            width: 2.5rem;
+            height: 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 9999px;
+            color: white;
+            font-weight: 800;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+
+<body class="text-slate-800 p-4 md:p-10">
+
+    <div class="max-w-6xl mx-auto">
+        <!-- HEADER -->
+        <header class="text-center mb-16">
+            <div class="inline-flex items-center px-4 py-2 bg-violet-600 text-white rounded-full mb-6 shadow-lg">
+                <i class="fas fa-vector-square mr-2"></i>
+                <span class="text-xs font-bold uppercase tracking-widest">Modelos de Clasificación y Regresión</span>
+            </div>
+            <h1 class="text-4xl md:text-6xl font-black text-slate-900 mb-6 tracking-tight">
+                Máquinas de Vectores de <span class="text-violet-600">Soporte</span>
+            </h1>
+            <p class="text-slate-500 text-lg max-w-3xl mx-auto leading-relaxed">
+                SVM es un algoritmo de aprendizaje supervisado extremadamente potente que busca encontrar el límite de
+                decisión óptimo para separar clases con la mayor precisión posible.
+            </p>
+        </header>
+
+        <!-- INFO BANNER -->
+        <div class="bg-violet-50 border-l-4 border-violet-500 p-4 mb-12 rounded-r-xl flex items-center gap-4">
+            <i class="fas fa-info-circle text-violet-500 text-xl"></i>
+            <p class="text-sm text-violet-800"><strong>Guía del Algoritmo:</strong> Haz clic en cada tarjeta para
+                explorar la geometría de los datos y cómo SVM gestiona la separación en espacios de alta dimensión.</p>
+        </div>
+
+        <!-- GRID DE PASOS -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 relative">
+
+            <!-- STEP 1: HIPERPLANO DE SEPARACIÓN -->
+            <div class="relative p-8 rounded-3xl border-2 border-transparent bg-slate-50 cursor-pointer transition-all duration-300 card-active"
+                onclick="toggleStep(this, 'violet')">
+                <div class="step-badge bg-violet-600">1</div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="p-3 rounded-2xl bg-violet-100 text-violet-600">
+                        <i class="fas fa-minus text-2xl rotate-45"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">Hiperplano</h3>
+                </div>
+                <p class="text-sm text-slate-600">El objetivo principal: encontrar una frontera (línea, plano o
+                    hiperplano) que separe perfectamente las clases.</p>
+
+                <div class="content-drawer">
+                    <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                        En un espacio de 2D es una línea, en 3D un plano, y en dimensiones superiores se denomina
+                        hiperplano. SVM busca aquel que divida los datos de manera óptima según sus etiquetas.
+                    </p>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-violet-500 mr-2"></i> Límite de Decisión
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-violet-500 mr-2"></i> Separación Geométrica
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-violet-500 mr-2"></i> Clasificación Lineal
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 2: MARGEN MÁXIMO -->
+            <div class="relative p-8 rounded-3xl border-2 border-transparent bg-slate-50 cursor-pointer transition-all duration-300"
+                onclick="toggleStep(this, 'indigo')">
+                <div class="step-badge bg-indigo-500">2</div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="p-3 rounded-2xl bg-indigo-100 text-indigo-600">
+                        <i class="fas fa-arrows-alt-h text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">Margen Máximo</h3>
+                </div>
+                <p class="text-sm text-slate-600">SVM no solo separa; busca la calle más ancha posible entre las clases
+                    para maximizar la seguridad.</p>
+
+                <div class="content-drawer">
+                    <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                        El margen es la distancia entre el hiperplano y los puntos más cercanos de cada clase. Al
+                        maximizar este margen, el modelo se vuelve más robusto y generaliza mejor ante datos nuevos.
+                    </p>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-indigo-500 mr-2"></i> Maximizador de Distancia
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-indigo-500 mr-2"></i> Robustez Predictiva
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-indigo-500 mr-2"></i> Zona de Seguridad
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 3: VECTORES DE SOPORTE -->
+            <div class="relative p-8 rounded-3xl border-2 border-transparent bg-slate-50 cursor-pointer transition-all duration-300"
+                onclick="toggleStep(this, 'purple')">
+                <div class="step-badge bg-purple-500">3</div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="p-3 rounded-2xl bg-purple-100 text-purple-600">
+                        <i class="fas fa-crosshairs text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">Vectores de Soporte</h3>
+                </div>
+                <p class="text-sm text-slate-600">Los puntos de datos críticos que tocan el margen y definen la posición
+                    del hiperplano.</p>
+
+                <div class="content-drawer">
+                    <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                        Son los ejemplos más difíciles de clasificar. Si eliminas estos puntos, el hiperplano cambiaría
+                        de posición. El algoritmo se llama así porque solo depende de estos "vectores" clave.
+                    </p>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-purple-500 mr-2"></i> Puntos de Influencia
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-purple-500 mr-2"></i> Definición de Frontera
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-purple-500 mr-2"></i> Eficiencia en Datos
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 4: TRUCO DEL KERNEL -->
+            <div class="relative p-8 rounded-3xl border-2 border-transparent bg-slate-50 cursor-pointer transition-all duration-300"
+                onclick="toggleStep(this, 'fuchsia')">
+                <div class="step-badge bg-fuchsia-500">4</div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="p-3 rounded-2xl bg-fuchsia-100 text-fuchsia-600">
+                        <i class="fas fa-magic text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">El Truco del Kernel</h3>
+                </div>
+                <p class="text-sm text-slate-600">La capacidad de transformar datos no lineales en un espacio superior
+                    donde sí son separables.</p>
+
+                <div class="content-drawer">
+                    <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                        Cuando los datos están mezclados, el Kernel proyecta los datos a una dimensión mayor (ej. de 2D
+                        a 3D) para encontrar un plano que los separe. Existen Kernels Lineales, Polinómicos y RBF.
+                    </p>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-fuchsia-500 mr-2"></i> Transformación Dimensional
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-fuchsia-500 mr-2"></i> Manejo de No-Linealidad
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-fuchsia-500 mr-2"></i> RBF / Polinómico
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 5: PARÁMETRO C (REGULARIZACIÓN) -->
+            <div class="relative p-8 rounded-3xl border-2 border-transparent bg-slate-50 cursor-pointer transition-all duration-300"
+                onclick="toggleStep(this, 'rose')">
+                <div class="step-badge bg-rose-500">5</div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="p-3 rounded-2xl bg-rose-100 text-rose-600">
+                        <i class="fas fa-balance-scale text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">Parámetro C</h3>
+                </div>
+                <p class="text-sm text-slate-600">Controla el equilibrio entre maximizar el margen y minimizar los
+                    errores de clasificación.</p>
+
+                <div class="content-drawer">
+                    <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                        Un <strong>C pequeño</strong> prioriza un margen más ancho (más errores permitidos). Un
+                        <strong>C grande</strong> prioriza clasificar todo correctamente (margen más estrecho),
+                        arriesgando sobreajuste.
+                    </p>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-rose-500 mr-2"></i> Margen Blando (Soft Margin)
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-rose-500 mr-2"></i> Control de Overfitting
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-rose-500 mr-2"></i> Penalización de Errores
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 6: PARÁMETRO GAMMA -->
+            <div class="relative p-8 rounded-3xl border-2 border-transparent bg-slate-50 cursor-pointer transition-all duration-300"
+                onclick="toggleStep(this, 'pink')">
+                <div class="step-badge bg-pink-500">6</div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="p-3 rounded-2xl bg-pink-100 text-pink-600">
+                        <i class="fas fa-bullseye text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">Parámetro Gamma</h3>
+                </div>
+                <p class="text-sm text-slate-600">Específico para Kernels como RBF; define hasta qué distancia llega la
+                    influencia de un punto.</p>
+
+                <div class="content-drawer">
+                    <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                        <strong>Gamma alto</strong> hace que solo los puntos cercanos influyan (límite muy ajustado).
+                        <strong>Gamma bajo</strong> hace que los puntos lejanos también influyan (límite más suave y
+                        genérico).
+                    </p>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-pink-500 mr-2"></i> Radio de Influencia
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-pink-500 mr-2"></i> Definición de Curvatura
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-pink-500 mr-2"></i> Ajuste Local vs Global
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 7: SVM MULTICLASE -->
+            <div class="relative p-8 rounded-3xl border-2 border-transparent bg-slate-50 cursor-pointer transition-all duration-300 lg:col-span-1"
+                onclick="toggleStep(this, 'slate')">
+                <div class="step-badge bg-slate-600">7</div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="p-3 rounded-2xl bg-slate-200 text-slate-700">
+                        <i class="fas fa-layer-group text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">Multiclase & SVR</h3>
+                </div>
+                <p class="text-sm text-slate-600">Extensión para clasificar múltiples etiquetas y su aplicación para
+                    problemas de Regresión (SVR).</p>
+
+                <div class="content-drawer">
+                    <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                        Aunque es nativamente binario, usa técnicas como <strong>One-vs-One</strong> para manejar
+                        múltiples clases. Además, el <strong>Support Vector Regression (SVR)</strong> aplica la misma
+                        lógica para predecir valores continuos.
+                    </p>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-slate-600 mr-2"></i> Estrategia OvO / OvR
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-slate-600 mr-2"></i> Support Vector Regression
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-slate-600 mr-2"></i> Flexibilidad de Modelo
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- POR QUÉ ELEGIR SVM -->
+            <div
+                class="lg:col-span-2 bg-slate-900 rounded-[2rem] p-10 text-white flex flex-col justify-center items-center text-center shadow-2xl relative overflow-hidden">
+                <div class="absolute top-0 right-0 p-10 opacity-10">
+                    <i class="fas fa-atom text-[150px]"></i>
+                </div>
+                <h2 class="text-3xl font-bold mb-4 relative z-10">Valor de las SVM</h2>
+                <p class="text-slate-400 text-sm mb-8 max-w-lg relative z-10">
+                    SVM es excepcional para datos de alta dimensión (cuando tienes muchas columnas) y conjuntos de datos
+                    pequeños pero complejos. Su base matemática sólida ofrece una frontera de decisión muy clara y
+                    eficiente en memoria.
+                </p>
+                <div class="flex flex-wrap gap-4 justify-center relative z-10">
+                    <span class="px-5 py-2 bg-white/10 rounded-xl text-xs font-mono border border-white/20">Alta
+                        Dimensión</span>
+                    <span class="px-5 py-2 bg-white/10 rounded-xl text-xs font-mono border border-white/20">Precisión
+                        Quirúrgica</span>
+                    <span class="px-5 py-2 bg-white/10 rounded-xl text-xs font-mono border border-white/20">Kernel
+                        Magic</span>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- FOOTER -->
+        <footer class="mt-20 pt-8 border-t border-slate-200 text-center text-slate-400 text-xs">
+            <p>© 2024 Guía de Algoritmos • Máquinas de Vectores de Soporte: La Geometría de la Inteligencia</p>
+        </footer>
+    </div>
+
+    <script>
+        function toggleStep(element, color) {
+            if (element.classList.contains('card-active')) {
+                element.classList.remove('card-active');
+                element.style.borderColor = 'transparent';
+                return;
+            }
+
+            document.querySelectorAll('.card-active').forEach(card => {
+                card.classList.remove('card-active');
+                card.style.borderColor = 'transparent';
+            });
+
+            element.classList.add('card-active');
+
+            const colorMap = {
+                violet: '#7c3aed',
+                indigo: '#6366f1',
+                purple: '#a855f7',
+                fuchsia: '#d946ef',
+                rose: '#f43f5e',
+                pink: '#ec4899',
+                slate: '#475569'
+            };
+            element.style.borderColor = colorMap[color];
+        }
+    </script>
+</body>
+
+</html>
