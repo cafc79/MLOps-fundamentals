@@ -136,8 +136,6 @@ Secuencial
 Contextual
 Dinámico
 
-© 2024 Guía de Algoritmos • Redes Neuronales Recurrentes: Memoria en Movimiento
-
 > [* Prev *](Deep_Learning-CNN.md "Redes Neuronales Convuncionales")
 > [* Practica - Redes Neuronales Recurrentes *](Sample/Deep_Learning-RNN.md)
 > [* Codigo - Redes Neuronales Recurrentes *](Code/Deep_Learning-RNN.md)
