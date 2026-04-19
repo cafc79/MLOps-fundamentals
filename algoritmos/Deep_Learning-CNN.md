@@ -1,10 +1,6 @@
-Algoritmo CNN (Convolutional Neural Networks)
+# Algoritmo CNN (Convolutional Neural Networks)
 
-
-
-Deep Learning / Computer Vision
-
-# Redes Neuronales Convolucionales
+# Deep Learning / Computer Vision
 
 Las CNN son arquitecturas especializadas en procesar datos con estructura de cuadrícula, como imágenes.
 Su capacidad para extraer patrones espaciales las hace el estándar para el reconocimiento de objetos y
