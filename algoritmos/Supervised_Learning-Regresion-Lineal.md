@@ -139,7 +139,7 @@ Tendencias
 Claras
 
 > [* Prev *](../docs/MLOps.md "Arquitectura de Modelos")
-> [* Practica - Regresion Lineal *](Sample/Supervised_Learning-Regresion_Lineal.md)
-> [* Codigo - Regresion Lineal *](Code/Supervised_Learning-Regresion_Lineal.md)
-> [* Algoritmo - Regresion Logistica *](algoritmos/Supervised_Learning-Regresion_Logistica.md)
+> [* Practica - Regresion Lineal *](../Sample/Supervised_Learning-Regresion_Lineal.md)
+> [* Codigo - Regresion Lineal *](../Code/Supervised_Learning-Regresion_Lineal.md)
+> [* Algoritmo - Regresion Logistica *](Supervised_Learning-Regresion_Logistica.md)
 ---
