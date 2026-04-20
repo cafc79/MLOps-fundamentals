@@ -71,5 +71,5 @@ No hay un algoritmo "mejor" para todo. La elección depende de la cantidad de da
 `01. Definir` → `02. Probar` → **`03. Iterar`**
 
 > [* Prev *](MLOps.md "Arquitectura de Modelos")
-> [* Algoritmo - Regresion Lineal *](algoritmos/Supervised_Learning-Regresion_Lineal.md "Regresion Lineal")
+> [* Algoritmo - Regresion Lineal *](../algoritmos/Supervised_Learning-Regresion_Lineal.md "Regresion Lineal")
 ---
