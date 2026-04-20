@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Caso Práctico: KNN en Recomendaciones</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+
+        .card-active {
+            background-color: white !important;
+            transform: scale(1.02);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            z-index: 20;
+        }
+
+        .content-drawer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out, opacity 0.3s ease;
+            opacity: 0;
+        }
+
+        .card-active .content-drawer {
+            max-height: 500px;
+            opacity: 1;
+            margin-top: 1.5rem;
+        }
+
+        .step-badge {
+            position: absolute;
+            top: -1rem;
+            left: -1rem;
+            width: 2.5rem;
+            height: 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 9999px;
+            color: white;
+            font-weight: 800;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+
+<body class="text-slate-800 p-4 md:p-10">
+
+    <div class="max-w-6xl mx-auto">
+        <!-- HEADER -->
+        <header class="text-center mb-16">
+            <div class="inline-flex items-center px-4 py-2 bg-cyan-600 text-white rounded-full mb-6 shadow-lg">
+                <i class="fas fa-shopping-bag mr-2"></i>
+                <span class="text-xs font-bold uppercase tracking-widest">Caso Real: Recomendación por Similitud</span>
+            </div>
+            <h1 class="text-4xl md:text-6xl font-black text-slate-900 mb-6 tracking-tight">
+                Personalización con <span class="text-cyan-600">KNN</span>
+            </h1>
+            <p class="text-slate-500 text-lg max-w-3xl mx-auto leading-relaxed">
+                ¿Qué producto debería sugerirle a este nuevo cliente? KNN encuentra a los usuarios más "parecidos" en
+                nuestra base de datos para predecir qué artículos le interesarán, basándose en la premisa de que
+                clientes con gustos similares compran cosas similares.
+            </p>
+        </header>
+
+        <!-- INFO BANNER -->
+        <div class="bg-cyan-50 border-l-4 border-cyan-500 p-4 mb-12 rounded-r-xl flex items-center gap-4">
+            <i class="fas fa-users-viewfinder text-cyan-500 text-xl"></i>
+            <p class="text-sm text-cyan-800"><strong>Guía de Negocio:</strong> Haz clic en cada etapa para entender cómo
+                transformamos coordenadas matemáticas en sugerencias de compra altamente efectivas.</p>
+        </div>
+
+        <!-- GRID DE PASOS -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 relative">
+
+            <!-- STEP 1: DEFINICIÓN DE SIMILITUD -->
+            <div class="relative p-8 rounded-3xl border-2 border-transparent bg-slate-50 cursor-pointer transition-all duration-300 card-active"
+                onclick="toggleStep(this, 'cyan')">
+                <div class="step-badge bg-cyan-600">1</div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="p-3 rounded-2xl bg-cyan-100 text-cyan-600">
+                        <i class="fas fa-user-friends text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">Criterio de Vecindad</h3>
+                </div>
+                <p class="text-sm text-slate-600">Identificamos qué hace que dos clientes sean "vecinos" en nuestro
+                    espacio digital.</p>
+
+                <div class="content-drawer">
+                    <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                        Analizamos el historial de 50,000 usuarios. No buscamos amigos, buscamos "gemelos estadísticos":
+                        personas que compran en las mismas categorías, a las mismas horas y con tickets promedio
+                        similares.
+                    </p>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-cyan-500 mr-2"></i> Perfil de Usuario 360°
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-cyan-500 mr-2"></i> Mapeo de Comportamiento
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-cyan-500 mr-2"></i> Segmentación Dinámica
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 2: ATRIBUTOS DE COMPARACIÓN -->
+            <div class="relative p-8 rounded-3xl border-2 border-transparent bg-slate-50 cursor-pointer transition-all duration-300"
+                onclick="toggleStep(this, 'teal')">
+                <div class="step-badge bg-teal-500">2</div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="p-3 rounded-2xl bg-teal-100 text-teal-600">
+                        <i class="fas fa-list-ul text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">Variables de Perfil</h3>
+                </div>
+                <p class="text-sm text-slate-600">Elegimos las características numéricas que nos permitirán calcular
+                    distancias matemáticas.</p>
+
+                <div class="content-drawer">
+                    <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                        Consideramos: Edad, Frecuencia de compra (mensual), Gasto promedio por pedido y afinidad por
+                        categorías (0-1). Estos datos se convierten en las "coordenadas" del cliente en nuestro mapa de
+                        mercado.
+                    </p>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-teal-500 mr-2"></i> Recencia de Compra
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-teal-500 mr-2"></i> Valor de Vida (CLV)
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-teal-500 mr-2"></i> Datos Demográficos
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 3: ESCALADO OBLIGATORIO -->
+            <div class="relative p-8 rounded-3xl border-2 border-transparent bg-slate-50 cursor-pointer transition-all duration-300"
+                onclick="toggleStep(this, 'blue')">
+                <div class="step-badge bg-blue-500">3</div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="p-3 rounded-2xl bg-blue-100 text-blue-600">
+                        <i class="fas fa-compress-arrows-alt text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">Normalización</h3>
+                </div>
+                <p class="text-sm text-slate-600">Crucial: Ajustamos todas las variables para que tengan el mismo peso
+                    en la recomendación.</p>
+
+                <div class="content-drawer">
+                    <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                        Sin esto, el algoritmo creería que el "Salario" es 1000 veces más importante que la "Frecuencia
+                        de compra" solo por tener números más grandes. Llevamos todo a una escala de 0 a 1 para una
+                        comparación justa.
+                    </p>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-blue-500 mr-2"></i> Equilibrio de Atributos
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-blue-500 mr-2"></i> Min-Max Scaling
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-blue-500 mr-2"></i> Precisión de Distancia
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 4: CÁLCULO DE DISTANCIA -->
+            <div class="relative p-8 rounded-3xl border-2 border-transparent bg-slate-50 cursor-pointer transition-all duration-300"
+                onclick="toggleStep(this, 'indigo')">
+                <div class="step-badge bg-indigo-500">4</div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="p-3 rounded-2xl bg-indigo-100 text-indigo-600">
+                        <i class="fas fa-ruler-combined text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">Métrica Euclidiana</h3>
+                </div>
+                <p class="text-sm text-slate-600">El algoritmo mide la "línea recta" imaginaria entre nuestro cliente y
+                    todos los demás.</p>
+
+                <div class="content-drawer">
+                    <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                        KNN calcula instantáneamente qué tan lejos está el perfil actual de cada registro histórico. Los
+                        clientes con la distancia más corta son declarados los "Vecinos más Cercanos" y son la base de
+                        la sugerencia.
+                    </p>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-indigo-500 mr-2"></i> Proximidad Matemática
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-indigo-500 mr-2"></i> Identificación de Patrones
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-indigo-500 mr-2"></i> Clasificación Espacial
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 5: SELECCIÓN DEL VALOR K -->
+            <div class="relative p-8 rounded-3xl border-2 border-transparent bg-slate-50 cursor-pointer transition-all duration-300"
+                onclick="toggleStep(this, 'orange')">
+                <div class="step-badge bg-orange-500">5</div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="p-3 rounded-2xl bg-orange-100 text-orange-600">
+                        <i class="fas fa-hashtag text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">El Número K</h3>
+                </div>
+                <p class="text-sm text-slate-600">Decidimos cuántos vecinos consultaremos (ej. K=5) para generar la
+                    recomendación final.</p>
+
+                <div class="content-drawer">
+                    <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                        Si K es muy pequeño (1), somos vulnerables a excepciones extrañas. Si es muy grande (100), la
+                        recomendación se vuelve genérica. Con un K=5 bien ajustado, capturamos el nicho perfecto del
+                        usuario.
+                    </p>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-orange-500 mr-2"></i> Optimización de Hiperparámetro
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-orange-500 mr-2"></i> Balance de Sesgo-Varianza
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-orange-500 mr-2"></i> Validación Técnica
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 6: ACCIÓN DE RECOMENDACIÓN -->
+            <div class="relative p-8 rounded-3xl border-2 border-transparent bg-slate-50 cursor-pointer transition-all duration-300"
+                onclick="toggleStep(this, 'emerald')">
+                <div class="step-badge bg-emerald-500">6</div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="p-3 rounded-2xl bg-emerald-100 text-emerald-600">
+                        <i class="fas fa-star text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">Voto de Preferencia</h3>
+                </div>
+                <p class="text-sm text-slate-600">Analizamos qué compraron esos 5 vecinos que nuestro cliente actual aún
+                    no tiene.</p>
+
+                <div class="content-drawer">
+                    <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                        Si 4 de los 5 vecinos compraron una "Cámara Pro", el sistema asume que el cliente actual también
+                        la querrá. Es una recomendación basada en la "experiencia prestada" de otros usuarios similares.
+                    </p>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-emerald-500 mr-2"></i> Votación por Mayoría
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-emerald-500 mr-2"></i> Filtrado Colaborativo
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-emerald-500 mr-2"></i> Salida Personalizada
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 7: RESULTADO DE NEGOCIO -->
+            <div class="relative p-8 rounded-3xl border-2 border-transparent bg-slate-50 cursor-pointer transition-all duration-300 lg:col-span-1"
+                onclick="toggleStep(this, 'rose')">
+                <div class="step-badge bg-rose-500">7</div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="p-3 rounded-2xl bg-rose-100 text-rose-600">
+                        <i class="fas fa-chart-line text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">Aumento de Conversión</h3>
+                </div>
+                <p class="text-sm text-slate-600">Medimos el éxito mediante el incremento en el CTR y las ventas por
+                    sugerencia.</p>
+
+                <div class="content-drawer">
+                    <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                        Al implementar KNN, la relevancia de los anuncios subió un 25%. El cliente siente que la tienda
+                        "lo conoce", lo que reduce la fricción de búsqueda y maximiza el valor del carrito de compra de
+                        forma orgánica.
+                    </p>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-rose-500 mr-2"></i> ROI de Datos
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-rose-500 mr-2"></i> Fidelización de Cliente
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-rose-500 mr-2"></i> Personalización de Escala
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VALOR DE NEGOCIO CARD -->
+            <div
+                class="lg:col-span-2 bg-slate-900 rounded-[2rem] p-10 text-white flex flex-col justify-center items-center text-center shadow-2xl relative overflow-hidden border border-cyan-900/30">
+                <div class="absolute top-0 right-0 p-10 opacity-10">
+                    <i class="fas fa-vector-square text-[150px]"></i>
+                </div>
+                <h2 class="text-3xl font-bold mb-4 relative z-10 text-cyan-400">La Inteligencia del "Parezco"</h2>
+                <p class="text-slate-400 text-sm mb-8 max-w-lg relative z-10 leading-relaxed">
+                    KNN es el algoritmo más humano de todos porque replica cómo tomamos decisiones: <strong>preguntando
+                        a quienes son como nosotros</strong>. No necesita modelos matemáticos complejos de entender,
+                    solo un buen mapa de proximidad.
+                </p>
+                <div class="flex flex-wrap gap-4 justify-center relative z-10">
+                    <span
+                        class="px-5 py-2 bg-white/10 rounded-xl text-xs font-mono border border-white/20">Intuitivo</span>
+                    <span class="px-5 py-2 bg-white/10 rounded-xl text-xs font-mono border border-white/20">Sin
+                        Entrenamiento</span>
+                    <span class="px-5 py-2 bg-white/10 rounded-xl text-xs font-mono border border-white/20">Basado en
+                        Datos</span>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- FOOTER -->
+        <footer class="mt-20 pt-8 border-t border-slate-200 text-center text-slate-400 text-xs pb-12">
+            <p>© 2024 Laboratorio de Ciencia de Datos • Caso Práctico: Recomendador de Retail con KNN</p>
+        </footer>
+    </div>
+
+    <script>
+        function toggleStep(element, color) {
+            if (element.classList.contains('card-active')) {
+                element.classList.remove('card-active');
+                element.style.borderColor = 'transparent';
+                return;
+            }
+
+            document.querySelectorAll('.card-active').forEach(card => {
+                card.classList.remove('card-active');
+                card.style.borderColor = 'transparent';
+            });
+
+            element.classList.add('card-active');
+
+            const colorMap = {
+                cyan: '#0891b2',
+                teal: '#0d9488',
+                blue: '#2563eb',
+                indigo: '#4f46e5',
+                orange: '#ea580c',
+                emerald: '#059669',
+                rose: '#e11d48'
+            };
+            element.style.borderColor = colorMap[color];
+        }
+    </script>
+</body>
+
+</html>

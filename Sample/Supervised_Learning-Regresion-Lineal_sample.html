@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ejemplo Práctico: Regresión Lineal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+
+        .card-active {
+            background-color: white !important;
+            transform: scale(1.02);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            z-index: 20;
+        }
+
+        .content-drawer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out, opacity 0.3s ease;
+            opacity: 0;
+        }
+
+        .card-active .content-drawer {
+            max-height: 500px;
+            opacity: 1;
+            margin-top: 1.5rem;
+        }
+
+        .step-badge {
+            position: absolute;
+            top: -1rem;
+            left: -1rem;
+            width: 2.5rem;
+            height: 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 9999px;
+            color: white;
+            font-weight: 800;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+
+<body class="text-slate-800 p-4 md:p-10">
+
+    <div class="max-w-6xl mx-auto">
+        <!-- HEADER -->
+        <header class="text-center mb-16">
+            <div class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-full mb-6 shadow-lg">
+                <i class="fas fa-home mr-2"></i>
+                <span class="text-xs font-bold uppercase tracking-widest">Caso de Uso: Real Estate Analytics</span>
+            </div>
+            <h1 class="text-4xl md:text-6xl font-black text-slate-900 mb-6 tracking-tight">
+                Predicción con <span class="text-blue-600">Regresión Lineal</span>
+            </h1>
+            <p class="text-slate-500 text-lg max-w-3xl mx-auto leading-relaxed">
+                Acompaña el proceso de creación de un modelo que estima el precio de una propiedad basándose en su
+                tamaño. Un flujo de trabajo desde el dato crudo hasta la toma de decisión financiera.
+            </p>
+        </header>
+
+        <!-- INFO BANNER -->
+        <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-12 rounded-r-xl flex items-center gap-4">
+            <i class="fas fa-info-circle text-blue-500 text-xl"></i>
+            <p class="text-sm text-blue-800"><strong>Guía del Proyecto:</strong> Haz clic en cada fase para ver las
+                tareas técnicas realizadas en este ejemplo de predicción inmobiliaria.</p>
+        </div>
+
+        <!-- GRID DE PASOS -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 relative">
+
+            <!-- STEP 1: EXPLORACIÓN -->
+            <div class="relative p-8 rounded-3xl border-2 border-transparent bg-slate-50 cursor-pointer transition-all duration-300 card-active"
+                onclick="toggleStep(this, 'blue')">
+                <div class="step-badge bg-blue-600">1</div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="p-3 rounded-2xl bg-blue-100 text-blue-600">
+                        <i class="fas fa-search-dollar text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">Exploración (EDA)</h3>
+                </div>
+                <p class="text-sm text-slate-600">Analizamos el dataset de 500 viviendas para confirmar si hay una
+                    tendencia lineal evidente.</p>
+
+                <div class="content-drawer">
+                    <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                        Creamos un gráfico de dispersión (scatter plot). Observamos que a medida que aumentan los m², el
+                        precio sube de forma constante. La correlación es de 0.85, lo que valida el uso de una regresión
+                        lineal.
+                    </p>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-blue-500 mr-2"></i> Visualización de tendencia
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-blue-500 mr-2"></i> Cálculo de correlación
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-blue-500 mr-2"></i> Identificación de Outliers
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 2: PREPARACIÓN -->
+            <div class="relative p-8 rounded-3xl border-2 border-transparent bg-slate-50 cursor-pointer transition-all duration-300"
+                onclick="toggleStep(this, 'cyan')">
+                <div class="step-badge bg-cyan-500">2</div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="p-3 rounded-2xl bg-cyan-100 text-cyan-600">
+                        <i class="fas fa-broom text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">Preprocesamiento</h3>
+                </div>
+                <p class="text-sm text-slate-600">Limpiamos los datos para que el modelo no se confunda con valores
+                    nulos o escalas extrañas.</p>
+
+                <div class="content-drawer">
+                    <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                        Eliminamos registros sin precio y aplicamos <strong>Escalado Estándar</strong>. Aunque la
+                        regresión lineal simple no lo exige estrictamente, ayuda a la convergencia si usáramos gradiente
+                        descendente.
+                    </p>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-cyan-500 mr-2"></i> Imputación de nulos
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-cyan-500 mr-2"></i> Estandarización de m²
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-cyan-500 mr-2"></i> División Train/Test (80/20)
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 3: DEFINICIÓN -->
+            <div class="relative p-8 rounded-3xl border-2 border-transparent bg-slate-50 cursor-pointer transition-all duration-300"
+                onclick="toggleStep(this, 'indigo')">
+                <div class="step-badge bg-indigo-500">3</div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="p-3 rounded-2xl bg-indigo-100 text-indigo-600">
+                        <i class="fas fa-calculator text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">El Modelo</h3>
+                </div>
+                <p class="text-sm text-slate-600">Planteamos la hipótesis: Precio = β₀ + β₁ * (Metros Cuadrados).</p>
+
+                <div class="content-drawer">
+                    <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                        Definimos que el "Precio" es nuestra variable objetivo ($Y$) y los "Metros Cuadrados" nuestra
+                        característica ($X$). El modelo buscará cuánto vale cada metro cuadrado extra (β₁) y el precio
+                        base (β₀).
+                    </p>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-indigo-500 mr-2"></i> Selección de Target
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-indigo-500 mr-2"></i> Configuración de Hipótesis
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-indigo-500 mr-2"></i> Inicialización de Pesos
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 4: ENTRENAMIENTO -->
+            <div class="relative p-8 rounded-3xl border-2 border-transparent bg-slate-50 cursor-pointer transition-all duration-300"
+                onclick="toggleStep(this, 'blue')">
+                <div class="step-badge bg-blue-500">4</div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="p-3 rounded-2xl bg-blue-100 text-blue-600">
+                        <i class="fas fa-dumbbell text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">Ajuste (Fit)</h3>
+                </div>
+                <p class="text-sm text-slate-600">El algoritmo ajusta la línea de mejor ajuste usando los datos de
+                    entrenamiento.</p>
+
+                <div class="content-drawer">
+                    <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                        Se aplica Mínimos Cuadrados Ordinarios (OLS). El algoritmo encuentra que β₀ = $50k y β₁ = $1.2k.
+                        Esto significa que cada m² aumenta el valor en $1,200 sobre una base de $50,000.
+                    </p>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-blue-500 mr-2"></i> Minimización de residuos
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-blue-500 mr-2"></i> Cálculo de coeficientes
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-blue-500 mr-2"></i> Optimización OLS
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 5: EVALUACIÓN -->
+            <div class="relative p-8 rounded-3xl border-2 border-transparent bg-slate-50 cursor-pointer transition-all duration-300"
+                onclick="toggleStep(this, 'rose')">
+                <div class="step-badge bg-rose-500">5</div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="p-3 rounded-2xl bg-rose-100 text-rose-600">
+                        <i class="fas fa-chart-line text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">Evaluación</h3>
+                </div>
+                <p class="text-sm text-slate-600">Probamos el modelo con datos que nunca vio para medir su precisión
+                    real.</p>
+
+                <div class="content-drawer">
+                    <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                        Obtenemos un <strong>R² de 0.82</strong>. Esto indica que el tamaño de la casa explica el 82% de
+                        la variación del precio. El error promedio (MAE) es de +/- $15,000.
+                    </p>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-rose-500 mr-2"></i> R² Score: 0.82
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-rose-500 mr-2"></i> MAE: $15k de error
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-rose-500 mr-2"></i> Análisis de Residuos
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 6: VALIDACIÓN -->
+            <div class="relative p-8 rounded-3xl border-2 border-transparent bg-slate-50 cursor-pointer transition-all duration-300"
+                onclick="toggleStep(this, 'amber')">
+                <div class="step-badge bg-amber-500">6</div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="p-3 rounded-2xl bg-amber-100 text-amber-600">
+                        <i class="fas fa-clipboard-check text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">Supuestos</h3>
+                </div>
+                <p class="text-sm text-slate-600">Verificamos que el modelo sea estadísticamente sólido y no sea fruto
+                    del azar.</p>
+
+                <div class="content-drawer">
+                    <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                        Comprobamos que los errores se distribuyen de forma normal y que no hay patrones extraños en los
+                        residuos. Si hubiera "curvas" en los errores, el modelo lineal sería insuficiente.
+                    </p>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-amber-500 mr-2"></i> Prueba de Homocedasticidad
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-amber-500 mr-2"></i> Normalidad de Errores
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-amber-500 mr-2"></i> Independencia
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 7: PREDICCIÓN -->
+            <div class="relative p-8 rounded-3xl border-2 border-transparent bg-slate-50 cursor-pointer transition-all duration-300 lg:col-span-1"
+                onclick="toggleStep(this, 'emerald')">
+                <div class="step-badge bg-emerald-500">7</div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="p-3 rounded-2xl bg-emerald-100 text-emerald-600">
+                        <i class="fas fa-rocket text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">Inferencia</h3>
+                </div>
+                <p class="text-sm text-slate-600">¡Listo para usar! Predecimos el valor de una casa nueva en el mercado.
+                </p>
+
+                <div class="content-drawer">
+                    <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                        Entra una casa de 100m². El modelo calcula: $50k + ($1.2k * 100) = <strong>$170,000</strong>.
+                        Esta predicción ayuda a tasadores y compradores a tener un precio de referencia justo.
+                    </p>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-emerald-500 mr-2"></i> Predicción en tiempo real
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-emerald-500 mr-2"></i> Estimación de confianza
+                        </div>
+                        <div class="flex items-center text-xs font-bold text-slate-700">
+                            <i class="fas fa-check-circle text-emerald-500 mr-2"></i> Valor añadido al negocio
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RESULTADO FINAL CARD -->
+            <div
+                class="lg:col-span-2 bg-slate-900 rounded-[2rem] p-10 text-white flex flex-col justify-center items-center text-center shadow-2xl relative overflow-hidden">
+                <div class="absolute top-0 right-0 p-10 opacity-10">
+                    <i class="fas fa-chart-area text-[150px]"></i>
+                </div>
+                <h2 class="text-3xl font-bold mb-4 relative z-10">Conclusión del Ejemplo</h2>
+                <p class="text-slate-400 text-sm mb-8 max-w-lg relative z-10">
+                    La Regresión Lineal nos permitió convertir datos históricos en una herramienta de tasación
+                    automática. Aunque simple, es la base para modelos más complejos (como añadir antigüedad, barrio o
+                    número de baños).
+                </p>
+                <div class="flex flex-wrap gap-4 justify-center relative z-10">
+                    <span
+                        class="px-5 py-2 bg-white/10 rounded-xl text-xs font-mono border border-white/20">Interpretable</span>
+                    <span
+                        class="px-5 py-2 bg-white/10 rounded-xl text-xs font-mono border border-white/20">Escalable</span>
+                    <span
+                        class="px-5 py-2 bg-white/10 rounded-xl text-xs font-mono border border-white/20">Predictivo</span>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- FOOTER -->
+        <footer class="mt-20 pt-8 border-t border-slate-200 text-center text-slate-400 text-xs">
+            <p>© 2024 Laboratorio de Ciencia de Datos • Caso Práctico: Tasación Inmobiliaria</p>
+        </footer>
+    </div>
+
+    <script>
+        function toggleStep(element, color) {
+            if (element.classList.contains('card-active')) {
+                element.classList.remove('card-active');
+                element.style.borderColor = 'transparent';
+                return;
+            }
+
+            document.querySelectorAll('.card-active').forEach(card => {
+                card.classList.remove('card-active');
+                card.style.borderColor = 'transparent';
+            });
+
+            element.classList.add('card-active');
+
+            const colorMap = {
+                blue: '#3b82f6',
+                cyan: '#06b6d4',
+                indigo: '#6366f1',
+                rose: '#f43f5e',
+                amber: '#f59e0b',
+                emerald: '#10b981'
+            };
+            element.style.borderColor = colorMap[color];
+        }
+    </script>
+</body>
+
+</html>
