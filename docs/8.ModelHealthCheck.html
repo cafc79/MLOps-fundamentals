@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MLOps: Model Health & Validation Framework</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Fira+Code:wght@400;500&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; color: #0f172a; line-height: 1.6; }
+        .code-block { font-family: 'Fira Code', monospace; background-color: #0f172a; color: #e2e8f0; padding: 1.25rem; border-radius: 0.75rem; font-size: 0.82rem; line-height: 1.6; border-left: 4px solid #3b82f6; overflow-x: auto; margin-bottom: 1.5rem; }
+        .py-comment { color: #64748b; font-style: italic; }
+        .py-keyword { color: #f472b6; }
+        .py-func { color: #38bdf8; }
+        .py-str { color: #fbbf24; }
+        .section-card { @apply bg-white p-8 rounded-3xl border border-slate-200 shadow-sm mb-12 transition-all hover:shadow-md; }
+        .pill { @apply px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest mb-4 inline-block; }
+        .health-grid-item { @apply p-5 rounded-2xl border border-slate-100 bg-slate-50 flex flex-col gap-2; }
+    </style>
+</head>
+<body class="p-4 md:p-12 lg:p-20">
+
+    <div class="max-w-6xl mx-auto">
+        <!-- CABECERA ESTRATÉGICA -->
+        <header class="mb-20 border-b border-slate-200 pb-12">
+            <div class="flex flex-col md:flex-row items-center gap-6 mb-8">
+                <div class="p-4 bg-slate-900 text-white rounded-2xl shadow-2xl text-center">
+                    <i class="fas fa-heartbeat text-3xl text-rose-500"></i>
+                </div>
+                <div>
+                    <h1 class="text-4xl md:text-6xl font-black tracking-tighter text-slate-900 italic">Model <span class="text-blue-600">Health Check</span></h1>
+                    <p class="text-slate-500 font-bold text-lg uppercase tracking-widest">Protocolo de Validación e Integridad MLOps</p>
+                </div>
+            </div>
+            <p class="text-slate-600 text-lg leading-relaxed max-w-4xl">
+                En MLOps, la salud del modelo no es un evento único, sino un **estado continuo**. Validar un modelo implica certificar que es técnicamente robusto, estadísticamente fiel a los datos y funcionalmente rentable para el negocio.
+            </p>
+        </header>
+
+        <!-- SECCIÓN 1: LAS TRES CAPAS DE SALUD -->
+        <section class="section-card">
+            <span class="pill bg-rose-100 text-rose-700">Dimensión de Diagnóstico</span>
+            <h2 class="text-3xl font-black mb-8 text-slate-900">1. Anatomía de la Salud del Modelo</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="health-grid-item">
+                    <div class="text-blue-600 font-bold text-sm uppercase tracking-tighter flex items-center gap-2">
+                        <i class="fas fa-server"></i> Salud Técnica (SRE)
+                    </div>
+                    <p class="text-xs text-slate-500">Enfoque en infraestructura y fiabilidad del software.</p>
+                    <ul class="text-[11px] text-slate-600 space-y-1 mt-2">
+                        <li>• Latencia P99 < 100ms.</li>
+                        <li>• Consumo de RAM/GPU estable.</li>
+                        <li>• Disponibilidad de API (Uptime).</li>
+                    </ul>
+                </div>
+                <div class="health-grid-item">
+                    <div class="text-emerald-600 font-bold text-sm uppercase tracking-tighter flex items-center gap-2">
+                        <i class="fas fa-database"></i> Salud de Datos
+                    </div>
+                    <p class="text-xs text-slate-500">Enfoque en la calidad y distribución de entrada.</p>
+                    <ul class="text-[11px] text-slate-600 space-y-1 mt-2">
+                        <li>• Detección de Data Drift ($P(X)$).</li>
+                        <li>• Validación de esquemas en tiempo real.</li>
+                        <li>• Ausencia de valores nulos atípicos.</li>
+                    </ul>
+                </div>
+                <div class="health-grid-item">
+                    <div class="text-purple-600 font-bold text-sm uppercase tracking-tighter flex items-center gap-2">
+                        <i class="fas fa-chart-line"></i> Salud Funcional
+                    </div>
+                    <p class="text-xs text-slate-500">Enfoque en el valor predictivo y ROI.</p>
+                    <ul class="text-[11px] text-slate-600 space-y-1 mt-2">
+                        <li>• F1-Score / RMSE sostenido.</li>
+                        <li>• Alineación con KPIs de negocio.</li>
+                        <li>• Análisis de sesgo (Fairness).</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 2: MECANISMOS DE VALIDACIÓN INDUSTRIAL (CON CÓDIGO) -->
+        <section class="mb-24">
+            <span class="pill bg-blue-100 text-blue-700">Protocolos Críticos</span>
+            <h2 class="text-3xl font-black mb-12 text-slate-900">2. Gatekeepers de Producción</h2>
+
+            <!-- Etapa: Safety Gate & Evaluation -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 mb-16">
+                <div class="lg:col-span-5">
+                    <h3 class="text-xl font-bold mb-4 flex items-center gap-3">
+                        <span class="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center text-sm font-mono">01</span>
+                        Safety Gate & Eval. Comparativa
+                    </h3>
+                    <p class="text-sm text-slate-600 mb-4 leading-relaxed">
+                        El <strong>Safety Gate</strong> es el umbral innegociable. Se basa en una <strong>Evaluación Comparativa (Champion/Challenger)</strong> donde el modelo nuevo debe superar al actual en un set de validación oculto antes de ser promovido.
+                    </p>
+                    <div class="bg-blue-50 p-4 rounded-xl text-[11px] text-blue-800 italic">
+                        "Un Safety Gate mal configurado permite que un modelo con mayor Accuracy pero mayor sesgo ético llegue a producción."
+                    </div>
+                </div>
+                <div class="lg:col-span-7">
+                    <div class="code-block">
+<span class="py-comment"># Lógica de Safety Gate en el Pipeline de CI</span>
+<span class="py-keyword">def</span> <span class="py-func">evaluate_promotion</span>(challenger_metrics, champion_metrics):
+    <span class="py-comment"># Umbral mínimo de mejora (Epsilon)</span>
+    threshold = <span class="py-val">0.02</span> 
+    <span class="py-keyword">if</span> challenger_metrics[<span class="py-str">'f1'</span>] > (champion_metrics[<span class="py-str">'f1'</span>] + threshold):
+        <span class="py-func">print</span>(<span class="py-str">"Safety Gate PASSED: Promoviendo Modelo"</span>)
+        <span class="py-keyword">return</span> <span class="py-keyword">True</span>
+    <span class="py-keyword">return</span> <span class="py-keyword">False</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Etapa: Linaje & Cross-Env -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 mb-16">
+                <div class="lg:col-span-5">
+                    <h3 class="text-xl font-bold mb-4 flex items-center gap-3">
+                        <span class="w-8 h-8 rounded-lg bg-indigo-600 text-white flex items-center justify-center text-sm font-mono">02</span>
+                        Linaje y Validación Cross-Env
+                    </h3>
+                    <p class="text-sm text-slate-600 mb-4 leading-relaxed">
+                        El <strong>Linaje del Dato</strong> rastrea desde la fuente cruda hasta el peso del modelo. La <strong>Validación Cross-Env</strong> garantiza que el modelo se comporte idéntico en Local, Staging y Prod eliminando discrepancias de entorno.
+                    </p>
+                </div>
+                <div class="lg:col-span-7">
+                    <div class="code-block">
+<span class="py-comment"># Trazabilidad de Linaje con MLflow Metadata</span>
+mlflow.<span class="py-func">log_params</span>({
+    <span class="py-str">"dataset_hash"</span>: <span class="py-str">"sha256_xyz789"</span>, <span class="py-comment"># DVC Linked</span>
+    <span class="py-str">"env_version"</span>: <span class="py-str">"docker_ml_base:2.4"</span>,
+    <span class="py-str">"git_commit"</span>: <span class="py-str">"a4f2b1c"</span>
+})
+                    </div>
+                </div>
+            </div>
+
+            <!-- Etapa: Auditoría & XAI -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
+                <div class="lg:col-span-5">
+                    <h3 class="text-xl font-bold mb-4 flex items-center gap-3">
+                        <span class="w-8 h-8 rounded-lg bg-emerald-600 text-white flex items-center justify-center text-sm font-mono">03</span>
+                        Auditoría e Inferencia Activa
+                    </h3>
+                    <p class="text-sm text-slate-600 mb-4 leading-relaxed">
+                        La <strong>Auditoría de Inferencia</strong> registra Request/Response para análisis post-mortem. La <strong>Explicabilidad Activa (SHAP)</strong> permite auditar por qué se tomó una decisión individual, detectando sesgos en vivo.
+                    </p>
+                </div>
+                <div class="lg:col-span-7">
+                    <div class="code-block">
+<span class="py-keyword">import</span> shap
+<span class="py-comment"># Auditoría de una decisión individual en Producción</span>
+explainer = shap.<span class="py-func">Explainer</span>(model)
+shap_values = <span class="py-func">explainer</span>(input_data_batch)
+
+<span class="py-comment"># Se guarda en log de auditoría para revisión legal</span>
+<span class="py-func">log_to_db</span>({<span class="py-str">"request_id"</span>: <span class="py-val">123</span>, <span class="py-str">"explanation"</span>: shap_values})
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 3: ANALISIS DE VALOR (PROS/CONS) -->
+        <section class="grid grid-cols-1 md:grid-cols-2 gap-12 mb-24">
+            <div>
+                <h3 class="text-2xl font-black mb-6 flex items-center gap-2"><i class="fas fa-plus-circle text-emerald-500"></i> Ventajas de la Rigurosidad</h3>
+                <div class="space-y-4">
+                    <div class="p-4 bg-emerald-50 rounded-2xl border border-emerald-100">
+                        <h4 class="font-bold text-sm text-emerald-800">Resiliencia Financiera</h4>
+                        <p class="text-xs text-emerald-700">Evita pérdidas masivas por modelos que fallan silenciosamente al cambiar el mercado.</p>
+                    </div>
+                    <div class="p-4 bg-emerald-50 rounded-2xl border border-emerald-100">
+                        <h4 class="font-bold text-sm text-emerald-800">Confianza Legal</h4>
+                        <p class="text-xs text-emerald-700">El linaje y XAI proporcionan las evidencias necesarias ante reguladores (AI Act).</p>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <h3 class="text-2xl font-black mb-6 flex items-center gap-2"><i class="fas fa-minus-circle text-rose-500"></i> Desafíos de Implementación</h3>
+                <div class="space-y-4">
+                    <div class="p-4 bg-rose-50 rounded-2xl border border-rose-100">
+                        <h4 class="font-bold text-sm text-rose-800">Latencia de Pipeline</h4>
+                        <p class="text-xs text-rose-700">El exceso de validación puede retrasar el time-to-market si no está bien automatizado.</p>
+                    </div>
+                    <div class="p-4 bg-rose-50 rounded-2xl border border-rose-100">
+                        <h4 class="font-bold text-sm text-rose-800">Costo de Almacenamiento</h4>
+                        <p class="text-xs text-rose-700">Auditar el 100% de la inferencia en sistemas de alto tráfico requiere infraestructuras de Big Data costosas.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 4: ERRORES COMUNES Y CICLO MLOPS -->
+        <section class="bg-slate-900 rounded-[3rem] p-10 text-white shadow-2xl mb-24 relative overflow-hidden">
+            <div class="absolute -right-20 -top-20 opacity-10"><i class="fas fa-triangle-exclamation text-[250px]"></i></div>
+            <div class="relative z-10">
+                <h2 class="text-3xl font-black mb-10 text-blue-400">Diagnóstico de Errores Comunes</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-12 text-sm">
+                    <ul class="space-y-4">
+                        <li class="flex gap-4">
+                            <i class="fas fa-times-circle text-rose-500 mt-1"></i>
+                            <div>
+                                <h5 class="font-bold uppercase text-xs">Ceguera de "200 OK"</h5>
+                                <p class="text-slate-400">Creer que el modelo está sano porque la API responde rápido, ignorando que el Accuracy cayó un 30%.</p>
+                            </div>
+                        </li>
+                        <li class="flex gap-4">
+                            <i class="fas fa-times-circle text-rose-500 mt-1"></i>
+                            <div>
+                                <h5 class="font-bold uppercase text-xs">Manual Retraining</h5>
+                                <p class="text-slate-400">Re-entrenar modelos por intuición y no disparados por triggers basados en métricas reales.</p>
+                            </div>
+                        </li>
+                    </ul>
+                    <div class="p-6 bg-white/5 rounded-3xl border border-white/10">
+                        <h4 class="text-xs font-bold text-blue-300 uppercase mb-4 tracking-widest text-center">Flujo de Salud en el Ciclo</h4>
+                        <div class="flex justify-between items-center text-[9px] uppercase font-black text-slate-500">
+                            <div class="flex flex-col items-center gap-2">
+                                <i class="fas fa-microscope text-blue-400 text-lg"></i>
+                                <span>Fase 2: Eval</span>
+                            </div>
+                            <i class="fas fa-arrow-right"></i>
+                            <div class="flex flex-col items-center gap-2 text-white">
+                                <i class="fas fa-shield-alt text-emerald-400 text-lg"></i>
+                                <span>Fase 3: Gate</span>
+                            </div>
+                            <i class="fas fa-arrow-right"></i>
+                            <div class="flex flex-col items-center gap-2">
+                                <i class="fas fa-tower-broadcast text-rose-400 text-lg"></i>
+                                <span>Fase 5: Monitoring</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 5: MEJORES PRÁCTICAS Y SEGURIDAD -->
+        <section class="mb-24">
+            <h2 class="text-3xl font-black mb-8 text-slate-900">Consideraciones Profesionales</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="p-6 bg-slate-50 rounded-2xl border border-slate-200">
+                    <h4 class="font-bold text-slate-800 mb-4 flex items-center gap-2">
+                        <i class="fas fa-user-shield text-blue-600"></i> Mejores Prácticas de Seguridad
+                    </h4>
+                    <ul class="text-xs text-slate-600 space-y-3">
+                        <li>• <strong>RBAC (Control de Acceso):</strong> Solo los Lead Engineers pueden aprobar el Safety Gate hacia Producción.</li>
+                        <li>• <strong>Model Poisoning Check:</strong> Validar que los datos de re-entrenamiento no han sido manipulados por un atacante.</li>
+                        <li>• <strong>PII Sanitization:</strong> Asegurar que la Auditoría de Inferencia no guarda datos personales (GDPR).</li>
+                    </ul>
+                </div>
+                <div class="p-6 bg-slate-50 rounded-2xl border border-slate-200">
+                    <h4 class="font-bold text-slate-800 mb-4 flex items-center gap-2">
+                        <i class="fas fa-gem text-emerald-600"></i> Madurez Profesional
+                    </h4>
+                    <ul class="text-xs text-slate-600 space-y-3">
+                        <li>• <strong>Trigger de Retraining:</strong> No solo basarse en tiempo; usar métricas dinámicas como PSI (Population Stability Index).</li>
+                        <li>• <strong>Auditoría Offline:</strong> Realizar revisiones mensuales de las explicaciones SHAP para detectar "Bias Drift".</li>
+                        <li>• <strong>Capa de Abstracción:</strong> Desacoplar el código de validación del código del modelo para reutilización masiva.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHECKLIST DE VALIDACIÓN FINAL -->
+        <section class="bg-white rounded-[3rem] p-10 shadow-2xl border-2 border-blue-500">
+            <h2 class="text-3xl font-black mb-10 flex items-center gap-4 text-blue-600">
+                <i class="fas fa-clipboard-check"></i> Checklist Maestro de Validación MLOps
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 text-sm leading-relaxed text-slate-500">
+                <div class="space-y-6">
+                    <div class="flex gap-4">
+                        <div class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center shrink-0 text-blue-600 font-bold"><i class="fas fa-check"></i></div>
+                        <div>
+                            <h5 class="font-bold text-slate-900 uppercase text-xs">Integridad de Linaje</h5>
+                            <p class="text-[11px]">¿Podemos rastrear este modelo hasta el hash exacto del dataset de entrenamiento?</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-4">
+                        <div class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center shrink-0 text-blue-600 font-bold"><i class="fas fa-check"></i></div>
+                        <div>
+                            <h5 class="font-bold text-slate-900 uppercase text-xs">Gateway de Desempeño</h5>
+                            <p class="text-[11px]">¿El modelo Challenger supera al Champion actual por al menos un 2% en métrica técnica?</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-4">
+                        <div class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center shrink-0 text-blue-600 font-bold"><i class="fas fa-check"></i></div>
+                        <div>
+                            <h5 class="font-bold text-slate-900 uppercase text-xs">Contrato de Datos Online</h5>
+                            <p class="text-[11px]">¿Existe una validación de esquema en la API que rechace peticiones malformadas?</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <div class="flex gap-4">
+                        <div class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center shrink-0 text-blue-600 font-bold"><i class="fas fa-check"></i></div>
+                        <div>
+                            <h5 class="font-bold text-slate-900 uppercase text-xs">Explicabilidad Activa</h5>
+                            <p class="text-[11px]">¿Se están guardando explicaciones de rasgos (ej. SHAP) para el 10% de la inferencia aleatoria?</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-4">
+                        <div class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center shrink-0 text-blue-600 font-bold"><i class="fas fa-check"></i></div>
+                        <div>
+                            <h5 class="font-bold text-slate-900 uppercase text-xs">SLA de Respuesta</h5>
+                            <p class="text-[11px]">¿La latencia se mantiene estable bajo pruebas de carga de 1000 RPS?</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-4">
+                        <div class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center shrink-0 text-blue-600 font-bold"><i class="fas fa-check"></i></div>
+                        <div>
+                            <h5 class="font-bold text-slate-900 uppercase text-xs">Protocolo de Rollback</h5>
+                            <p class="text-[11px]">¿Existe un trigger automatizado que revierta al modelo anterior si el error rate sube al 5%?</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="mt-20 pt-10 border-t border-slate-200 text-center pb-12">
+            <p class="text-slate-400 text-[10px] uppercase font-black tracking-[0.2em] mb-4">
+                MLOps Engineering Standards v5.0 • Health & Validation Architecture • 2024
+            </p>
+            <div class="flex justify-center gap-8 text-slate-300">
+                <i class="fab fa-python text-2xl"></i>
+                <i class="fas fa-shield-alt text-2xl"></i>
+                <i class="fas fa-server text-2xl"></i>
+                <i class="fas fa-microchip text-2xl"></i>
+            </div>
+        </footer>
+    </div>
+
+</body>
+</html>

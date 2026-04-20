@@ -70,6 +70,6 @@ No hay un algoritmo "mejor" para todo. La elección depende de la cantidad de da
 ## 🔄 Ciclo de Mejora Continua
 `01. Definir` → `02. Probar` → **`03. Iterar`**
 
-*Conceptos de Ciencia de Datos • 2024*
-
+> [* Prev *](MLOps.md "Arquitectura de Modelos")
+> [* Algoritmo - Regresion Lineal *](algoritmos/Supervised_Learning-Regresion_Lineal.md "Regresion Lineal")
 ---

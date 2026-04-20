@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arquitectura de Modelos | Guía de Selección</title>
+    
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons via CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <style>
+        /* Estilos para animaciones y transiciones */
+        .card-content {
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+        }
+        .card-content.hidden {
+            display: none;
+            opacity: 0;
+            max-height: 0;
+        }
+        .card-content.visible {
+            opacity: 1;
+            max-height: 600px;
+        }
+        .algorithm-card {
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-slate-100 p-4 md:p-10 font-sans text-slate-900">
+    <div class="max-w-6xl mx-auto">
+        
+        <!-- Header Section -->
+        <header class="mb-12 text-center md:text-left flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <div class="max-w-2xl">
+                <h1 class="text-4xl md:text-6xl font-black tracking-tighter text-slate-900 mb-4">
+                    Arquitectura de <span class="text-blue-600 italic">Modelos</span>
+                </h1>
+                <p class="text-slate-500 text-lg leading-relaxed">
+                    Elegir el algoritmo correcto es el corazón del Machine Learning. Aquí exploramos los pilares que definen cómo las máquinas aprenden y deciden.
+                </p>
+            </div>
+            <div class="hidden md:block">
+                <div class="px-4 py-2 bg-white rounded-2xl shadow-sm border border-slate-200 flex items-center gap-3">
+                    <div class="flex -space-x-2">
+                        <div class="w-6 h-6 rounded-full border-2 border-white bg-slate-200"></div>
+                        <div class="w-6 h-6 rounded-full border-2 border-white bg-slate-400"></div>
+                        <div class="w-6 h-6 rounded-full border-2 border-white bg-slate-600"></div>
+                    </div>
+                    <span class="text-xs font-bold text-slate-400">Guía de Selección v2.0</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Definición -->
+        <div class="mb-10 bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+            <h2 class="text-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Definición</h2>
+            <p class="text-slate-600 leading-relaxed">
+                Un algoritmo de machine learning es un conjunto definido de pasos que se utilizan para entrenar un modelo de machine learning para que pueda hacer predicciones útiles en su caso de uso del mundo real. Comprende no solo la forma en que el modelo asigna un punto de datos de entrada a su salida correspondiente, sino también el proceso de optimización de las predicciones del modelo para "ajustar" un conjunto de datos de entrenamiento de ejemplos relevantes. Es un algoritmo que permite a una máquina aprender de los datos.
+            </p>
+        </div>
+
+        <!-- Legend / Filter Stats -->
+        <div class="flex flex-wrap gap-4 mb-10">
+            <div class="flex items-center gap-2 px-3 py-1.5 bg-blue-50 text-blue-700 rounded-xl text-xs font-bold border border-blue-100">
+                <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i> Supervisado: Predicción con guía
+            </div>
+            <div class="flex items-center gap-2 px-3 py-1.5 bg-orange-50 text-orange-700 rounded-xl text-xs font-bold border border-orange-100">
+                <i data-lucide="share-2" class="w-3.5 h-3.5"></i> No Supervisado: Descubrimiento autónomo
+            </div>
+            <div class="flex items-center gap-2 px-3 py-1.5 bg-rose-50 text-rose-700 rounded-xl text-xs font-bold border border-rose-100">
+                <i data-lucide="brain" class="w-3.5 h-3.5"></i> Deep Learning: Representación compleja
+            </div>
+        </div>
+
+        <!-- Algorithm Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+            
+            <!-- Card 1: Regresión Lineal -->
+            <div class="algorithm-card group relative p-6 rounded-3xl border-2 cursor-pointer overflow-hidden bg-white shadow-2xl border-blue-500 ring-4 ring-blue-50 scale-[1.02] z-10 active"
+                 data-index="0" data-color="blue">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="p-3 rounded-2xl bg-blue-100 text-blue-600">
+                        <i data-lucide="bar-chart" class="w-7 h-7"></i>
+                    </div>
+                    <span class="text-[10px] font-black uppercase tracking-widest px-2 py-1 rounded-full bg-blue-50 text-blue-700">
+                        Supervisado
+                    </span>
+                </div>
+                <h3 class="text-xl font-bold text-slate-900 mb-2">Regresión Lineal</h3>
+                <p class="text-sm text-slate-600 mb-4 leading-relaxed">
+                    El abuelo de los algoritmos. Predice un valor numérico continuo basándose en la relación lineal entre variables.
+                </p>
+                
+                <div class="card-content visible space-y-6">
+                    <div>
+                        <h4 class="text-xs font-bold text-slate-400 uppercase tracking-tighter mb-2 flex items-center">
+                            <i data-lucide="zap" class="w-3.5 h-3.5 mr-1"></i> ¿Para qué se usa?
+                        </h4>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="px-2 py-1 bg-slate-100 text-slate-700 text-[10px] font-bold rounded-md">Predicción de precios</span>
+                            <span class="px-2 py-1 bg-slate-100 text-slate-700 text-[10px] font-bold rounded-md">Tendencias de ventas</span>
+                            <span class="px-2 py-1 bg-slate-100 text-slate-700 text-[10px] font-bold rounded-md">Estimación de demanda</span>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-tighter mb-2 flex items-center">
+                                <i data-lucide="check-circle-2" class="w-3.5 h-3.5 mr-1 text-emerald-500"></i> Ventajas
+                            </h4>
+                            <ul class="text-[11px] text-slate-600 space-y-1">
+                                <li>• Muy rápido</li>
+                                <li>• Fácil de interpretar</li>
+                                <li>• No requiere mucho poder cómputo</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-tighter mb-2 flex items-center">
+                                <i data-lucide="lightbulb" class="w-3.5 h-3.5 mr-1 text-amber-500"></i> Características
+                            </h4>
+                            <ul class="text-[11px] text-slate-600 space-y-1">
+                                <li>• Relación lineal</li>
+                                <li>• Baja complejidad</li>
+                                <li>• Sensible a outliers</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 2: Random Forest -->
+            <div class="algorithm-card group relative p-6 rounded-3xl border-2 cursor-pointer overflow-hidden bg-slate-50 border-transparent hover:bg-white hover:shadow-lg opacity-90 hover:opacity-100"
+                 data-index="1" data-color="emerald">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="p-3 rounded-2xl bg-emerald-100 text-emerald-600">
+                        <i data-lucide="git-merge" class="w-7 h-7"></i>
+                    </div>
+                    <span class="text-[10px] font-black uppercase tracking-widest px-2 py-1 rounded-full bg-emerald-50 text-emerald-700">
+                        Supervisado
+                    </span>
+                </div>
+                <h3 class="text-xl font-bold text-slate-900 mb-2">Random Forest</h3>
+                <p class="text-sm text-slate-600 mb-4 leading-relaxed line-clamp-2">
+                    Un conjunto de múltiples árboles de decisión que 'votan' para dar un resultado más robusto y preciso.
+                </p>
+                
+                <div class="card-content hidden space-y-6">
+                    <div>
+                        <h4 class="text-xs font-bold text-slate-400 uppercase tracking-tighter mb-2 flex items-center">
+                            <i data-lucide="zap" class="w-3.5 h-3.5 mr-1"></i> ¿Para qué se usa?
+                        </h4>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="px-2 py-1 bg-slate-100 text-slate-700 text-[10px] font-bold rounded-md">Detección de fraude</span>
+                            <span class="px-2 py-1 bg-slate-100 text-slate-700 text-[10px] font-bold rounded-md">Clasificación de clientes</span>
+                            <span class="px-2 py-1 bg-slate-100 text-slate-700 text-[10px] font-bold rounded-md">Diagnóstico médico</span>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-tighter mb-2 flex items-center">
+                                <i data-lucide="check-circle-2" class="w-3.5 h-3.5 mr-1 text-emerald-500"></i> Ventajas
+                            </h4>
+                            <ul class="text-[11px] text-slate-600 space-y-1">
+                                <li>• Alta precisión</li>
+                                <li>• Maneja datos faltantes</li>
+                                <li>• Evita el sobreajuste</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-tighter mb-2 flex items-center">
+                                <i data-lucide="lightbulb" class="w-3.5 h-3.5 mr-1 text-amber-500"></i> Características
+                            </h4>
+                            <ul class="text-[11px] text-slate-600 space-y-1">
+                                <li>• Ensemble learning</li>
+                                <li>• Alta interpretabilidad</li>
+                                <li>• Datos tabulares</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 3: K-Means -->
+            <div class="algorithm-card group relative p-6 rounded-3xl border-2 cursor-pointer overflow-hidden bg-slate-50 border-transparent hover:bg-white hover:shadow-lg opacity-90 hover:opacity-100"
+                 data-index="2" data-color="orange">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="p-3 rounded-2xl bg-orange-100 text-orange-600">
+                        <i data-lucide="boxes" class="w-7 h-7"></i>
+                    </div>
+                    <span class="text-[10px] font-black uppercase tracking-widest px-2 py-1 rounded-full bg-orange-50 text-orange-700">
+                        No Supervisado
+                    </span>
+                </div>
+                <h3 class="text-xl font-bold text-slate-900 mb-2">K-Means Clustering</h3>
+                <p class="text-sm text-slate-600 mb-4 leading-relaxed line-clamp-2">
+                    Agrupa datos similares en 'K' grupos basándose en sus características, sin conocer etiquetas previas.
+                </p>
+                
+                <div class="card-content hidden space-y-6">
+                    <div>
+                        <h4 class="text-xs font-bold text-slate-400 uppercase tracking-tighter mb-2 flex items-center">
+                            <i data-lucide="zap" class="w-3.5 h-3.5 mr-1"></i> ¿Para qué se usa?
+                        </h4>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="px-2 py-1 bg-slate-100 text-slate-700 text-[10px] font-bold rounded-md">Segmentación clientes</span>
+                            <span class="px-2 py-1 bg-slate-100 text-slate-700 text-[10px] font-bold rounded-md">Compresión imágenes</span>
+                            <span class="px-2 py-1 bg-slate-100 text-slate-700 text-[10px] font-bold rounded-md">Análisis perfiles</span>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-tighter mb-2 flex items-center">
+                                <i data-lucide="check-circle-2" class="w-3.5 h-3.5 mr-1 text-emerald-500"></i> Ventajas
+                            </h4>
+                            <ul class="text-[11px] text-slate-600 space-y-1">
+                                <li>• Patrones ocultos</li>
+                                <li>• Escalable</li>
+                                <li>• Simple implementación</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-tighter mb-2 flex items-center">
+                                <i data-lucide="lightbulb" class="w-3.5 h-3.5 mr-1 text-amber-500"></i> Características
+                            </h4>
+                            <ul class="text-[11px] text-slate-600 space-y-1">
+                                <li>• Basado en distancias</li>
+                                <li>• Requiere definir K</li>
+                                <li>• Sin etiquetas</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 4: SVM -->
+            <div class="algorithm-card group relative p-6 rounded-3xl border-2 cursor-pointer overflow-hidden bg-slate-50 border-transparent hover:bg-white hover:shadow-lg opacity-90 hover:opacity-100"
+                 data-index="3" data-color="indigo">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="p-3 rounded-2xl bg-indigo-100 text-indigo-600">
+                        <i data-lucide="target" class="w-7 h-7"></i>
+                    </div>
+                    <span class="text-[10px] font-black uppercase tracking-widest px-2 py-1 rounded-full bg-indigo-50 text-indigo-700">
+                        Supervisado
+                    </span>
+                </div>
+                <h3 class="text-xl font-bold text-slate-900 mb-2">Support Vector Machines</h3>
+                <p class="text-sm text-slate-600 mb-4 leading-relaxed line-clamp-2">
+                    Busca el hiperplano óptimo que separa los datos en diferentes clases con el máximo margen posible.
+                </p>
+                
+                <div class="card-content hidden space-y-6">
+                    <div>
+                        <h4 class="text-xs font-bold text-slate-400 uppercase tracking-tighter mb-2 flex items-center">
+                            <i data-lucide="zap" class="w-3.5 h-3.5 mr-1"></i> ¿Para qué se usa?
+                        </h4>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="px-2 py-1 bg-slate-100 text-slate-700 text-[10px] font-bold rounded-md">Reconocimiento facial</span>
+                            <span class="px-2 py-1 bg-slate-100 text-slate-700 text-[10px] font-bold rounded-md">Clasificación texto</span>
+                            <span class="px-2 py-1 bg-slate-100 text-slate-700 text-[10px] font-bold rounded-md">Bioinformática</span>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-tighter mb-2 flex items-center">
+                                <i data-lucide="check-circle-2" class="w-3.5 h-3.5 mr-1 text-emerald-500"></i> Ventajas
+                            </h4>
+                            <ul class="text-[11px] text-slate-600 space-y-1">
+                                <li>• Alta dimensión</li>
+                                <li>• Versátil (Kernels)</li>
+                                <li>• Robusto ante ruido</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-tighter mb-2 flex items-center">
+                                <i data-lucide="lightbulb" class="w-3.5 h-3.5 mr-1 text-amber-500"></i> Características
+                            </h4>
+                            <ul class="text-[11px] text-slate-600 space-y-1">
+                                <li>• Maximización margen</li>
+                                <li>• Complejidad matemática</li>
+                                <li>• Eficiencia memoria</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 5: Redes Neuronales -->
+            <div class="algorithm-card group relative p-6 rounded-3xl border-2 cursor-pointer overflow-hidden bg-slate-50 border-transparent hover:bg-white hover:shadow-lg opacity-90 hover:opacity-100"
+                 data-index="4" data-color="rose">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="p-3 rounded-2xl bg-rose-100 text-rose-600">
+                        <i data-lucide="brain" class="w-7 h-7"></i>
+                    </div>
+                    <span class="text-[10px] font-black uppercase tracking-widest px-2 py-1 rounded-full bg-rose-50 text-rose-700">
+                        Deep Learning
+                    </span>
+                </div>
+                <h3 class="text-xl font-bold text-slate-900 mb-2">Redes Neuronales</h3>
+                <p class="text-sm text-slate-600 mb-4 leading-relaxed line-clamp-2">
+                    Inspiradas en el cerebro humano. Capas de neuronas artificiales que aprenden representaciones complejas de datos.
+                </p>
+                
+                <div class="card-content hidden space-y-6">
+                    <div>
+                        <h4 class="text-xs font-bold text-slate-400 uppercase tracking-tighter mb-2 flex items-center">
+                            <i data-lucide="zap" class="w-3.5 h-3.5 mr-1"></i> ¿Para qué se usa?
+                        </h4>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="px-2 py-1 bg-slate-100 text-slate-700 text-[10px] font-bold rounded-md">Visión computadora</span>
+                            <span class="px-2 py-1 bg-slate-100 text-slate-700 text-[10px] font-bold rounded-md">NLP</span>
+                            <span class="px-2 py-1 bg-slate-100 text-slate-700 text-[10px] font-bold rounded-md">Generación contenido</span>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-tighter mb-2 flex items-center">
+                                <i data-lucide="check-circle-2" class="w-3.5 h-3.5 mr-1 text-emerald-500"></i> Ventajas
+                            </h4>
+                            <ul class="text-[11px] text-slate-600 space-y-1">
+                                <li>• Features automáticas</li>
+                                <li>• Máxima precisión</li>
+                                <li>• Extremadamente flexible</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-tighter mb-2 flex items-center">
+                                <i data-lucide="lightbulb" class="w-3.5 h-3.5 mr-1 text-amber-500"></i> Características
+                            </h4>
+                            <ul class="text-[11px] text-slate-600 space-y-1">
+                                <li>• Capas ocultas</li>
+                                <li>• Requiere mucha GPU</li>
+                                <li>• Caja negra</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 6: XGBoost -->
+            <div class="algorithm-card group relative p-6 rounded-3xl border-2 cursor-pointer overflow-hidden bg-slate-50 border-transparent hover:bg-white hover:shadow-lg opacity-90 hover:opacity-100"
+                 data-index="5" data-color="amber">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="p-3 rounded-2xl bg-amber-100 text-amber-600">
+                        <i data-lucide="zap" class="w-7 h-7"></i>
+                    </div>
+                    <span class="text-[10px] font-black uppercase tracking-widest px-2 py-1 rounded-full bg-amber-50 text-amber-700">
+                        Supervisado
+                    </span>
+                </div>
+                <h3 class="text-xl font-bold text-slate-900 mb-2">XGBoost / Gradient Boosting</h3>
+                <p class="text-sm text-slate-600 mb-4 leading-relaxed line-clamp-2">
+                    Algoritmo de optimización que construye modelos de forma secuencial, corrigiendo los errores de los anteriores.
+                </p>
+                
+                <div class="card-content hidden space-y-6">
+                    <div>
+                        <h4 class="text-xs font-bold text-slate-400 uppercase tracking-tighter mb-2 flex items-center">
+                            <i data-lucide="zap" class="w-3.5 h-3.5 mr-1"></i> ¿Para qué se usa?
+                        </h4>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="px-2 py-1 bg-slate-100 text-slate-700 text-[10px] font-bold rounded-md">Kaggle</span>
+                            <span class="px-2 py-1 bg-slate-100 text-slate-700 text-[10px] font-bold rounded-md">CTR Prediction</span>
+                            <span class="px-2 py-1 bg-slate-100 text-slate-700 text-[10px] font-bold rounded-md">Recomendación</span>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-tighter mb-2 flex items-center">
+                                <i data-lucide="check-circle-2" class="w-3.5 h-3.5 mr-1 text-emerald-500"></i> Ventajas
+                            </h4>
+                            <ul class="text-[11px] text-slate-600 space-y-1">
+                                <li>• State-of-the-art</li>
+                                <li>• Penalizaciones L1/L2</li>
+                                <li>• Paralelo</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-tighter mb-2 flex items-center">
+                                <i data-lucide="lightbulb" class="w-3.5 h-3.5 mr-1 text-amber-500"></i> Características
+                            </h4>
+                            <ul class="text-[11px] text-slate-600 space-y-1">
+                                <li>• Gradient Descent</li>
+                                <li>• Alta eficiencia</li>
+                                <li>• Muchos hiperparámetros</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Decision Support Box -->
+        <div class="bg-slate-900 rounded-[32px] p-8 text-white relative overflow-hidden shadow-2xl">
+            <div class="absolute -right-20 -bottom-20 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl"></div>
+            <div class="absolute -left-20 -top-20 w-80 h-80 bg-purple-500/10 rounded-full blur-3xl"></div>
+
+            <div class="relative z-10 flex flex-col md:flex-row gap-8 items-center">
+                <div class="md:w-1/3 text-center md:text-left">
+                    <h2 class="text-2xl font-bold mb-4">¿Cuál elegir?</h2>
+                    <p class="text-slate-400 text-sm leading-relaxed">
+                        No hay un algoritmo "mejor" para todo. La elección depende de la cantidad de datos, el tipo de problema y los recursos disponibles.
+                    </p>
+                </div>
+
+                <div class="md:w-2/3 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="p-4 bg-white/5 rounded-2xl border border-white/10 hover:bg-white/10 transition-colors">
+                        <h4 class="font-bold text-sm text-blue-400 mb-1">Pocos datos + Rapidez</h4>
+                        <p class="text-[11px] text-slate-500">Regresión Lineal o Naive Bayes.</p>
+                    </div>
+                    <div class="p-4 bg-white/5 rounded-2xl border border-white/10 hover:bg-white/10 transition-colors">
+                        <h4 class="font-bold text-sm text-emerald-400 mb-1">Datos Tabulares + Precisión</h4>
+                        <p class="text-[11px] text-slate-500">XGBoost o Random Forest.</p>
+                    </div>
+                    <div class="p-4 bg-white/5 rounded-2xl border border-white/10 hover:bg-white/10 transition-colors">
+                        <h4 class="font-bold text-sm text-rose-400 mb-1">Imágenes / Audio / Texto</h4>
+                        <p class="text-[11px] text-slate-500">Redes Neuronales (CNN/Transformers).</p>
+                    </div>
+                    <div class="p-4 bg-white/5 rounded-2xl border border-white/10 hover:bg-white/10 transition-colors">
+                        <h4 class="font-bold text-sm text-orange-400 mb-1">Sin etiquetas + Segmentar</h4>
+                        <p class="text-[11px] text-slate-500">K-Means o DBSCAN.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="mt-16 pt-8 border-t border-slate-200 text-center text-slate-400">
+            <div class="flex justify-center gap-8 mb-6">
+                <div class="flex flex-col items-center gap-1">
+                    <div class="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-slate-500 font-bold text-xs">01</div>
+                    <span class="text-[10px] uppercase font-bold tracking-widest">Definir</span>
+                </div>
+                <i data-lucide="arrow-right" class="mt-2 opacity-30 w-4 h-4"></i>
+                <div class="flex flex-col items-center gap-1">
+                    <div class="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-slate-500 font-bold text-xs">02</div>
+                    <span class="text-[10px] uppercase font-bold tracking-widest">Probar</span>
+                </div>
+                <i data-lucide="arrow-right" class="mt-2 opacity-30 w-4 h-4"></i>
+                <div class="flex flex-col items-center gap-1">
+                    <div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold text-xs">03</div>
+                    <span class="text-[10px] uppercase font-bold tracking-widest text-blue-600">Iterar</span>
+                </div>
+            </div>
+            <p class="text-[10px] uppercase tracking-widest font-bold">Conceptos de Ciencia de Datos • 2024</p>
+        </footer>
+
+    </div>
+
+    <!-- Tailwind Compile Guard (Safelist for dynamic classes) -->
+    <div class="hidden">
+        <div class="border-blue-500 bg-blue-50 text-blue-700 bg-blue-100 text-blue-600 ring-blue-50"></div>
+        <div class="border-emerald-500 bg-emerald-50 text-emerald-700 bg-emerald-100 text-emerald-600 ring-emerald-50"></div>
+        <div class="border-orange-500 bg-orange-50 text-orange-700 bg-orange-100 text-orange-600 ring-orange-50"></div>
+        <div class="border-indigo-500 bg-indigo-50 text-indigo-700 bg-indigo-100 text-indigo-600 ring-indigo-50"></div>
+        <div class="border-rose-500 bg-rose-50 text-rose-700 bg-rose-100 text-rose-600 ring-rose-50"></div>
+        <div class="border-amber-500 bg-amber-50 text-amber-700 bg-amber-100 text-amber-600 ring-amber-50"></div>
+    </div>
+
+    <!-- Script de Interactividad -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Inicializar iconos
+            lucide.createIcons();
+
+            const cards = document.querySelectorAll('.algorithm-card');
+
+            cards.forEach(card => {
+                card.addEventListener('click', () => {
+                    const index = card.dataset.index;
+                    const color = card.dataset.color;
+
+                    // Resetear todas las tarjetas
+                    cards.forEach(c => {
+                        const cColor = c.dataset.color;
+                        // Clases inactivas
+                        c.classList.remove('bg-white', 'shadow-2xl', 'border-' + cColor + '-500', 'ring-4', 'ring-' + cColor + '-50', 'scale-[1.02]', 'z-10', 'active');
+                        c.classList.add('bg-slate-50', 'border-transparent', 'hover:bg-white', 'hover:shadow-lg', 'opacity-90', 'hover:opacity-100');
+                        
+                        // Ocultar detalles
+                        const content = c.querySelector('.card-content');
+                        content.classList.remove('visible');
+                        content.classList.add('hidden');
+                    });
+
+                    // Activar tarjeta clickeada
+                    card.classList.remove('bg-slate-50', 'border-transparent', 'hover:bg-white', 'hover:shadow-lg', 'opacity-90', 'hover:opacity-100');
+                    card.classList.add('bg-white', 'shadow-2xl', 'border-' + color + '-500', 'ring-4', 'ring-' + color + '-50', 'scale-[1.02]', 'z-10', 'active');
+                    
+                    // Mostrar detalles
+                    const content = card.querySelector('.card-content');
+                    content.classList.remove('hidden');
+                    content.classList.add('visible');
+                });
+            });
+        });
+    </script>
+</body>
+</html>
