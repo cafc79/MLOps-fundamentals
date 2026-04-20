@@ -138,7 +138,7 @@ que no puedas explicar o monitorear económicamente.
 - **Lack of
   Ownership:** Nadie es dueño del modelo una vez desplegado.
 
-## [**Model Health Check**](8.ModelHealthCheck.md)
+## [**Model Health Check**](/docs/8.ModelHealthCheck.md)
 
 #### Salud Técnica
 
@@ -190,5 +190,5 @@ baja de un umbral X?
 ¿Podemos justificar por qué el modelo dio ese
 resultado específico?
 
-> [*Next*](../docs/ArquitecturaModelos.md "Arquitectura de Modelos")
+> [*Next*](/docs/ArquitecturaModelos.md "Arquitectura de Modelos")
 ---
