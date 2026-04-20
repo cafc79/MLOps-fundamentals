@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pipeline Industrial: KNN & MLOps</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Fira+Code:wght@400;500&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f9ff;
+            color: #1e293b;
+            line-height: 1.6;
+        }
+
+        .code-block {
+            font-family: 'Fira Code', monospace;
+            background-color: #0f172a;
+            color: #e2e8f0;
+            padding: 1.25rem;
+            border-radius: 0.75rem;
+            font-size: 0.85rem;
+            line-height: 1.6;
+            border-left: 4px solid #06b6d4;
+            overflow-x: auto;
+            margin-bottom: 1.5rem;
+        }
+
+        .py-comment {
+            color: #64748b;
+            font-style: italic;
+        }
+
+        .py-keyword {
+            color: #f472b6;
+        }
+
+        .py-func {
+            color: #38bdf8;
+        }
+
+        .py-str {
+            color: #fbbf24;
+        }
+
+        .py-val {
+            color: #bd93f9;
+        }
+
+        .phase-indicator {
+            @apply inline-block px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest mb-4 bg-cyan-600 text-white shadow-sm;
+        }
+
+        .alert-card {
+            @apply bg-rose-50 border-l-4 border-rose-500 p-5 rounded-r-xl mb-8 shadow-sm;
+        }
+
+        .best-practice {
+            @apply bg-cyan-50 border-l-4 border-cyan-500 p-5 rounded-r-xl mb-8 shadow-sm;
+        }
+
+        .health-badge {
+            @apply px-2 py-0.5 rounded text-[10px] font-bold border flex items-center gap-1 bg-white;
+        }
+    </style>
+</head>
+
+<body class="p-4 md:p-12 lg:p-20">
+
+    <div class="max-w-5xl mx-auto">
+        <!-- CABECERA TÉCNICA -->
+        <header class="mb-20 border-b border-slate-200 pb-12">
+            <div class="flex flex-col md:flex-row items-center gap-6 mb-8">
+                <div class="p-4 bg-cyan-600 text-white rounded-2xl shadow-2xl">
+                    <i class="fas fa-users-viewfinder text-3xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-4xl md:text-6xl font-black tracking-tighter text-slate-900">KNN <span
+                            class="text-cyan-600">Industrial</span></h1>
+                    <p class="text-slate-500 font-bold text-lg uppercase tracking-widest">Aprendizaje Basado en
+                        Instancias y MLOps</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="p-6 bg-white rounded-2xl shadow-sm border border-slate-200">
+                    <h4 class="text-xs font-black text-slate-400 uppercase mb-3">¿Por qué elegir KNN sobre otros?</h4>
+                    <p class="text-sm text-slate-600">
+                        Es el algoritmo ideal cuando:
+                        <br>• Los datos **no siguen una distribución conocida** (No-paramétrico).
+                        <br>• El dataset es de **tamaño pequeño a mediano** (< 100k registros). <br>• Se requiere una
+                            **frontera de decisión extremadamente flexible**.
+                            <br>• El modelo debe ser capaz de aprender de **nuevos datos instantáneamente** (Lazy
+                            Learning).
+                    </p>
+                </div>
+                <div class="p-6 bg-cyan-900 rounded-2xl shadow-xl text-white">
+                    <h4 class="text-xs font-black text-cyan-300 uppercase mb-3">Elemento Distintivo: No-Training</h4>
+                    <p class="text-sm italic opacity-90">
+                        "KNN no genera una fórmula; memoriza el dataset. Su 'entrenamiento' es instantáneo, pero su
+                        'inferencia' es costosa, ya que debe calcular distancias contra todos los ejemplos conocidos en
+                        cada predicción."
+                    </p>
+                </div>
+            </div>
+        </header>
+
+        <!-- FASE 1: DATA OPS -->
+        <section class="mb-24">
+            <span class="phase-indicator bg-blue-600">Fase 1: Ingesta & Data Quality</span>
+            <h2 class="text-3xl font-extrabold mb-6">Tratamiento de Outliers y Split</h2>
+            <p class="text-slate-600 mb-8">Como KNN se basa en distancias, un solo valor atípico (Outlier) puede
+                "atrapar" a los vecinos cercanos y arruinar la clasificación local.</p>
+
+            <div class="code-block">
+                <span class="py-keyword">import</span> pandas <span class="py-keyword">as</span> pd
+                <span class="py-keyword">from</span> sklearn.model_selection <span class="py-keyword">import</span>
+                train_test_split
+
+                <span class="py-comment"># Ingesta desde Feature Store versionada</span>
+                df = pd.<span class="py-func">read_csv</span>(<span class="py-str">'customer_segments_v1.csv'</span>)
+
+                <span class="py-comment"># Gestión de Outliers: KNN es altamente sensible a ruidos espaciales</span>
+                <span class="py-comment"># Filtramos el percentil 99 para evitar puntos "aislados" que atraigan
+                    vecinos</span>
+                df = df[df[<span class="py-str">'spending_score'</span>].between(df[<span
+                    class="py-str">'spending_score'</span>].quantile(<span class="py-val">0.01</span>),
+                df[<span class="py-str">'spending_score'</span>].quantile(<span class="py-val">0.99</span>))]
+
+                <span class="py-comment"># Split: Stratify es mandatorio para mantener la densidad de clases
+                    local</span>
+                X_train, X_test, y_train, y_test = <span class="py-func">train_test_split</span>(
+                df.drop(<span class="py-str">'category'</span>, axis=<span class="py-val">1</span>),
+                df[<span class="py-str">'category'</span>],
+                test_size=<span class="py-val">0.2</span>,
+                stratify=df[<span class="py-str">'category'</span>],
+                random_state=<span class="py-val">42</span>
+                )
+            </div>
+
+            <div class="alert-card">
+                <h4 class="text-rose-800 font-bold text-sm uppercase mb-2"><i
+                        class="fas fa-exclamation-triangle mr-2"></i>Error Común: Dataset Masivo</h4>
+                <p class="text-xs text-rose-700 leading-relaxed">Intentar usar KNN en datasets de millones de filas sin
+                    indexación (como KD-Trees o BallTrees). La inferencia se volverá prohibitivamente lenta al tener que
+                    calcular millones de distancias euclidianas.</p>
+            </div>
+        </section>
+
+        <!-- FASE 2: FEATURE ENGINEERING -->
+        <section class="mb-24">
+            <span class="phase-indicator bg-indigo-600">Fase 2: Preprocessing & Dimensionality</span>
+            <h2 class="text-3xl font-extrabold mb-6">El Mandato del Escalado (StandardScaler)</h2>
+            <p class="text-slate-600 mb-8">Si una variable tiene rango 0-1 y otra 0-1000, la distancia será dominada
+                totalmente por la segunda variable.</p>
+
+            <div class="code-block">
+                <span class="py-keyword">from</span> sklearn.preprocessing <span class="py-keyword">import</span>
+                StandardScaler
+
+                <span class="py-comment"># SIN ESCALADO, KNN ES MATEMÁTICAMENTE INVÁLIDO</span>
+                scaler = <span class="py-func">StandardScaler</span>()
+                X_train_scaled = scaler.<span class="py-func">fit_transform</span>(X_train)
+                X_test_scaled = scaler.<span class="py-func">transform</span>(X_test)
+
+                <span class="py-comment"># Recomendación pro: Si tienes > 20 variables, usa PCA antes de KNN</span>
+                <span class="py-comment"># para combatir la "Maldición de la Dimensionalidad".</span>
+            </div>
+
+            <div class="best-practice">
+                <h4 class="text-cyan-800 font-bold text-sm uppercase mb-2"><i
+                        class="fas fa-microchip mr-2"></i>Validación de Dimensionalidad</h4>
+                <p class="text-xs text-cyan-700 leading-relaxed">KNN sufre cuando hay demasiadas columnas. En alta
+                    dimensión, todos los puntos parecen estar "lejos" de todos, invalidando el concepto de "vecino
+                    cercano". Limita tus features a las 10-15 más importantes.</p>
+            </div>
+        </section>
+
+        <!-- FASE 3: TRAINING & SEARCH -->
+        <section class="mb-24">
+            <span class="phase-indicator bg-purple-600">Fase 3: Model Tuning & Tracking</span>
+            <h2 class="text-3xl font-extrabold mb-6">Optimización de $K$ y Métricas de Distancia</h2>
+            <p class="text-slate-600 mb-8">El valor de $K$ define el balance entre sesgo y varianza. Un $K$ pequeño
+                sobreajusta; un $K$ grande promedia demasiado.</p>
+
+            <div class="code-block">
+                <span class="py-keyword">from</span> sklearn.neighbors <span class="py-keyword">import</span>
+                KNeighborsClassifier
+                <span class="py-keyword">import</span> mlflow
+
+                <span class="py-keyword">with</span> mlflow.<span class="py-func">start_run</span>(run_name=<span
+                    class="py-str">"knn_optimized_k7"</span>):
+                <span class="py-comment"># K=7 (Impar para evitar empates), pesos ponderados por distancia</span>
+                model = <span class="py-func">KNeighborsClassifier</span>(n_neighbors=<span class="py-val">7</span>,
+                weights=<span class="py-str">'distance'</span>, metric=<span class="py-str">'euclidean'</span>)
+                model.<span class="py-func">fit</span>(X_train_scaled, y_train)
+
+                <span class="py-comment"># Tracking de parámetros clave</span>
+                mlflow.<span class="py-func">log_params</span>({<span class="py-str">"k"</span>: <span
+                    class="py-val">7</span>, <span class="py-str">"weights"</span>: <span
+                    class="py-str">"distance"</span>, <span class="py-str">"algorithm"</span>: <span
+                    class="py-str">"auto"</span>})
+            </div>
+        </section>
+
+        <!-- FASE 4: VALIDATION & HEALTH CHECK -->
+        <section class="mb-24">
+            <span class="phase-indicator bg-rose-600">Fase 4: Evaluación & Model Health</span>
+            <h2 class="text-3xl font-extrabold mb-8">Chequeo de Salud Espacial</h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                <div class="p-8 bg-slate-900 rounded-3xl text-white shadow-2xl border border-cyan-500/30">
+                    <h3 class="text-xl font-bold mb-6 flex items-center gap-2 text-rose-400">
+                        <i class="fas fa-heartbeat"></i> Model Health Check
+                    </h3>
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center border-b border-white/10 pb-2">
+                            <span class="text-xs">Estabilidad ante cambio de K</span>
+                            <span class="health-badge border-emerald-400 text-emerald-400">Variación < 3%</span>
+                        </div>
+                        <div class="flex justify-between items-center border-b border-white/10 pb-2">
+                            <span class="text-xs">Latencia de Inferencia</span>
+                            <span class="health-badge border-blue-400 text-blue-400">Objetivo < 100ms</span>
+                        </div>
+                        <div class="flex justify-between items-center border-b border-white/10 pb-2">
+                            <span class="text-xs">Accuracy en Micro-clusters</span>
+                            <span class="health-badge border-rose-400 text-rose-400">Mínimo 85%</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs">Ratio de Overfitting</span>
+                            <span class="health-badge border-amber-400 text-amber-400">Delta < 5%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="code-block !mb-0 !text-[11px] leading-tight">
+                    <span class="py-keyword">from</span> sklearn.metrics <span class="py-keyword">import</span>
+                    classification_report
+
+                    <span class="py-comment"># Validación distintiva: Error de entrenamiento vs Test</span>
+                    <span class="py-comment"># En KNN, si K=1, el error de entrenamiento es 0. </span>
+                    <span class="py-comment"># Eso es una alerta roja de salud del modelo.</span>
+                    y_pred = model.<span class="py-func">predict</span>(X_test_scaled)
+                    <span class="py-func">print</span>(classification_report(y_test, y_pred))
+                </div>
+            </div>
+
+            <div class="alert-card mt-8">
+                <h4 class="text-rose-800 font-bold text-sm uppercase mb-2"><i class="fas fa-radiation mr-2"></i>La
+                    Trampa del K=1</h4>
+                <p class="text-xs text-rose-700">Usar un K demasiado pequeño capturará el ruido del dataset como si
+                    fuera un patrón real. Valida siempre con un rango de K (ej. 3 a 15) y elige el que mantenga métricas
+                    estables en el set de validación.</p>
+            </div>
+        </section>
+
+        <!-- FASE 5: OPERATIONALIZATION -->
+        <section class="mb-24">
+            <span class="phase-indicator bg-emerald-600">Fase 5: Deployment & Serving</span>
+            <h2 class="text-3xl font-extrabold mb-6">Serialización del "Dataset-Cerebro"</h2>
+            <p class="text-slate-600 mb-8">Recuerda: El bundle de producción debe contener el dataset de entrenamiento,
+                ya que KNN lo necesita para "comparar" en vivo.</p>
+
+            <div class="code-block">
+                <span class="py-keyword">import</span> joblib
+
+                <span class="py-comment"># El artefacto DEBE ser atómico (Scaler + Model)</span>
+                production_bundle = {
+                <span class="py-str">"pipeline_v"</span>: <span class="py-str">"10.2.1"</span>,
+                <span class="py-str">"feature_scaler"</span>: scaler,
+                <span class="py-str">"knn_model"</span>: model
+                }
+                joblib.<span class="py-func">dump</span>(production_bundle, <span
+                    class="py-str">'knn_service.joblib'</span>)
+            </div>
+        </section>
+
+        <!-- FASE 6: MONITORING -->
+        <section class="mb-24">
+            <span class="phase-indicator bg-slate-900">Fase 6: Observation & Drift</span>
+            <h2 class="text-3xl font-extrabold mb-6">Vigilancia de la Distribución Espacial</h2>
+            <p class="text-slate-600 mb-8">Monitoreamos si los nuevos datos de los usuarios están cayendo en "tierras de
+                nadie" geométricas.</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="p-6 bg-white border border-slate-200 rounded-2xl shadow-sm">
+                    <h4 class="font-black text-slate-800 mb-4 uppercase text-xs">Alertas de Re-entrenamiento:</h4>
+                    <div class="space-y-4">
+                        <div class="flex items-start gap-3">
+                            <i class="fas fa-tachometer-alt text-cyan-500 mt-1"></i>
+                            <div>
+                                <h5 class="text-xs font-bold">Latency Drift</h5>
+                                <p class="text-[10px] text-slate-500">Si el dataset crece, el tiempo de respuesta
+                                    aumenta. Alerta en > 150ms.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <i class="fas fa-map-pin text-rose-500 mt-1"></i>
+                            <div>
+                                <h5 class="text-xs font-bold">Data Drift</h5>
+                                <p class="text-[10px] text-slate-500">Si el 20% de las predicciones tienen una distancia
+                                    al vecino > umbral histórico.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div
+                    class="flex items-center justify-center bg-cyan-50 rounded-3xl border-2 border-dashed border-cyan-200">
+                    <div class="text-center p-8 text-cyan-700">
+                        <i class="fas fa-sync-alt text-4xl mb-4 animate-spin-slow"></i>
+                        <p class="text-[10px] font-mono uppercase">Continuous Learning Sync</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHECKLIST DE VALIDACIÓN FINAL -->
+        <section
+            class="bg-slate-900 rounded-[2.5rem] p-10 text-white shadow-2xl relative overflow-hidden border border-slate-700">
+            <div class="absolute -right-20 -bottom-20 opacity-10">
+                <i class="fas fa-check-double text-[250px]"></i>
+            </div>
+            <div class="relative z-10">
+                <h2 class="text-3xl font-black mb-10 flex items-center gap-4 text-cyan-400">
+                    <i class="fas fa-clipboard-list"></i> Checklist de Validación MLOps (KNN)
+                </h2>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-12 text-sm leading-relaxed text-slate-300">
+                    <div class="space-y-6">
+                        <div class="flex gap-4">
+                            <div
+                                class="w-8 h-8 rounded-lg bg-cyan-500/20 flex items-center justify-center shrink-0 border border-cyan-500/40 text-cyan-400">
+                                <i class="fas fa-check"></i></div>
+                            <div>
+                                <h5 class="font-bold text-white uppercase text-xs">Normalización Z-Score</h5>
+                                <p class="text-[11px]">¿Se validó que todas las variables tienen media 0 y varianza 1
+                                    antes de calcular distancias?</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <div
+                                class="w-8 h-8 rounded-lg bg-cyan-500/20 flex items-center justify-center shrink-0 border border-cyan-500/40 text-cyan-400">
+                                <i class="fas fa-check"></i></div>
+                            <div>
+                                <h5 class="font-bold text-white uppercase text-xs">Estrategia de K-Impar</h5>
+                                <p class="text-[11px]">¿Se eligió un K que no permita empates en la votación de clases?
+                                </p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <div
+                                class="w-8 h-8 rounded-lg bg-cyan-500/20 flex items-center justify-center shrink-0 border border-cyan-500/40 text-cyan-400">
+                                <i class="fas fa-check"></i></div>
+                            <div>
+                                <h5 class="font-bold text-white uppercase text-xs">Dimensionalidad Bajo Control</h5>
+                                <p class="text-[11px]">¿Se eliminaron variables ruidosas o irrelevantes mediante
+                                    Selección de Características?</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div class="flex gap-4">
+                            <div
+                                class="w-8 h-8 rounded-lg bg-cyan-500/20 flex items-center justify-center shrink-0 border border-cyan-500/40 text-cyan-400">
+                                <i class="fas fa-check"></i></div>
+                            <div>
+                                <h5 class="font-bold text-white uppercase text-xs">Indexación KD-Tree</h5>
+                                <p class="text-[11px]">¿Se configuró el parámetro `algorithm='kd_tree'` para acelerar la
+                                    búsqueda en producción?</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <div
+                                class="w-8 h-8 rounded-lg bg-cyan-500/20 flex items-center justify-center shrink-0 border border-cyan-500/40 text-cyan-400">
+                                <i class="fas fa-check"></i></div>
+                            <div>
+                                <h5 class="font-bold text-white uppercase text-xs">Pesos por Distancia</h5>
+                                <p class="text-[11px]">¿Se consideró `weights='distance'` para que los vecinos más
+                                    cercanos influyan más que los lejanos?</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <div
+                                class="w-8 h-8 rounded-lg bg-cyan-500/20 flex items-center justify-center shrink-0 border border-cyan-500/40 text-cyan-400">
+                                <i class="fas fa-check"></i></div>
+                            <div>
+                                <h5 class="font-bold text-white uppercase text-xs">Inferencia SLA</h5>
+                                <p class="text-[11px]">¿Se ha medido el tiempo de respuesta con carga máxima simulada?
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="mt-20 pt-10 border-t border-slate-200 text-center pb-12">
+            <p class="text-slate-400 text-[10px] uppercase font-black tracking-[0.2em] mb-4">
+                Industrial ML Standard v10.0 • KNN & MLOps Architecture • 2024
+            </p>
+            <div class="flex justify-center gap-8 text-slate-300">
+                <i class="fab fa-python text-2xl"></i>
+                <i class="fas fa-project-diagram text-2xl"></i>
+                <i class="fas fa-shield-alt text-2xl"></i>
+                <i class="fas fa-server text-2xl"></i>
+            </div>
+        </footer>
+    </div>
+
+</body>
+
+</html>

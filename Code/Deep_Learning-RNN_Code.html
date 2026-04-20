@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pipeline Industrial: RNN/LSTM & MLOps</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Fira+Code:wght@400;500&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #fdfaf8;
+            color: #0f172a;
+            line-height: 1.6;
+        }
+
+        .code-block {
+            font-family: 'Fira Code', monospace;
+            background-color: #0f172a;
+            color: #e2e8f0;
+            padding: 1.25rem;
+            border-radius: 0.75rem;
+            font-size: 0.85rem;
+            line-height: 1.6;
+            border-left: 4px solid #f59e0b;
+            overflow-x: auto;
+            margin-bottom: 1.5rem;
+        }
+
+        .py-comment {
+            color: #64748b;
+            font-style: italic;
+        }
+
+        .py-keyword {
+            color: #f472b6;
+        }
+
+        .py-func {
+            color: #38bdf8;
+        }
+
+        .py-str {
+            color: #fbbf24;
+        }
+
+        .py-val {
+            color: #bd93f9;
+        }
+
+        .phase-indicator {
+            @apply inline-block px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest mb-4 bg-amber-600 text-white shadow-sm;
+        }
+
+        .alert-card {
+            @apply bg-rose-50 border-l-4 border-rose-500 p-5 rounded-r-xl mb-8 shadow-sm;
+        }
+
+        .best-practice {
+            @apply bg-emerald-50 border-l-4 border-emerald-500 p-5 rounded-r-xl mb-8 shadow-sm;
+        }
+
+        .health-badge {
+            @apply px-2 py-0.5 rounded text-[10px] font-bold border flex items-center gap-1 bg-white;
+        }
+    </style>
+</head>
+
+<body class="p-4 md:p-12 lg:p-20">
+
+    <div class="max-w-5xl mx-auto">
+        <!-- CABECERA TÉCNICA -->
+        <header class="mb-20 border-b border-slate-200 pb-12">
+            <div class="flex flex-col md:flex-row items-center gap-6 mb-8">
+                <div class="p-4 bg-slate-900 text-white rounded-2xl shadow-2xl text-center">
+                    <i class="fas fa-redo-alt text-3xl text-amber-400"></i>
+                </div>
+                <div>
+                    <h1 class="text-4xl md:text-6xl font-black tracking-tighter text-slate-900">RNN <span
+                            class="text-amber-600">Industrial</span></h1>
+                    <p class="text-slate-500 font-bold text-lg uppercase tracking-widest">Series Temporales y Ecosistema
+                        MLOps</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="p-6 bg-white rounded-2xl shadow-sm border border-slate-200">
+                    <h4 class="text-xs font-black text-slate-400 uppercase mb-3">Lógica de Selección: ¿Por qué LSTM/GRU?
+                    </h4>
+                    <p class="text-sm text-slate-600 leading-relaxed">
+                        Se elige sobre modelos tradicionales (ARIMA) o densos (MLP) cuando:
+                        <br>• Existen **dependencias de largo plazo** en los datos.
+                        <br>• El orden secuencial es el factor determinante del resultado.
+                        <br>• Se requiere capturar patrones estacionales complejos no lineales.
+                        <br>• Se dispone de datos masivos con múltiples variables correlacionadas en el tiempo.
+                    </p>
+                </div>
+                <div class="p-6 bg-amber-900 rounded-2xl shadow-xl text-white">
+                    <h4 class="text-xs font-black text-amber-300 uppercase mb-3">Elemento Distintivo: Estado Oculto</h4>
+                    <p class="text-sm italic opacity-90">
+                        "A diferencia de otros modelos, la RNN posee una 'memoria' interna ($h_t$). No mira cada dato de
+                        forma aislada; mantiene un resumen del pasado que condiciona la interpretación del presente."
+                    </p>
+                </div>
+            </div>
+        </header>
+
+        <!-- FASE 1: DATA OPS -->
+        <section class="mb-24">
+            <span class="phase-indicator bg-blue-600">Fase 1: Ingesta & Temporal Lineage</span>
+            <h2 class="text-3xl font-extrabold mb-6">Manejo de Ventanas y Evitación de Look-ahead</h2>
+            <p class="text-slate-600 mb-8">En series de tiempo, el error fatal es el "Look-ahead bias": permitir que el
+                modelo vea información del futuro durante el entrenamiento.</p>
+
+            <div class="code-block">
+                <span class="py-keyword">import</span> pandas <span class="py-keyword">as</span> pd
+                <span class="py-keyword">import</span> numpy <span class="py-keyword">as</span> np
+
+                <span class="py-comment"># Ingesta inmutable: NO barajar (shuffle=False)</span>
+                df = pd.<span class="py-func">read_csv</span>(<span class="py-str">'energy_demand_v1.csv'</span>,
+                parse_dates=[<span class="py-str">'timestamp'</span>])
+
+                <span class="py-comment"># Time Series Split: El set de prueba debe ser cronológicamente
+                    posterior</span>
+                train_size = <span class="py-func">int</span>(<span class="py-func">len</span>(df) * <span
+                    class="py-val">0.8</span>)
+                train, test = df.iloc[:train_size], df.iloc[train_size:]
+
+                <span class="py-comment"># Creación de Ventanas Deslizantes (Sliding Windows)</span>
+                <span class="py-keyword">def</span> <span class="py-func">create_windows</span>(data, window_size=<span
+                    class="py-val">24</span>):
+                X, y = [], []
+                <span class="py-keyword">for</span> i <span class="py-keyword">in</span> <span
+                    class="py-func">range</span>(<span class="py-func">len</span>(data) - window_size):
+                X.append(data[i:i+window_size])
+                y.append(data[i+window_size])
+                <span class="py-keyword">return</span> np.array(X), np.array(y)
+            </div>
+
+            <div class="alert-card">
+                <h4 class="text-rose-800 font-bold text-sm uppercase mb-2"><i
+                        class="fas fa-exclamation-triangle mr-2"></i>Error Común: Shuffling Aleatorio</h4>
+                <p class="text-xs text-rose-700 leading-relaxed">Usar <code>train_test_split</code> con barajado
+                    destruye la autocorrelación temporal. El modelo entrenará con datos del futuro para predecir el
+                    pasado, inflando las métricas ficticiamente.</p>
+            </div>
+        </section>
+
+        <!-- FASE 2: FEATURE ENGINEERING -->
+        <section class="mb-24">
+            <span class="phase-indicator bg-indigo-600">Fase 2: Preprocessing & Scaling</span>
+            <h2 class="text-3xl font-extrabold mb-6">Escalamiento y Estacionariedad</h2>
+            <p class="text-slate-600 mb-8">Las RNN son extremadamente sensibles a la escala debido a las funciones de
+                activación (tanh/sigmoid). Además, removemos tendencias para estabilizar la media.</p>
+
+            <div class="code-block">
+                <span class="py-keyword">from</span> sklearn.preprocessing <span class="py-keyword">import</span>
+                MinMaxScaler
+
+                <span class="py-comment"># MinMaxScaler es preferible para RNNs para mantener rangos [0, 1]</span>
+                scaler = <span class="py-func">MinMaxScaler</span>(feature_range=(<span class="py-val">0</span>, <span
+                    class="py-val">1</span>))
+                train_scaled = scaler.<span class="py-func">fit_transform</span>(train[[<span
+                    class="py-str">'demand'</span>]])
+                test_scaled = scaler.<span class="py-func">transform</span>(test[[<span
+                    class="py-str">'demand'</span>]])
+
+                <span class="py-comment"># Mejor Práctica: Diferenciación para hacer la serie estacionaria</span>
+                <span class="py-comment"># df_diff = df.diff().dropna() </span>
+            </div>
+
+            <div class="best-practice">
+                <h4 class="text-emerald-800 font-bold text-sm uppercase mb-2"><i
+                        class="fas fa-check-double mr-2"></i>Validación Crucial: Estacionariedad</h4>
+                <p class="text-xs text-emerald-700 leading-relaxed">Aplica el test de <strong>Dickey-Fuller
+                        (ADF)</strong>. Si la serie no es estacionaria (su media cambia con el tiempo), la RNN tendrá
+                    dificultades para converger. La diferenciación es tu mejor aliada.</p>
+            </div>
+        </section>
+
+        <!-- FASE 3: MODEL DEVELOPMENT -->
+        <section class="mb-24">
+            <span class="phase-indicator bg-purple-600">Fase 3: Model Training & Architecture</span>
+            <h2 class="text-3xl font-extrabold mb-6">Arquitectura LSTM Trazable</h2>
+            <p class="text-slate-600 mb-8">Implementamos celdas de Memoria de Largo Plazo (LSTM) para combatir el
+                desvanecimiento del gradiente.</p>
+
+            <div class="code-block">
+                <span class="py-keyword">from</span> tensorflow.keras.models <span class="py-keyword">import</span>
+                Sequential
+                <span class="py-keyword">from</span> tensorflow.keras.layers <span class="py-keyword">import</span>
+                LSTM, Dense, Dropout
+                <span class="py-keyword">import</span> mlflow
+
+                <span class="py-keyword">with</span> mlflow.<span class="py-func">start_run</span>(run_name=<span
+                    class="py-str">"lstm_demand_forecaster"</span>):
+                model = <span class="py-func">Sequential</span>([
+                <span class="py-comment"># input_shape=(time_steps, features)</span>
+                <span class="py-func">LSTM</span>(<span class="py-val">50</span>, return_sequences=<span
+                    class="py-keyword">True</span>, input_shape=(<span class="py-val">24</span>, <span
+                    class="py-val">1</span>)),
+                <span class="py-func">Dropout</span>(<span class="py-val">0.2</span>),
+                <span class="py-func">LSTM</span>(<span class="py-val">50</span>, return_sequences=<span
+                    class="py-keyword">False</span>),
+                <span class="py-func">Dense</span>(<span class="py-val">1</span>)
+                ])
+
+                model.<span class="py-func">compile</span>(optimizer=<span class="py-str">'adam'</span>, loss=<span
+                    class="py-str">'mse'</span>)
+                mlflow.<span class="py-func">log_param</span>(<span class="py-str">"window_size"</span>, <span
+                    class="py-val">24</span>)
+            </div>
+        </section>
+
+        <!-- FASE 4: VALIDATION & HEALTH CHECK -->
+        <section class="mb-24">
+            <span class="phase-indicator bg-rose-600">Fase 4: Evaluación & Model Health</span>
+            <h2 class="text-3xl font-extrabold mb-8">Diagnóstico de Residuos Temporales</h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                <div class="p-8 bg-slate-900 rounded-3xl text-white shadow-2xl border border-amber-500/30">
+                    <h3 class="text-xl font-bold mb-6 flex items-center gap-2 text-rose-400">
+                        <i class="fas fa-heartbeat"></i> RNN Health Check
+                    </h3>
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center border-b border-white/10 pb-2">
+                            <span class="text-xs">RMSE / MAPE</span>
+                            <span class="health-badge border-emerald-400 text-emerald-400">Tolerancia < 5%</span>
+                        </div>
+                        <div class="flex justify-between items-center border-b border-white/10 pb-2">
+                            <span class="text-xs">Autocorrelación de Residuos</span>
+                            <span class="health-badge border-blue-400 text-blue-400">Cero (Ruido blanco)</span>
+                        </div>
+                        <div class="flex justify-between items-center border-b border-white/10 pb-2">
+                            <span class="text-xs">Look-ahead Bias Check</span>
+                            <span class="health-badge border-amber-400 text-amber-400">Validado</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs">Loss Stability</span>
+                            <span class="health-badge border-purple-400 text-purple-400">Convergencia OK</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                    <h4 class="text-xs font-black text-slate-400 uppercase mb-3">Validación Crítica: Backtesting</h4>
+                    <p class="text-sm text-slate-600 mb-4 italic">"Una RNN saludable no solo minimiza el error, sino que
+                        sus errores no están correlacionados en el tiempo. Si el error de hoy ayuda a predecir el de
+                        mañana, el modelo está incompleto."</p>
+                    <div class="p-3 bg-slate-50 rounded-lg text-center">
+                        <i class="fas fa-history text-amber-500 text-4xl mb-2"></i>
+                        <p class="text-[10px] font-mono text-slate-400">WALK-FORWARD VALIDATION: PASSED</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="alert-card mt-8">
+                <h4 class="text-rose-800 font-bold text-sm uppercase mb-2"><i
+                        class="fas fa-skull-crossbones mr-2"></i>La Trampa del "Lag 1"</h4>
+                <p class="text-xs text-rose-700">A veces la RNN simplemente aprende a copiar el valor del paso anterior
+                    ($Y_{t-1}$) como predicción para $Y_t$. Esto da un error bajo pero no genera valor predictivo real.
+                    **Compara siempre tu modelo contra un baseline ingenuo (Persistence Model).**</p>
+            </div>
+        </section>
+
+        <!-- FASE 5: OPERATIONALIZATION -->
+        <section class="mb-24">
+            <span class="phase-indicator bg-emerald-600">Fase 5: Deployment & Streaming</span>
+            <h2 class="text-3xl font-extrabold mb-6">Serving Secuencial e Inferencia</h2>
+            <p class="text-slate-600 mb-8">El despliegue de una RNN requiere una gestión de estado. La API debe mantener
+                los últimos $N$ pasos para predecir el siguiente.</p>
+
+            <div class="code-block">
+                <span class="py-keyword">import</span> joblib
+
+                <span class="py-comment"># Bundle inmutable: Escalador + Modelo H5</span>
+                forecasting_bundle = {
+                <span class="py-str">"v"</span>: <span class="py-str">"18.2.0"</span>,
+                <span class="py-str">"input_scaler"</span>: scaler,
+                <span class="py-str">"rnn_model"</span>: <span class="py-str">"saved_model.h5"</span>,
+                <span class="py-str">"lookback"</span>: <span class="py-val">24</span>
+                }
+                joblib.<span class="py-func">dump</span>(forecasting_bundle, <span
+                    class="py-str">'demand_service.pkl'</span>)
+
+                <span class="py-comment"># Nota: El servicio de Serving debe reconstruir el tensor </span>
+                <span class="py-comment"># de entrada con la forma (1, 24, 1) antes de .predict()</span>
+            </div>
+        </section>
+
+        <!-- FASE 6: MONITORING -->
+        <section class="mb-24">
+            <span class="phase-indicator bg-slate-900 text-white">Fase 6: Monitoring & Time Drift</span>
+            <h2 class="text-3xl font-extrabold mb-6">Vigilancia de la Estacionalidad</h2>
+            <p class="text-slate-600 mb-8">Los patrones temporales cambian (ej. cambio de hábitos por confinamiento).
+                Monitoreamos la deriva del concepto temporal.</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="p-6 bg-white border border-slate-200 rounded-2xl shadow-sm">
+                    <h4 class="font-bold text-slate-800 mb-4 uppercase text-xs">Alertas MLOps (RNN):</h4>
+                    <div class="space-y-4">
+                        <div class="flex items-start gap-3">
+                            <i class="fas fa-chart-line text-amber-500 mt-1"></i>
+                            <div>
+                                <h5 class="text-xs font-bold">Variance Drift</h5>
+                                <p class="text-[10px] text-slate-500">Si la volatilidad de la demanda aumenta
+                                    drásticamente.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <i class="fas fa-exclamation-circle text-rose-500 mt-1"></i>
+                            <div>
+                                <h5 class="text-xs font-bold">Concept Drift</h5>
+                                <p class="text-[10px] text-slate-500">Si el error residual del modelo sube > 15%
+                                    sostenidamente.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div
+                    class="flex items-center justify-center bg-amber-50 rounded-3xl border-2 border-dashed border-amber-200">
+                    <div class="text-center p-8 text-amber-700">
+                        <i class="fas fa-sync-alt text-4xl mb-4 animate-spin-slow"></i>
+                        <p class="text-[10px] font-mono uppercase">Online Training Loop Active</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHECKLIST DE VALIDACIÓN FINAL -->
+        <section
+            class="bg-slate-900 rounded-[2.5rem] p-10 text-white shadow-2xl relative overflow-hidden border border-slate-700">
+            <div class="absolute -right-20 -bottom-20 opacity-10 text-amber-500">
+                <i class="fas fa-check-double text-[250px]"></i>
+            </div>
+            <div class="relative z-10">
+                <h2 class="text-3xl font-black mb-10 flex items-center gap-4 text-amber-400">
+                    <i class="fas fa-clipboard-check"></i> Checklist de Validación MLOps (RNN)
+                </h2>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-12 text-sm leading-relaxed text-slate-300">
+                    <div class="space-y-6">
+                        <div class="flex gap-4">
+                            <div
+                                class="w-8 h-8 rounded-lg bg-amber-500/20 flex items-center justify-center shrink-0 border border-amber-500/40 text-amber-400">
+                                <i class="fas fa-check"></i></div>
+                            <div>
+                                <h5 class="font-bold text-white uppercase text-xs">Temporal Integrity</h5>
+                                <p class="text-[11px]">¿Se garantizó que el split de entrenamiento y prueba fue
+                                    puramente cronológico?</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <div
+                                class="w-8 h-8 rounded-lg bg-amber-500/20 flex items-center justify-center shrink-0 border border-amber-500/40 text-amber-400">
+                                <i class="fas fa-check"></i></div>
+                            <div>
+                                <h5 class="font-bold text-white uppercase text-xs">Windowing Logic</h5>
+                                <p class="text-[11px]">¿El tamaño de la ventana ($T$) es suficiente para capturar la
+                                    estacionalidad mínima (ej. 24h)?</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <div
+                                class="w-8 h-8 rounded-lg bg-amber-500/20 flex items-center justify-center shrink-0 border border-amber-500/40 text-amber-400">
+                                <i class="fas fa-check"></i></div>
+                            <div>
+                                <h5 class="font-bold text-white uppercase text-xs">Scaling Persistency</h5>
+                                <p class="text-[11px]">¿Se está usando el mismo objeto `MinMaxScaler` para transformar
+                                    las entradas de la API?</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div class="flex gap-4">
+                            <div
+                                class="w-8 h-8 rounded-lg bg-amber-500/20 flex items-center justify-center shrink-0 border border-amber-500/40 text-amber-400">
+                                <i class="fas fa-check"></i></div>
+                            <div>
+                                <h5 class="font-bold text-white uppercase text-xs">Residuals Whiteness</h5>
+                                <p class="text-[11px]">¿Se comprobó que los errores no tienen autocorrelación
+                                    significativa?</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <div
+                                class="w-8 h-8 rounded-lg bg-amber-500/20 flex items-center justify-center shrink-0 border border-amber-500/40 text-amber-400">
+                                <i class="fas fa-check"></i></div>
+                            <div>
+                                <h5 class="font-bold text-white uppercase text-xs">Architectural Benchmark</h5>
+                                <p class="text-[11px]">¿La LSTM supera realmente a un modelo autorregresivo simple
+                                    (ARIMA) en precisión?</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <div
+                                class="w-8 h-8 rounded-lg bg-amber-500/20 flex items-center justify-center shrink-0 border border-amber-500/40 text-amber-400">
+                                <i class="fas fa-check"></i></div>
+                            <div>
+                                <h5 class="font-bold text-white uppercase text-xs">Monitoring Trigger</h5>
+                                <p class="text-[11px]">¿Existe una alerta automática ante la pérdida de precisión por
+                                    cambio de ciclo estacional?</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="mt-20 pt-10 border-t border-slate-200 text-center pb-12">
+            <p class="text-slate-400 text-[10px] uppercase font-black tracking-[0.2em] mb-4">
+                Industrial Deep Learning Standard v18.0 • RNN/LSTM & MLOps • 2024
+            </p>
+            <div class="flex justify-center gap-8 text-slate-300">
+                <i class="fab fa-python text-2xl"></i>
+                <i class="fas fa-brain text-2xl"></i>
+                <i class="fas fa-hourglass-half text-2xl"></i>
+                <i class="fas fa-server text-2xl"></i>
+            </div>
+        </footer>
+    </div>
+
+</body>
+
+</html>
