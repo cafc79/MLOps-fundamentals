@@ -40,7 +40,7 @@ predicciones/segundo sin degradación.
 
 ## El Ciclo de Vida en 6 Fases
 
-Fase 1: Data Management
+Fase 1: [**Data Management**](/docs/1.Gestion-Datos.md "Data Management")
 
 ### Gestión de Datos y Feature Stores
 
@@ -53,7 +53,7 @@ versionada (DVC).
 Catálogo central de
 características (Feature Store).
 
-Fase 2: Experimentation
+Fase 2: [**Experimentation**](/docs/2.Desarrollo-modelo.md)
 
 ### Desarrollo del Modelo y Tracking
 
@@ -66,7 +66,7 @@ hiperparámetros (MLflow).
 Validación de algoritmos
 base (Baseline).
 
-Fase 3: ML Pipeline Automation
+Fase 3: [**ML Pipeline Automation**](/docs/3.AutomatizacionCI-CD.md)
 
 ### CI/CD/CT (Integración y Entrega Continua)
 
@@ -79,7 +79,7 @@ de ML.
 Pipelines de entrenamiento
 automático (Kubeflow).
 
-Fase 4: Model Serving
+Fase 4: [**Model Serving**](/docs/4.Despliegue.md)
 
 ### Despliegue e Inferencia
 
@@ -92,7 +92,7 @@ Contenerización inmutable
 Estrategias Canary y A/B
 Testing.
 
-Fase 5: Monitoring & Observability
+Fase 5: [**Monitoring & Observability**](/docs/5.Monitoreo.md)
 
 ### Monitoreo de Deriva y Salud
 
@@ -105,7 +105,7 @@ Detección de Data Drift
 Detección de Model Decay
 (Pérdida de Precisión).
 
-Fase 6: Governance & Security
+Fase 6: [**Governance & Security**](/docs/6.Gobernabilidad.md)
 
 ### Gobernanza, Ética y Auditoría
 
@@ -118,7 +118,7 @@ Explicabilidad
 Control de acceso (RBAC) y
 Seguridad de datos.
 
-## Ingeniería de Decisión
+## [**Ingeniería de Decisión**](/docs/ArquitecturaModelos.md)
 
 #### ¿Cómo elegir el mejor algoritmo?
 
@@ -138,7 +138,7 @@ que no puedas explicar o monitorear económicamente.
 - **Lack of
   Ownership:** Nadie es dueño del modelo una vez desplegado.
 
-## Model Health Check
+## [**Model Health Check**](8.ModelHealthCheck.md)
 
 #### Salud Técnica
 
