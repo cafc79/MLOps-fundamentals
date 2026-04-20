@@ -136,8 +136,9 @@ Secuencial
 Contextual
 Dinámico
 
-
-> [**Prev**](Deep_Learning-CNN.md "Redes Neuronales Convuncionales")
-> [**Practica - Redes Neuronales Recurrentes**](Sample/Deep_Learning-RNN.md)
-> [**Codigo - Redes Neuronales Recurrentes**](Code/Deep_Learning-RNN.md)
+> [* Prev**](Deep_Learning-Perceptron-Multicapa.md "Perceptrón Multicapa")
+ • 
+> [* Practica - Redes Neuronales Recurrentes**](Sample/Deep_Learning-RNN.md)
+ • 
+> [* Codigo - Redes Neuronales Recurrentes**](Code/Deep_Learning-RNN.md)
 ---

@@ -140,7 +140,10 @@ Velocidad de
 Modelado
 
 > [* Prev *](Unsupervised_Learning-K-Means-Clustering.md "K-Means Clustering")
+• 
 > [* Practica - Análisis de Componentes Principales *](Sample/Unsupervised_Learning-PCA.md)
+• 
 > [* Codigo - Análisis de Componentes Principales *](Code/Unsupervised_Learning-PCA.md)
+• 
 > [* Algoritmo - Agrupamiento Jerárquico *](Unsupervised_Learning-Hierarchical-Clustering.md)
 ---

@@ -1,6 +1,10 @@
-# Algoritmo CNN (Convolutional Neural Networks)
+Algoritmo CNN (Convolutional Neural Networks)
 
-# Deep Learning / Computer Vision
+
+
+Deep Learning / Computer Vision
+
+# Redes Neuronales Convolucionales
 
 Las CNN son arquitecturas especializadas en procesar datos con estructura de cuadrícula, como imágenes.
 Su capacidad para extraer patrones espaciales las hace el estándar para el reconocimiento de objetos y
@@ -138,8 +142,7 @@ Deep
 Learning
 
 
-> [* Prev *](Deep_Learning-Perceptron-Multicapa.md "Perceptrón Multicapa")
-> [* Practica - Redes Neuronales Convolucionales *](Sample/Deep_Learning-CNN.md)
-> [* Codigo - Redes Neuronales Convolucionales *](Code/Deep_Learning-CNN.md)
-> [* Algoritmo - Redes Neuronales Recurrentes *](Deep_Learning-RNN.md)
+> [**Algoritmo - Redes Neuronales Convolucionales**](../algoritmos/Deep_Learning-CNN.md "Redes Neuronales Convolucionales")
+> [**Practica - Redes Neuronales Convolucionales**](../Sample/Deep_Learning-CNN.md)
+> [**Codigo - Redes Neuronales Recurrentes**](Deep_Learning-RNN.md)
 ---

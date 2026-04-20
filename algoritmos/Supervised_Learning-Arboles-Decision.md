@@ -135,8 +135,11 @@ Interpretable
 No
 Lineal
 
-> [* Prev *](/Supervised_Learning-K-Nearest-Neighbors.md "K-Nearest Neighbors")
-> [* Practica - Árboles de Decisión *](Sample/Supervised_Learning-Arboles-Decision.md)
-> [* Codigo - Árboles de Decisión *](Code/Supervised_Learning-Arboles-Decision.md)
-> [* Algoritmo - K-Means Clustering *](Unsupervised_Learning-K-Means-Clustering.md)
+> [**Prev**](/Supervised_Learning-K-Nearest-Neighbors.md "K-Nearest Neighbors")
+• 
+> [**Practica - Árboles de Decisión**](../Sample/Supervised_Learning-Arboles-Decision.md)
+• 
+> [**Codigo - Árboles de Decisión**](../Code/Supervised_Learning-Arboles-Decision.md)
+• 
+> [**Algoritmo - K-Means Clustering**](Unsupervised_Learning-K-Means-Clustering.md)
 ---

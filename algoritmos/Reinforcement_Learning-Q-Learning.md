@@ -135,8 +135,11 @@ Auto-Aprendizaje
 Robusto
 Dinámico
 
-> [* Prev *](Unsupervised_Learning-Hierarchical-Clustering.md "Agrupamiento Jerárquico")
-> [* Practica - Q-Learning *](Sample/Reinforcement_Learning-Q-Learning.md)
-> [* Codigo - Q-Learning *](Code/Reinforcement_Learning-Q-Learning.md)
-> [* Algoritmo - Perceptrón Multicapa *](Deep_Learning-Perceptron-Multicapa.md)
+> [**Prev**](Unsupervised_Learning-Hierarchical-Clustering.md "Agrupamiento Jerárquico")
+• 
+> [**Practica - Q-Learning**](../Sample/Reinforcement_Learning-Q-Learning.md)
+• 
+> [**Codigo - Q-Learning**](../Code/Reinforcement_Learning-Q-Learning.md)
+• 
+> [**Algoritmo - Perceptrón Multicapa**](Deep_Learning-Perceptron-Multicapa.md)
 ---

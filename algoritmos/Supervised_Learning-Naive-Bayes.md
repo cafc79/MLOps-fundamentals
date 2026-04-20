@@ -133,8 +133,11 @@ NLP
 Eficiente en
 Datos
 
-> [* Prev *](Supervised_Learning-SVM.md "Máquinas de Vectores de Soporte")
-> [* Practica - Naive-Bayes *](Sample/Supervised_Learning-Naive-Bayes.md)
-> [* Codigo - Naive-Bayes *](Code/Supervised_Learning-Naive-Bayes.md)
-> [* Algoritmo - Regresion Lineal *](Supervised_Learning-K-Nearest-Neighbors.md)
+> [**Prev**](Supervised_Learning-SVM.md "Máquinas de Vectores de Soporte")
+• 
+> [**Practica - Naive-Bayes**](../Sample/Supervised_Learning-Naive-Bayes.md)
+• 
+> [**Codigo - Naive-Bayes**](../Code/Supervised_Learning-Naive-Bayes.md)
+• 
+> [**Algoritmo - Regresion Lineal**](Supervised_Learning-K-Nearest-Neighbors.md)
 ---

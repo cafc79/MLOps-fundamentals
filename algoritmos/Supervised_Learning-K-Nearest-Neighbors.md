@@ -136,8 +136,11 @@ Implementación
 Baseline
 Robusto
 
-> [* Prev *](/Supervised_Learning-Naive-Bayes.md "Naive-Bayes")
-> [* Practica - K-Nearest Neighbors *](Sample/Supervised_Learning-K-Nearest-Neighbors.md)
-> [* Codigo - K-Nearest Neighbors *](Code/Supervised_Learning-K-Nearest-Neighbors.md)
-> [* Algoritmo - Árboles de Decisión *](Supervised_Learning-Arboles-Decision.md)
+> [**Prev**](/Supervised_Learning-Naive-Bayes.md "Naive-Bayes")
+• 
+> [**Practica - K-Nearest Neighbors**](../Sample/Supervised_Learning-K-Nearest-Neighbors.md)
+• 
+> [**Codigo - K-Nearest Neighbors**](../Code/Supervised_Learning-K-Nearest-Neighbors.md)
+• 
+> [**Algoritmo - Árboles de Decisión**](Supervised_Learning-Arboles-Decision.md)
 ---

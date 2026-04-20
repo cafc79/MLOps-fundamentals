@@ -138,8 +138,11 @@ Precisión
 No-Paramétrico
 Versátil
 
-> [* Prev *](Supervised_Learning-Regresion-Logistica.md "Regresion Lineal")
-> [* Practica - Random Forest *](Sample/Supervised_Learning-Random-Forest.md)
-> [* Codigo - Random Forest *](Code/Supervised_Learning-Random-Forest.md)
-> [* Algoritmo - Regresion Lineal *](Supervised_Learning-SVM.md)
+> [**Prev**](Supervised_Learning-Regresion-Logistica.md "Regresion Lineal")
+• 
+> [**Practica - Random Forest**](../Sample/Supervised_Learning-Random-Forest.md)
+• 
+> [**Codigo - Random Forest**](../Code/Supervised_Learning-Random-Forest.md)
+• 
+> [**Algoritmo - Regresion Lineal**](Supervised_Learning-SVM.md)
 ---

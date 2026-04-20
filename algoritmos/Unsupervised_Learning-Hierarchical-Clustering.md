@@ -139,8 +139,11 @@ Total
 Anidamiento
 Lógico
 
-> [* Prev *](Unsupervised_Learning-PCA.md "Análisis de Componentes Principales")
-> [* Practica - Agrupamiento Jerárquico *](Sample/Unsupervised_Learning-Hierarchical-Clustering.md)
-> [* Codigo - Agrupamiento Jerárquico *](Code/Unsupervised_Learning-Hierarchical-Clustering.md)
-> [* Algoritmo - Q-Learning *](Reinforcement_Learning-Q-Learning.md)
+> [**Prev**](Unsupervised_Learning-PCA.md "Análisis de Componentes Principales")
+• 
+> [**Practica - Agrupamiento Jerárquico**](../Sample/Unsupervised_Learning-Hierarchical-Clustering.md)
+• 
+> [**Codigo - Agrupamiento Jerárquico**](../Code/Unsupervised_Learning-Hierarchical-Clustering.md)
+• 
+> [**Algoritmo - Q-Learning**](Reinforcement_Learning-Q-Learning.md)
 ---

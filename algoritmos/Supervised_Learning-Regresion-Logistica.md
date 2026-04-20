@@ -131,8 +131,11 @@ Probabilística
 Transparente
 Escalable
 
-> [* Prev *](Supervised_Learning-Regresion_Lineal.md "Regresion Lineal")
-> [* Practica - Regresion Logistica *](Sample/Supervised_Learning-Regresion-Logistica.md)
-> [* Codigo - Regresion Logistica *](Code/Supervised_Learning-Regresion-Logistica.md)
-> [* Algoritmo - Random Forest *](Supervised_Learning-Random-Forest.md)
+> [**Prev**](Supervised_Learning-Regresion_Lineal.md "Regresion Lineal")
+• 
+> [**Practica - Regresion Logistica**](../Sample/Supervised_Learning-Regresion-Logistica.md)
+• 
+> [**Codigo - Regresion Logistica**](../Code/Supervised_Learning-Regresion-Logistica.md)
+• 
+> [**Algoritmo - Random Forest**](Supervised_Learning-Random-Forest.md)
 ---

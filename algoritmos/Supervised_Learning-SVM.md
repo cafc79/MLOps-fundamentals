@@ -136,8 +136,11 @@ Quirúrgica
 Kernel
 Magic
 
-> [* Prev *](Supervised_Learning-Random-Forest.md "Random Forest")
-> [* Practica - Máquinas de Vectores de Soporte *](Sample/Supervised_Learning-SVM.md)
-> [* Codigo - Máquinas de Vectores de Soporte *](Code/Supervised_Learning-SVM.md)
-> [* Algoritmo - Naive Bayes *](Supervised_Learning-Naive-Bayes.md)
+> [**Prev**](Supervised_Learning-Random-Forest.md "Random Forest")
+• 
+> [**Practica - Máquinas de Vectores de Soporte**](../Sample/Supervised_Learning-SVM.md)
+• 
+> [**Codigo - Máquinas de Vectores de Soporte**](../Code/Supervised_Learning-SVM.md)
+• 
+> [**Algoritmo - Naive Bayes**](Supervised_Learning-Naive-Bayes.md)
 ---

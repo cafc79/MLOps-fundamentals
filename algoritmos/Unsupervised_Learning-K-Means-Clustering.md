@@ -136,8 +136,11 @@ Masiva
 Fácil
 Interpretación
 
-> [* Prev *](Supervised_Learning-Arboles-Decision.md "Árboles de Decisión")
-> [* Practica - K-Means Clustering *](Sample/Unsupervised_Learning-K-Means-Clustering.md)
-> [* Codigo - K-Means Clustering *](Code/Unsupervised_Learning-K-Means-Clustering.md)
-> [* Algoritmo - Análisis de Componentes Principales *](Unsupervised_Learning-PCA.md)
+> [**Prev**](Supervised_Learning-Arboles-Decision.md "Árboles de Decisión")
+• 
+> [**Practica - K-Means Clustering**](../Sample/Unsupervised_Learning-K-Means-Clustering.md)
+• 
+> [**Codigo - K-Means Clustering**](../Code/Unsupervised_Learning-K-Means-Clustering.md)
+• 
+> [**Algoritmo - Análisis de Componentes Principales**](Unsupervised_Learning-PCA.md)
 ---

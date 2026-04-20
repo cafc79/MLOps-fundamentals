@@ -141,8 +141,8 @@ Learning Base
 Altamente
 Flexible
 
-> [* Prev *](Reinforcement_Learning-Q-Learning.md "Q-Learning")
-> [* Practica - Perceptrón Multicapa *](Sample/Deep_Learning-Perceptron-Multicapa.md)
-> [* Codigo - Perceptrón Multicapa *](Code/Deep_Learning-Perceptron-Multicapa.md)
-> [* Algoritmo - Redes Neuronales Convolucionales *](Deep_Learning-CNN.md)
+> [**Prev**](Reinforcement_Learning-Q-Learning.md "Q-Learning")
+> [**Practica - Perceptrón Multicapa**](../Sample/Deep_Learning-Perceptron-Multicapa.md)
+> [**Codigo - Perceptrón Multicapa**](../Code/Deep_Learning-Perceptron-Multicapa.md)
+> [**Algoritmo - Redes Neuronales Convolucionales**](Deep_Learning-CNN.md)
 ---
