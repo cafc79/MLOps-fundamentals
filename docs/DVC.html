@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Masterclass: DVC en el Ciclo MLOps</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Fira+Code:wght@400;500&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; color: #0f172a; line-height: 1.6; }
+        .code-block { font-family: 'Fira Code', monospace; background-color: #0f172a; color: #e2e8f0; padding: 1.25rem; border-radius: 0.75rem; font-size: 0.8rem; line-height: 1.6; border-left: 4px solid #06b6d4; overflow-x: auto; margin-bottom: 1.5rem; }
+        .bash-cmd { color: #4ade80; }
+        .bash-comment { color: #64748b; font-style: italic; }
+        .section-card { @apply bg-white p-8 rounded-3xl border border-slate-200 shadow-sm mb-12 transition-all hover:shadow-md; }
+        .pill { @apply px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest mb-4 inline-block bg-cyan-100 text-cyan-700; }
+        .health-badge { @apply px-2 py-0.5 rounded text-[10px] font-bold border flex items-center gap-1 bg-white; }
+        .step-indicator { @apply w-12 h-12 rounded-2xl bg-slate-900 text-white flex items-center justify-center font-bold text-lg mb-4 border-2 border-cyan-400 shadow-lg; }
+    </style>
+</head>
+<body class="p-4 md:p-12 lg:p-20">
+
+    <div class="max-w-6xl mx-auto">
+        <!-- CABECERA ESTRATÉGICA -->
+        <header class="mb-20 border-b border-slate-200 pb-12">
+            <div class="flex flex-col md:flex-row items-center gap-6 mb-8">
+                <div class="p-4 bg-slate-900 text-white rounded-2xl shadow-2xl text-center">
+                    <i class="fas fa-history text-3xl text-cyan-400"></i>
+                </div>
+                <div>
+                    <h1 class="text-4xl md:text-6xl font-black tracking-tighter text-slate-900 italic">DVC <span class="text-cyan-600">Engineering</span></h1>
+                    <p class="text-slate-500 font-bold text-lg uppercase tracking-widest">Data Version Control: El Git de los Grandes Datos</p>
+                </div>
+            </div>
+            <p class="text-slate-600 text-lg leading-relaxed max-w-4xl">
+                <strong>DVC (Data Version Control)</strong> es la herramienta de código abierto que permite versionar datasets, modelos y pipelines de ML con la misma simplicidad que Git gestiona el código. En MLOps, DVC es el motor que garantiza que cada modelo en producción esté vinculado de forma inmutable al dato exacto que lo originó.
+            </p>
+        </header>
+
+        <!-- SECCIÓN 1: CONCEPTOS, VENTAJAS Y DESVENTAJAS -->
+        <section class="grid grid-cols-1 md:grid-cols-2 gap-12 mb-24">
+            <div>
+                <h3 class="text-2xl font-black mb-6 flex items-center gap-2 text-cyan-600"><i class="fas fa-layer-group"></i> Conceptos de Versionalización</h3>
+                <div class="space-y-4">
+                    <div class="p-4 bg-white border border-slate-200 rounded-xl shadow-sm text-sm">
+                        <strong class="text-slate-900">Data Pointers (.dvc files):</strong> Archivos pequeños de texto que Git rastrea. Contienen metadatos y un hash (md5) que apunta al dataset real almacenado en la nube.
+                    </div>
+                    <div class="p-4 bg-white border border-slate-200 rounded-xl shadow-sm text-sm">
+                        <strong class="text-slate-900">Remote Storage:</strong> El lugar donde residen los datos pesados (S3, GCS, Azure, SSH). DVC actúa como el transportista entre el código y este almacén.
+                    </div>
+                    <div class="p-4 bg-white border border-slate-200 rounded-xl shadow-sm text-sm">
+                        <strong class="text-slate-900">Pipeline Tracking:</strong> DVC no solo guarda datos; registra los comandos, dependencias y salidas (Dags) para automatizar el re-entrenamiento.
+                    </div>
+                </div>
+            </div>
+            <div>
+                <h3 class="text-2xl font-black mb-6 text-slate-800"><i class="fas fa-balance-scale"></i> Análisis de Valor</h3>
+                <div class="grid grid-cols-1 gap-4">
+                    <div class="bg-emerald-50 p-5 rounded-xl border border-emerald-100 shadow-sm">
+                        <h4 class="text-[10px] font-black text-emerald-700 uppercase mb-2">Ventajas</h4>
+                        <ul class="text-xs text-emerald-800 space-y-1">
+                            <li>• <strong>Git Friendly:</strong> No sobrecarga Git con archivos binarios pesados.</li>
+                            <li>• <strong>Agnóstico al Almacenamiento:</strong> Cambia de AWS a Google Cloud sin tocar el código.</li>
+                            <li>• <strong>Reproducibilidad:</strong> "Git checkout" cambia el código Y el dato simultáneamente.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-rose-50 p-5 rounded-xl border border-rose-100 shadow-sm">
+                        <h4 class="text-[10px] font-black text-rose-700 uppercase mb-2">Desventajas</h4>
+                        <ul class="text-xs text-rose-800 space-y-1">
+                            <li>• <strong>Overhead de Comandos:</strong> Requiere ejecutar comandos de DVC además de los de Git.</li>
+                            <li>• <strong>Gestión de Cache:</strong> Los discos locales pueden llenarse rápido si no se limpia el caché.</li>
+                            <li>• <strong>Curva de Aprendizaje:</strong> Entender el flujo de punteros vs. datos reales.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 2: FLUJO TÉCNICO (CÓDIGO) -->
+        <section class="mb-24">
+            <h2 class="text-3xl font-black mb-12 text-slate-900 text-center">Pipeline de Gestión de Datos</h2>
+            
+            <!-- Etapa 1: Init y Track -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 mb-16 border-l-4 border-cyan-500 pl-6">
+                <div class="lg:col-span-5">
+                    <div class="step-indicator">01</div>
+                    <span class="pill">Etapa 1: Ingesta Inmutable</span>
+                    <h3 class="text-xl font-bold mb-4">Inicialización y Rastreo</h3>
+                    <p class="text-sm text-slate-600 mb-6 leading-relaxed">
+                        Preparamos el repositorio para manejar datos. El comando <code>dvc add</code> genera el puntero que Git rastreará, mientras que el dato real se ignora automáticamente.
+                    </p>
+                </div>
+                <div class="lg:col-span-7">
+                    <div class="code-block">
+<span class="bash-comment"># 1. Inicializar DVC en el proyecto Git</span>
+<span class="bash-cmd">dvc init</span>
+
+<span class="bash-comment"># 2. Configurar almacenamiento remoto (ej. AWS S3)</span>
+<span class="bash-cmd">dvc remote add -d storage s3://mi-bucket-mlops/data</span>
+
+<span class="bash-comment"># 3. Empezar a rastrear un dataset pesado</span>
+<span class="bash-cmd">dvc add data/training_dataset.csv</span>
+
+<span class="bash-comment"># 4. Git solo rastrea el puntero .dvc</span>
+<span class="bash-cmd">git add data/training_dataset.csv.dvc .gitignore</span>
+<span class="bash-cmd">git commit -m "Track: Dataset v1.0 versionado con DVC"</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Etapa 2: Pipelines -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 mb-16 border-l-4 border-indigo-500 pl-6">
+                <div class="lg:col-span-5">
+                    <div class="step-indicator">02</div>
+                    <span class="pill bg-indigo-100 text-indigo-700">Etapa 2: Linaje de Proceso</span>
+                    <h3 class="text-xl font-bold mb-4">Pipeline de Entrenamiento</h3>
+                    <p class="text-sm text-slate-600 mb-6 leading-relaxed">
+                        Definimos un paso del pipeline. DVC rastrea las dependencias (scripts/datos) y las salidas (modelos). Si nada ha cambiado, DVC salta el paso para ahorrar cómputo.
+                    </p>
+                </div>
+                <div class="lg:col-span-7">
+                    <div class="code-block">
+<span class="bash-comment"># Definir un paso de entrenamiento automático</span>
+<span class="bash-cmd">dvc run -n train \</span>
+    <span class="bash-cmd">-d src/train.py -d data/training_dataset.csv \</span>
+    <span class="bash-cmd">-o models/model.pkl \</span>
+    <span class="bash-cmd">python src/train.py</span>
+
+<span class="bash-comment"># Si el dataset cambia, DVC sabe que debe volver a correr 'train'</span>
+<span class="bash-cmd">dvc repro</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 3: VALIDACIÓN CRUZADA Y DVC -->
+        <section class="section-card bg-slate-900 text-white">
+            <h3 class="text-2xl font-bold mb-6 text-cyan-400">Zoom: Validación Cruzada en el Linaje DVC</h3>
+            <p class="text-sm text-slate-300 mb-8 leading-relaxed">
+                En MLOps, la <strong>Validación Cruzada (K-Fold)</strong> no es solo una prueba algorítmica. DVC permite crear "Data Slices" versionados para que cada fold sea reproducible. Esto asegura que el <strong>Health Check</strong> del modelo no dependa de un split aleatorio, sino de una validación sistemática sobre datos inmutables.
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="p-6 bg-white/5 rounded-2xl border border-white/10">
+                    <h4 class="text-xs font-bold text-emerald-400 uppercase mb-2">Sinergia DVC + CV</h4>
+                    <p class="text-[11px] text-slate-400">DVC garantiza que cada fold de entrenamiento use exactamente la misma semilla y snapshot de datos, permitiendo auditar por qué el modelo falló en un "Slice" específico del dataset.</p>
+                </div>
+                <div class="p-6 bg-white/5 rounded-2xl border border-white/10">
+                    <h4 class="text-xs font-bold text-rose-400 uppercase mb-2">Evitar el "Drift Ciego"</h4>
+                    <p class="text-[11px] text-slate-400">Al versionar los datos con DVC, la Validación Cruzada permite detectar si la caída del performance en producción se debe a un cambio en el dato (Data Drift) comparando contra el fold histórico idéntico.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 4: ERRORES COMUNES Y SALUD -->
+        <section class="mb-24 mt-12">
+            <h2 class="text-3xl font-black mb-10 text-center text-slate-900">Diagnóstico de Salud: <span class="text-cyan-600">DVC Phase</span></h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+                <div class="p-6 bg-white border border-slate-200 rounded-2xl shadow-sm">
+                    <div class="flex items-center gap-3 mb-4 text-emerald-600">
+                        <i class="fas fa-link text-xl"></i>
+                        <h4 class="font-bold text-sm uppercase">Punteros Válidos</h4>
+                    </div>
+                    <span class="health-badge border-emerald-400 text-emerald-600">Integridad 100%</span>
+                    <p class="text-[10px] text-slate-500 mt-2">¿Todos los archivos .dvc tienen su binario correspondiente en el remoto?</p>
+                </div>
+                <div class="p-6 bg-white border border-slate-200 rounded-2xl shadow-sm">
+                    <div class="flex items-center gap-3 mb-4 text-blue-600">
+                        <i class="fas fa-share-nodes text-xl"></i>
+                        <h4 class="font-bold text-sm uppercase">Lineage Graph</h4>
+                    </div>
+                    <span class="health-badge border-blue-400 text-blue-400">DAG Correcto</span>
+                    <p class="text-[10px] text-slate-500 mt-2">¿Podemos rastrear el modelo hasta la fuente de datos cruda sin interrupciones?</p>
+                </div>
+                <div class="p-6 bg-white border border-slate-200 rounded-2xl shadow-sm">
+                    <div class="flex items-center gap-3 mb-4 text-amber-600">
+                        <i class="fas fa-database text-xl"></i>
+                        <h4 class="font-bold text-sm uppercase">Storage Quota</h4>
+                    </div>
+                    <span class="health-badge border-amber-400 text-amber-600">Bajo Límite</span>
+                    <p class="text-[10px] text-slate-500 mt-2">¿Se está limpiando el caché antiguo para evitar costos de almacenamiento excesivos?</p>
+                </div>
+            </div>
+
+            <div class="error-card bg-rose-50 border-l-4 border-rose-500 p-6 rounded-r-2xl shadow-sm">
+                <h4 class="text-rose-800 font-bold text-sm uppercase mb-3"><i class="fas fa-skull-crossbones mr-2"></i>Errores de Producción (Red Flags)</h4>
+                <ul class="text-xs text-rose-700 space-y-3">
+                    <li class="flex gap-2"><strong>Dangling Pointers:</strong> Hacer "git commit" del archivo .dvc pero olvidar hacer "dvc push". El compañero verá el puntero pero no podrá descargar el dato.</li>
+                    <li class="flex gap-2"><strong>Unchecked Remotes:</strong> No validar la conexión al bucket de S3/GCS en el CI/CD, causando fallos en los pipelines de entrenamiento automático.</li>
+                    <li class="flex gap-2"><strong>Hardcoded Paths in DVC:</strong> Usar rutas absolutas (C:/Users/...) que rompen el pipeline cuando se ejecuta en el clúster de producción o contenedores.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- MEJORES PRÁCTICAS Y SEGURIDAD -->
+        <section class="mb-24">
+            <h2 class="text-3xl font-black mb-8 text-slate-900 text-center">Consideraciones Profesionales</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="p-6 bg-slate-50 rounded-2xl border border-slate-200 shadow-sm">
+                    <h4 class="font-bold text-slate-800 mb-4 flex items-center gap-2">
+                        <i class="fas fa-user-shield text-cyan-600"></i> Seguridad en DVC
+                    </h4>
+                    <ul class="text-xs text-slate-600 space-y-3">
+                        <li>• <strong>PII Sanitization:</strong> Asegúrate de que el dataset esté anonimizado ANTES de ejecutar <code>dvc add</code>. Los datos binarios en el remoto son inmutables.</li>
+                        <li>• <strong>Access Control:</strong> Implementa permisos de lectura/escritura (IAM) granulares en el bucket remoto. No todos los usuarios deben poder borrar versiones antiguas.</li>
+                        <li>• <strong>Signed Links:</strong> Usa URLs firmadas para el acceso temporal a datos en clústeres de inferencia externos.</li>
+                    </ul>
+                </div>
+                <div class="p-6 bg-slate-50 rounded-2xl border border-slate-200 shadow-sm">
+                    <h4 class="font-bold text-slate-800 mb-4 flex items-center gap-2">
+                        <i class="fas fa-gem text-indigo-600"></i> Madurez en MLOps
+                    </h4>
+                    <ul class="text-xs text-slate-600 space-y-3">
+                        <li>• <strong>Semantic Versioning:</strong> Etiqueta tus punteros .dvc con nombres claros (ej. <code>dataset_v1.4_churn_fixed</code>) para facilitar la búsqueda.</li>
+                        <li>• <strong>DVC Metrics:</strong> Usa <code>dvc metrics show</code> para comparar resultados de diferentes versiones de datos directamente en la terminal.</li>
+                        <li>• <strong>Incremental Repro:</strong> Aprovecha el caché de DVC para no re-procesar datos que no han cambiado, optimizando el tiempo de CI/CD.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHECKLIST DE VALIDACIÓN FINAL -->
+        <section class="bg-white rounded-[3rem] p-10 shadow-2xl border-2 border-cyan-500">
+            <h2 class="text-3xl font-black mb-10 flex items-center gap-4 text-blue-600">
+                <i class="fas fa-clipboard-check"></i> Checklist de Validación MLOps (DVC)
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 text-sm leading-relaxed text-slate-500">
+                <div class="space-y-6">
+                    <div class="flex gap-4">
+                        <div class="w-8 h-8 rounded-lg bg-cyan-100 flex items-center justify-center shrink-0 text-cyan-600 font-bold"><i class="fas fa-check"></i></div>
+                        <div>
+                            <h5 class="font-bold text-slate-900 uppercase text-xs">Sincronización Git-DVC</h5>
+                            <p class="text-[11px]">¿Se confirmó que por cada commit de Git con un archivo .dvc se realizó el correspondiente <code>dvc push</code>?</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-4">
+                        <div class="w-8 h-8 rounded-lg bg-cyan-100 flex items-center justify-center shrink-0 text-cyan-600 font-bold"><i class="fas fa-check"></i></div>
+                        <div>
+                            <h5 class="font-bold text-slate-900 uppercase text-xs">Integridad del Remoto</h5>
+                            <p class="text-[11px]">¿Se ha verificado la accesibilidad del almacenamiento remoto desde el entorno de producción (Staging/Prod)?</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-4">
+                        <div class="w-8 h-8 rounded-lg bg-cyan-100 flex items-center justify-center shrink-0 text-cyan-600 font-bold"><i class="fas fa-check"></i></div>
+                        <div>
+                            <h5 class="font-bold text-slate-900 uppercase text-xs">Validación de Pipeline (DAG)</h5>
+                            <p class="text-[11px]">¿Ejecutar <code>dvc status</code> muestra que todos los pasos del entrenamiento están actualizados?</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <div class="flex gap-4">
+                        <div class="w-8 h-8 rounded-lg bg-cyan-100 flex items-center justify-center shrink-0 text-cyan-600 font-bold"><i class="fas fa-check"></i></div>
+                        <div>
+                            <h5 class="font-bold text-slate-900 uppercase text-xs">Snapshot de Validación Cruzada</h5>
+                            <p class="text-[11px]">¿El resultado del Cross-Validation está registrado y vinculado al hash del dataset versión X?</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-4">
+                        <div class="w-8 h-8 rounded-lg bg-cyan-100 flex items-center justify-center shrink-0 text-cyan-600 font-bold"><i class="fas fa-check"></i></div>
+                        <div>
+                            <h5 class="font-bold text-slate-900 uppercase text-xs">Sanitización de Datos Sensibles</h5>
+                            <p class="text-[11px]">¿Se confirmó que el dataset versionado no contiene información personal identificable (PII) sin cifrar?</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-4">
+                        <div class="w-8 h-8 rounded-lg bg-cyan-100 flex items-center justify-center shrink-0 text-cyan-600 font-bold"><i class="fas fa-check"></i></div>
+                        <div>
+                            <h5 class="font-bold text-slate-900 uppercase text-xs">Métrica de Reproducibilidad</h5>
+                            <p class="text-[11px]">¿Otro ingeniero puede descargar el dato y obtener exactamente el mismo modelo ejecutando un solo comando?</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="mt-20 pt-10 border-t border-slate-200 text-center pb-12">
+            <p class="text-slate-400 text-[10px] uppercase font-black tracking-[0.2em] mb-4">
+                Google Cloud AI Standards • MLOps Engineering • 2024
+            </p>
+            <div class="flex justify-center gap-8 text-slate-300">
+                <i class="fab fa-aws text-2xl"></i>
+                <i class="fas fa-cloud text-2xl"></i>
+                <i class="fas fa-database text-2xl"></i>
+                <i class="fas fa-shield-alt text-2xl"></i>
+            </div>
+        </footer>
+    </div>
+
+</body>
+</html>
