@@ -1,5 +1,7 @@
 # 🔍FASE 1: Del Caos al Problema (Problem Framing)  
-Objetivo: Que Melissa y Airis entiendan que no empezamos con código, sino con una necesidad de negocio mal definida.  
+###Objetivo: 
+Que Melissa y Airis entiendan que no empezamos con código, sino con una necesidad de negocio mal definida.  
+
 🎯 Preguntas para plantear:  
 🗣️ "Imagina que el equipo de soporte recibe 10,000 correos diarios. 
     ¿Qué dolor concreto estamos intentando aliviar?"  
@@ -12,7 +14,7 @@ Objetivo: Que Melissa y Airis entiendan que no empezamos con código, sino con u
 
 "No es 'arreglar el correo', es 'reducir el tiempo que se pierde revisando spam'" y esto es el Problem Statement, Definir claramente qué queremos resolver y para quién
 
-💡 Lo que buscas que ella descubra:  
+💡 Lo que buscas que ellas descubran:  
 •	La diferencia entre problema de negocio ("reducir ruido") y problema de ML ("clasificación binaria").  
 o	"Cada correo → 'spam' o 'ham' (legítimo)", "Como separar ropa: limpia/sucia, colores/blancos" y esto es Classification Problem, Tipo de problema donde asignamos una categoría a cada entrada  
 •	Que los falsos positivos tienen costo de negocio.  
@@ -28,6 +30,7 @@ El Split de Datos: El spam es un evento raro (digamos que solo el 10% de los cor
 Inmutabilidad: Sabiendo que los analistas van a seguir añadiendo nuevos correos a este archivo la próxima semana, ¿qué herramienta de terminal vas a inicializar primero en tu proyecto para asegurar que el modelo que entrenemos hoy esté vinculado a esta versión exacta de los datos?
 ________________________________________
 ## Code
+
 spam_filter_mlops/  
 ├── data/  
 │   ├── raw/          # 📥 Datos crudos (nunca se modifican)  
@@ -49,7 +52,7 @@ En MLOps, los datos no se procesan con listas de Python ni csv nativo. pandas in
 
 >
 ```
-Creamos src/fase_01_setup.py
+# Creamos src/fase_01_setup.py
 import pandas as pd
 import os
 
@@ -85,7 +88,8 @@ ________________________________________
 🔍 Traducirlo implica mapear objetivos de negocio a variables técnicas. Aquí, target = 1 para spam nos permite entrenar un clasificador binario. Pero más importante: al estandarizar la etiqueta ahora, evitamos inconsistencias futuras ('Spam', 'spam', 1, True). MLOps exige normalización temprana de esquemas; si el esquema cambia después, el modelo falla en producción sin warning claro. 
 
 # 📊 FASE 2: Selección y Exploración de Datos
-Objetivo: Entender que los datos no "aparecen", se seleccionan con criterio.
+### Objetivo: 
+Entender que los datos no "aparecen", se seleccionan con criterio.
 
 🎯 Preguntas para plantear:
 🗣️ "Tenemos acceso a: asunto, cuerpo, remitente, hora, adjuntos, headers completos. 
@@ -103,17 +107,26 @@ Objetivo: Entender que los datos no "aparecen", se seleccionan con criterio.
     ¿Qué riesgo hay si el modelo 'memoriza' dominios específicos del dataset de entrenamiento?"
 •	"No es lo mismo tener harina que tener una masa lista para hornear",  Feature Engineering Transformar datos crudos en features útiles para el modelo
 
-💡 Lo que buscas que ella descubra:
+💡 Lo que buscas que ellas descubran:
 •	La importancia del feature engineering (no todo texto es igual).
 •	El problema del desequilibrio de clases.
 •	El riesgo de data leakage y sobreajuste.
 Data Leakage (Fuga de Datos): Vamos a tener que limpiar el texto (quitar signos de puntuación, pasar a minúsculas). ¿Vas a limpiar todo el dataset antes o después de hacer la división de Train/Test? Entonces, "Si incluimos 'fue marcado como spam por el usuario' como feature, el modelo 'hace trampa'" entonces Data Leakage, Cuando información del futuro o de test 'se filtra' al entrenamiento
 Investigar los datos antes de modelar: distribuciones, valores nulos, correlaciones, Exploratory Data Analysis (EDA)
 ________________________________________
+
 ## Code
+
+> 
+```
 pip install scikit-learn
+```
+
 scikit-learn es el estándar industrial para utilidades de ML en Python. No la usamos aquí para modelar aún, sino por train_test_split, que implementa particiones estratificadas, reproducibles y libres de sesgo. Además, su API es consistente con la fase siguiente (pipelines, métricas, validación). En MLOps, usar una librería probada para splits evita errores silenciosos como fugas de datos o desbalances no intencionales.
-Creamos src/fase_02_eda_split.py
+
+> 
+```
+# Creamos src/fase_02_eda_split.py
 import pandas as pd
 from sklearn.model_selection import train_test_split
 import os
@@ -143,29 +156,30 @@ y_train.to_csv("data/processed/y_train.csv", index=False)
 y_test.to_csv("data/processed/y_test.csv", index=False)
 
 print("✅ Splits guardados. Zero leakage garantizado.")
-
+```
 ________________________________________
 
-P1: "¿Por qué hacemos el train_test_split antes de crear TfidfVectorizer o escalar valores?"
+P1: "¿Por qué hacemos el train_test_split antes de crear TfidfVectorizer o escalar valores?"  
 🔍 Razonamiento esperado: Si vectorizamos o escalamos todo el dataset primero, el vectorizador "ve" la distribución completa de palabras, y el escalador calcula medias/desviaciones con datos de prueba incluidos. El modelo entonces recibe información indirecta de la prueba durante el entrenamiento: data leakage. En MLOps, la regla es sagrada: split → fit en train → transform en train y test. El split define el universo de conocimiento permitido.
 
-P2: "¿Qué hace stratify=y y por qué es crítico en un dataset de spam?"
+P2: "¿Qué hace stratify=y y por qué es crítico en un dataset de spam?"  
 🔍 Razonamiento esperado: El spam suele ser minoría (~10-20%). Sin stratify, el split aleatorio podría poner 0% o 2% de spam en test, haciendo que accuracy sea engañosa o que el modelo nunca vea ejemplos positivos. stratify=y fuerza que la proporción de clases se mantenga idéntica en train y test. MLOps exige representatividad estadística; si el test no refleja la realidad, las métricas son ilusorias.
 
-P3: "Si mañana se envía un correo nuevo, ¿cómo garantizamos que msg_length y num_exclamations se calculen exactamente igual que en entrenamiento?"
+P3: "Si mañana se envía un correo nuevo, ¿cómo garantizamos que msg_length y num_exclamations se calculen exactamente igual que en entrenamiento?"  
 🔍 La lógica de feature engineering debe estar centralizada y versionada, no replicada en notebooks o scripts sueltos. Si hoy usamos .str.len() y mañana alguien cambia a .str.split().len(), el modelo en producción recibirá features distintas y fallará silenciosamente. En MLOps, las transformaciones se encapsulan en el mismo pipeline que se entrena (ver Fase 3), eliminando training-serving skew.
 
  
-🧹 FASE 3: Limpieza y Preparación (Data Readiness)
-Objetivo: Que surja naturalmente la necesidad de un pipeline de preprocessing.
+# 🧹 FASE 3: Limpieza y Preparación (Data Readiness)
+### Objetivo: 
+Que surja naturalmente la necesidad de un pipeline de preprocessing.
 
 🎯 Preguntas para plantear:
 🗣️ "Nuestro dataset tiene correos en HTML, otros en texto plano, algunos con emojis, 
-    otros con codificación rara. ¿Qué le pasará al modelo si le damos esto 'crudo'?"
+    otros con codificación rara. ¿Qué le pasará al modelo si le damos esto 'crudo'?"  
 •	"Eliminar correos duplicados, decodificar HTML, manejar caracteres raros", Data Cleaning Corregir o eliminar datos inconsistentes, incompletos o erróneos
 
 🗣️ "Si hoy limpiamos los datos 'a mano' en un notebook, ¿qué pasa cuando lleguen 
-    100 correos nuevos mañana? ¿Tenemos que repetir el proceso manualmente?"
+    100 correos nuevos mañana? ¿Tenemos que repetir el proceso manualmente?"  
 •	"Lowercasing → remover stopwords → stemming → vectorización"; Preprocessing Pipeline Secuencia automatizada y reproducible de transformaciones
 
 🗣️ "¿Cómo garantizamos que la limpieza que aplicamos en entrenamiento 
@@ -173,19 +187,29 @@ Objetivo: Que surja naturalmente la necesidad de un pipeline de preprocessing.
 •	"Si en entrenamiento usamos correos de 2020 y en producción llegan de 2026, el modelo puede fallar" Training-Serving Skew Cuando los datos en entrenamiento son distintos a los de producción
 
 🗣️ "Si dos personas en el equipo limpian los datos de forma ligeramente distinta, 
-    ¿cómo reproducimos los resultados?"
+    ¿cómo reproducimos los resultados?"  
 •	"¿Qué hacemos si un correo no tiene asunto? ¿Lo eliminamos? ¿Usamos 'sin_asunto' como feature?" Missing Values Handling Estrategia para tratar datos faltantes: eliminar, imputar, marcar
 
-💡 Lo que buscas que ella descubra:
-•	La necesidad de pipelines reproducibles de preprocessing.
-•	Que la limpieza no es un paso "one-off", es parte del sistema.
+💡 Lo que buscas que ella descubra:  
+•	La necesidad de pipelines reproducibles de preprocessing.  
+•	Que la limpieza no es un paso "one-off", es parte del sistema.  
 •	El concepto de training-serving skew.
+
 "Poner toda la ropa del mismo color antes de lavar" Text Normalization Estandarizar texto: minúsculas, eliminar puntuación, lematización
 ________________________________________
+
 ## Code
+
+> 
+```
 pip install joblib
+```
+
 pickle es la herramienta nativa de Python para serializar objetos, pero es lenta y maneja mal matrices grandes de numpy. joblib está optimizada específicamente para objetos numéricos y scikit-learn: comprime arrays, serializa en paralelo y produce archivos más ligeros. En MLOps, el artefacto que se despliega es el modelo serializado; usar joblib garantiza carga rápida en producción, menor consumo de memoria y compatibilidad garantizada con sklearn.
-Creamos src/fase_03_pipeline.py
+
+> 
+```
+# Creamos src/fase_03_pipeline.py
 import pandas as pd
 import joblib
 from sklearn.pipeline import Pipeline
@@ -221,30 +245,35 @@ X_test = pd.read_csv("data/processed/X_test.csv")
 y_test = pd.read_csv("data/processed/y_test.csv").squeeze()
 acc = spam_pipeline.score(X_test, y_test)
 print(f"✅ Pipeline guardado. Accuracy en test: {acc:.3f}")
+```
 ________________________________________
-P1: "¿Por qué metemos TfidfVectorizer y StandardScaler dentro de Pipeline en lugar de aplicarlos manualmente antes de fit()?"
+
+P1: "¿Por qué metemos TfidfVectorizer y StandardScaler dentro de Pipeline en lugar de aplicarlos manualmente antes de fit()?"  
 🔍 Si aplicas transformaciones manualmente, debes recordar ejecutarlas en el mismo orden y con los mismos parámetros en producción. Un Pipeline encapsula el flujo completo como un solo objeto serializable. En fit(), aprende vocabulario y escalado solo de train. En predict(), aplica las mismas transformaciones automáticamente. Esto elimina errores humanos y garantiza Training == Serving.
-P2: "¿Qué pasa si en producción llega un mensaje con caracteres no UTF-8 o sin texto? ¿El pipeline se rompe?"
+
+P2: "¿Qué pasa si en producción llega un mensaje con caracteres no UTF-8 o sin texto? ¿El pipeline se rompe?"  
 🔍 TfidfVectorizer tiene parámetros como de## Code_error='ignore' o lowercase=True. Si no se configuran, puede lanzar Uni## CodeDe## CodeError. MLOps exige robustez a datos sucios en producción. Además, ColumnTransformer maneja columnausentes si se configura con remainder='drop' o passthrough. La lección conceptual: un modelo no vive en un notebook limpio; vive en un entorno hostil. El pipeline debe anticipar fallas, no asumirlas.
-P3: "Guardamos pipeline_v1.joblib. ¿Qué más debemos registrar junto a este archivo para que sea verdaderamente reproducible en 6 meses?"
-🔍 El .joblib solo contiene pesos y lógica interna. Para reproducibilidad MLOps necesitamos:
-•	Versión exacta de requirements.txt (pandas, sklearn, joblib)
-•	Hash de los datos usados (X_train.csv, y_train.csv)
-•	Parámetros de configuración (max_features=2000, C=1.0, random_state=42)
+
+P3: "Guardamos pipeline_v1.joblib. ¿Qué más debemos registrar junto a este archivo para que sea verdaderamente reproducible en 6 meses?"  
+🔍 El .joblib solo contiene pesos y lógica interna. Para reproducibilidad MLOps necesitamos:  
+•	Versión exacta de requirements.txt (pandas, sklearn, joblib)  
+•	Hash de los datos usados (X_train.csv, y_train.csv)  
+•	Parámetros de configuración (max_features=2000, C=1.0, random_state=42)  
 •	Métricas de validación y métricas de negocio aceptadas Sin este contexto, el artefacto es una caja negra. Esto nos lleva directamente a la necesidad de MLflow Tracking y DVC (Fase 4), donde vinculamos código + datos + modelo + métricas en un único run auditable.
  
-🔄 FASE 4: Versionado de Datos y Código
-Objetivo: Que entienda por qué git solo no basta en ML.
+# 🔄 FASE 4: Versionado de Datos y Código
+### Objetivo: 
+Que entienda por qué git solo no basta en ML.
 
-🎯 Preguntas para plantear:
+🎯 Preguntas para plantear:  
 🗣️ "Imagina que el modelo v1.0 funcionaba perfecto. Hoy actualizamos el dataset 
     con correos de esta semana y el rendimiento cae. ¿Cómo sabemos si fue por:
-a)	Los nuevos datos, b) Un cambio en el código, o c) Ambos?"
-•	"Poder recrear el modelo v1.3 exactamente: mismo código + mismos datos + mismos parámetros". Reproducibility Capacidad de obtener los mismos resultados partiendo de los mismos insumos
-•	"Este modelo se entrenó con dataset v2.1 → procesado con pipeline v3 → features X,Y,Z" Lineage Trazabilidad: saber de dónde vino cada dato y qué transformaciones sufrió
+a)	Los nuevos datos, b) Un cambio en el código, o c) Ambos?"  
+•	"Poder recrear el modelo v1.3 exactamente: mismo código + mismos datos + mismos parámetros". Reproducibility Capacidad de obtener los mismos resultados partiendo de los mismos insumos  
+•	"Este modelo se entrenó con dataset v2.1 → procesado con pipeline v3 → features X,Y,Z" Lineage Trazabilidad: saber de dónde vino cada dato y qué transformaciones sufrió  
 
 🗣️ "Si Airis, Melissa y tú trabajan en paralelo, ella con el dataset de enero y tú con el de marzo, 
-    ¿cómo comparan sus modelos de forma justa?"
+    ¿cómo comparan sus modelos de forma justa?"  
 •	"Guardar cada cambio en el script de preprocessing o en la selección de features" "v1.0: dataset 2024-Q1; v1.1: + correos de Q2; v2.0: + features de headers" Data Versioning (DVC, LakeFS) Control de versiones para datasets 
 
 🗣️ "¿Qué metadata necesitaríamos guardar de un dataset para poder 'volver al pasado' 
@@ -257,7 +286,11 @@ a)	Los nuevos datos, b) Un cambio en el código, o c) Ambos?"
 •	La necesidad de DVC, Pachyderm o similar para datos.
 •	Que la trazabilidad requiere vincular: código + datos + hiperparámetros + métricas.
 ________________________________________
+
 ## Code
+
+> 
+```
 pip install dvc
 Anteriormente, generamos data/raw/spam.csv, splits y artifacts/pipeline_v1.pkl. Git no está diseñado para archivos binarios o datasets >100MB: cada commit duplica el archivo, el repositorio se infla y el historial se vuelve inmanejable. dvc (Data Version Control) resuelve esto guardando los archivos pesados en almacenamiento externo (local, GCS, S3) y dejando en Git solo un puntero ligero (.dvc) con el hash SHA-256. Así versionamos datos sin romper Git.
 pip install mlflow
