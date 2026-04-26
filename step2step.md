@@ -83,10 +83,10 @@ print(df.head(3))
 Los datos crudos son la fuente de verdad inmutable. Si los editamos manualmente o los mezclamos con transformaciones, perdemos la capacidad de auditar qué entró originalmente al sistema. En MLOps, raw es de solo lectura; cualquier modificación vive en processed/. Esto permite reproducir cualquier experimento pasado y detectar si un cambio en métricas vino de los datos o del código.
 ________________________________________
 
-"Si el script falla a mitad de descarga, ¿qué garantía tenemos de que el archivo no quedó corrupto para futuros runs?"  
-🔍 La descarga no es atómica. Un corte de red deja un CSV parcial que pd.read_csv() podría leer silenciosamente o fallar de forma impredecible. En producción, se usan estrategias como descargar a .tmp y luego os.replace(), o verificar checksums (SHA-256). Este primer script enseña el principio: la ingestión debe ser segura o el pipeline no es confiable.  
+***"Si el script falla a mitad de descarga, ¿qué garantía tenemos de que el archivo no quedó corrupto para futuros runs?"***  
+🔍 La descarga no es atómica. Un corte de red deja un CSV parcial que pd.read_csv() podría leer silenciosamente o fallar de forma impredecible. En producción, se usan estrategias como descargar a .tmp y luego os.replace(), o verificar checksums (SHA-256). Este primer script enseña el principio: la ingestión debe ser segura o  el pipeline no es confiable.  
 
-"¿Cómo traducimos 'reducir spam sin bloquear correos de clientes' a algo que este script prepare para el futuro?"  
+***"¿Cómo traducimos 'reducir spam sin bloquear correos de clientes' a algo que este script prepare para el futuro?"***  
 🔍 Traducirlo implica mapear objetivos de negocio a variables técnicas. Aquí, target = 1 para spam nos permite entrenar un clasificador binario. Pero más importante: al estandarizar la etiqueta ahora, evitamos inconsistencias futuras ('Spam', 'spam', 1, True). MLOps exige normalización temprana de esquemas; si el esquema cambia después, el modelo falla en producción sin warning claro. 
 
 # 📊 FASE 2: Selección y Exploración de Datos
@@ -768,7 +768,7 @@ El CI ejecuta pip install -r requirements.txt en un entorno limpio. Si hay incom
 2.	Si pasa la instalación pero hay API breaking changes, pytest fallará en los tests de schema o predicción
 3.	El modelo no se registra en MLflow → no hay promoción accidental
 Además, en flujos maduros se añade pip-audit o safety para detectar vulnerabilidades, y pip freeze > requirements.txt se bloquea con pre-commit hooks.
-En MLOps, el CI es el primer firewall. Un entorno aislado + tests estrictos + gates automáticos crean un sistema donde los errores se atrapan antes de costar dinero.
+En MLOps, el CI es el primer firewall. Un entorno aislado + tests estrictos + gates automáticos crean un sistema donde los errores se atrapan antes de costar dinero.  
 
 # 🔄 FASE 7: CI/CD para ML (No es lo mismo que software tradicional)
 Objetivo: Entender las particularidades del testing en ML.
@@ -869,7 +869,8 @@ else:
     print("✅ Distribución estable. Modelo en producción sigue siendo válido.")
 ```
 
-|COMPONENTE EN CÓDIGO|	EQUIVALENTE NATIVO EN GCP	|PROPÓSITO|  
+|COMPONENTE EN CÓDIGO|	EQUIVALENTE NATIVO EN GCP	|PROPÓSITO|
+
 |EVIDENTLY + DATADRIFTPRESET|	Vertex AI Model Monitoring	|Monitoreo nativo de drift en features/predicciones sin Código|  
 |RETRAIN_TRIGGER.JSON|	Pub/Sub + Cloud Scheduler	|Canal de eventos para orquestar reentrenamiento|  
 |PYTHON TRIGGER SCRIPT|	Cloud Run / Cloud Functions	|Ejecuta lógica de decisión o notifica equipos|  
