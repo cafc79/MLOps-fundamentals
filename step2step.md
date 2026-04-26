@@ -1,46 +1,54 @@
-🔍FASE 1: Del Caos al Problema (Problem Framing)  
-Objetivo: Que Melissa y Airis entiendan que no empezamos con código, sino con una necesidad de negocio mal definida.
-
+# 🔍FASE 1: Del Caos al Problema (Problem Framing)  
+Objetivo: Que Melissa y Airis entiendan que no empezamos con código, sino con una necesidad de negocio mal definida.  
 🎯 Preguntas para plantear:  
 🗣️ "Imagina que el equipo de soporte recibe 10,000 correos diarios. 
-    ¿Qué dolor concreto estamos intentando aliviar?"
+    ¿Qué dolor concreto estamos intentando aliviar?"  
 
 🗣️ "¿Qué pasaría si nuestro filtro bloquea un correo importante de un cliente? 
-    ¿Es ese error igual de grave que dejar pasar un spam? ¿Por qué?"
+    ¿Es ese error igual de grave que dejar pasar un spam? ¿Por qué?"  
 
 🗣️ "¿Cómo sabremos dentro de 3 meses si nuestro filtro funciona bien? 
-    ¿Qué número mirarías en un dashboard?"
+    ¿Qué número mirarías en un dashboard?"  
 
 "No es 'arreglar el correo', es 'reducir el tiempo que se pierde revisando spam'" y esto es el Problem Statement, Definir claramente qué queremos resolver y para quién
 
-💡 Lo que buscas que ellas descubran:  
+💡 Lo que buscas que ella descubra:  
 •	La diferencia entre problema de negocio ("reducir ruido") y problema de ML ("clasificación binaria").  
-> > o	"Cada correo → 'spam' o 'ham' (legítimo)", "Como separar ropa: limpia/sucia, colores/blancos" y esto es Classification Problem, Tipo de problema donde asignamos una categoría a cada entrada  
+o	"Cada correo → 'spam' o 'ham' (legítimo)", "Como separar ropa: limpia/sucia, colores/blancos" y esto es Classification Problem, Tipo de problema donde asignamos una categoría a cada entrada  
 •	Que los falsos positivos tienen costo de negocio.  
-> > o	"FP = correo de cliente va a spam (grave). FN = spam llega a inbox (molesto)"  
-> > o	False Positive / False Negative Errores de clasificación: bloquear algo bueno o dejar pasar algo malo  
+o	"FP = correo de cliente va a spam (grave). FN = spam llega a inbox (molesto)"
+o	False Positive / False Negative Errores de clasificación: bloquear algo bueno o dejar pasar algo malo  
 •	La necesidad de definir métricas de éxito antes de tocar datos.  
-> > o	El impacto económico o operacional de cada tipo de error, Cost of Error  
-    
-"Reducción del 80% en correos spam en inbox, con <1% de falsos positivos" y esto es el Success Metrics (Business), Cómo mediremos el éxito en términos de negocio  
+o	El impacto económico o operacional de cada tipo de error, Cost of Error
 
-El Split de Datos: El spam es un evento raro (digamos que solo el 10% de los correos son spam). Cuando uses Python para dividir tus datos en Entrenamiento (Train) y Prueba (Test), ¿qué parámetro o técnica específica debes usar obligatoriamente para no arruinar el aprendizaje del modelo?  
-Inmutabilidad: Sabiendo que los analistas van a seguir añadiendo nuevos correos a este archivo la próxima semana, ¿qué herramienta de terminal vas a inicializar primero en tu proyecto para asegurar que el modelo que entrenemos hoy esté vinculado a esta versión exacta de los datos?  
+"Reducción del 80% en correos spam en inbox, con <1% de falsos positivos" y esto es el Success Metrics (Business), Cómo mediremos el éxito en términos de negocio
+
+El Split de Datos: El spam es un evento raro (digamos que solo el 10% de los correos son spam). Cuando uses Python para dividir tus datos en Entrenamiento (Train) y Prueba (Test), ¿qué parámetro o técnica específica debes usar obligatoriamente para no arruinar el aprendizaje del modelo?
+
+Inmutabilidad: Sabiendo que los analistas van a seguir añadiendo nuevos correos a este archivo la próxima semana, ¿qué herramienta de terminal vas a inicializar primero en tu proyecto para asegurar que el modelo que entrenemos hoy esté vinculado a esta versión exacta de los datos?
 ________________________________________
-Code
-spam_filter_mlops/
-├── data/
-│   ├── raw/          # 📥 Datos crudos (nunca se modifican)
-│   └── processed/    # 🧼 Splits y features listas para modelar
-├── artifacts/        # 📦 Pipelines y modelos serializados
-├── src/
-│   ├── fase_01_setup.py
-│   ├── fase_02_eda_split.py
+## Code
+spam_filter_mlops/  
+├── data/  
+│   ├── raw/          # 📥 Datos crudos (nunca se modifican)  
+│   └── processed/    # 🧼 Splits y features listas para modelar  
+├── artifacts/        # 📦 Pipelines y modelos serializados  
+├── src/  
+│   ├── fase_01_setup.py  
+│   ├── fase_02_eda_split.py  
 │   └── fase_03_pipeline.py
-├── requirements.txt
-└── README.md
+├── requirements.txt  
+└── README.md  
+
+> 
+```
 pip install pandas
+```
+
 En MLOps, los datos no se procesan con listas de Python ni csv nativo. pandas introduce el concepto de DataFrame: una estructura tabular optimizada, con indexación alineada, operaciones vectorizadas y manejo nativo de tipos. Además, pd.read_csv() maneja codificaciones, saltos de línea y esquemas inconsistentes sin romper el script. Es la base para cualquier pipeline de datos porque garantiza que la ingesta sea determinista y reproducible, no dependiente de scripts frágiles.
+
+>
+```
 Creamos src/fase_01_setup.py
 import pandas as pd
 import os
@@ -65,15 +73,18 @@ df['target'] = df['label'].map({'ham': 0, 'spam': 1})
 
 print(f"✅ Cargado: {df.shape[0]} filas, {df.shape[1]} cols")
 print(df.head(3))
+```
 
 Los datos crudos son la fuente de verdad inmutable. Si los editamos manualmente o los mezclamos con transformaciones, perdemos la capacidad de auditar qué entró originalmente al sistema. En MLOps, raw es de solo lectura; cualquier modificación vive en processed/. Esto permite reproducir cualquier experimento pasado y detectar si un cambio en métricas vino de los datos o del código.
 ________________________________________
-"Si el script falla a mitad de descarga, ¿qué garantía tenemos de que el archivo no quedó corrupto para futuros runs?"
-🔍 La descarga no es atómica. Un corte de red deja un CSV parcial que pd.read_csv() podría leer silenciosamente o fallar de forma impredecible. En producción, se usan estrategias como descargar a .tmp y luego os.replace(), o verificar checksums (SHA-256). Este primer script enseña el principio: la ingestión debe ser segura o el pipeline no es confiable.
 
-"¿Cómo traducimos 'reducir spam sin bloquear correos de clientes' a algo que este script prepare para el futuro?"
+"Si el script falla a mitad de descarga, ¿qué garantía tenemos de que el archivo no quedó corrupto para futuros runs?"  
+🔍 La descarga no es atómica. Un corte de red deja un CSV parcial que pd.read_csv() podría leer silenciosamente o fallar de forma impredecible. En producción, se usan estrategias como descargar a .tmp y luego os.replace(), o verificar checksums (SHA-256). Este primer script enseña el principio: la ingestión debe ser segura o el pipeline no es confiable.  
+
+"¿Cómo traducimos 'reducir spam sin bloquear correos de clientes' a algo que este script prepare para el futuro?"  
 🔍 Traducirlo implica mapear objetivos de negocio a variables técnicas. Aquí, target = 1 para spam nos permite entrenar un clasificador binario. Pero más importante: al estandarizar la etiqueta ahora, evitamos inconsistencias futuras ('Spam', 'spam', 1, True). MLOps exige normalización temprana de esquemas; si el esquema cambia después, el modelo falla en producción sin warning claro. 
-📊 FASE 2: Selección y Exploración de Datos
+
+# 📊 FASE 2: Selección y Exploración de Datos
 Objetivo: Entender que los datos no "aparecen", se seleccionan con criterio.
 
 🎯 Preguntas para plantear:
@@ -99,7 +110,7 @@ Objetivo: Entender que los datos no "aparecen", se seleccionan con criterio.
 Data Leakage (Fuga de Datos): Vamos a tener que limpiar el texto (quitar signos de puntuación, pasar a minúsculas). ¿Vas a limpiar todo el dataset antes o después de hacer la división de Train/Test? Entonces, "Si incluimos 'fue marcado como spam por el usuario' como feature, el modelo 'hace trampa'" entonces Data Leakage, Cuando información del futuro o de test 'se filtra' al entrenamiento
 Investigar los datos antes de modelar: distribuciones, valores nulos, correlaciones, Exploratory Data Analysis (EDA)
 ________________________________________
-Code
+## Code
 pip install scikit-learn
 scikit-learn es el estándar industrial para utilidades de ML en Python. No la usamos aquí para modelar aún, sino por train_test_split, que implementa particiones estratificadas, reproducibles y libres de sesgo. Además, su API es consistente con la fase siguiente (pipelines, métricas, validación). En MLOps, usar una librería probada para splits evita errores silenciosos como fugas de datos o desbalances no intencionales.
 Creamos src/fase_02_eda_split.py
@@ -171,7 +182,7 @@ Objetivo: Que surja naturalmente la necesidad de un pipeline de preprocessing.
 •	El concepto de training-serving skew.
 "Poner toda la ropa del mismo color antes de lavar" Text Normalization Estandarizar texto: minúsculas, eliminar puntuación, lematización
 ________________________________________
-Code
+## Code
 pip install joblib
 pickle es la herramienta nativa de Python para serializar objetos, pero es lenta y maneja mal matrices grandes de numpy. joblib está optimizada específicamente para objetos numéricos y scikit-learn: comprime arrays, serializa en paralelo y produce archivos más ligeros. En MLOps, el artefacto que se despliega es el modelo serializado; usar joblib garantiza carga rápida en producción, menor consumo de memoria y compatibilidad garantizada con sklearn.
 Creamos src/fase_03_pipeline.py
@@ -214,7 +225,7 @@ ________________________________________
 P1: "¿Por qué metemos TfidfVectorizer y StandardScaler dentro de Pipeline en lugar de aplicarlos manualmente antes de fit()?"
 🔍 Si aplicas transformaciones manualmente, debes recordar ejecutarlas en el mismo orden y con los mismos parámetros en producción. Un Pipeline encapsula el flujo completo como un solo objeto serializable. En fit(), aprende vocabulario y escalado solo de train. En predict(), aplica las mismas transformaciones automáticamente. Esto elimina errores humanos y garantiza Training == Serving.
 P2: "¿Qué pasa si en producción llega un mensaje con caracteres no UTF-8 o sin texto? ¿El pipeline se rompe?"
-🔍 TfidfVectorizer tiene parámetros como decode_error='ignore' o lowercase=True. Si no se configuran, puede lanzar UnicodeDecodeError. MLOps exige robustez a datos sucios en producción. Además, ColumnTransformer maneja columnausentes si se configura con remainder='drop' o passthrough. La lección conceptual: un modelo no vive en un notebook limpio; vive en un entorno hostil. El pipeline debe anticipar fallas, no asumirlas.
+🔍 TfidfVectorizer tiene parámetros como de## Code_error='ignore' o lowercase=True. Si no se configuran, puede lanzar Uni## CodeDe## CodeError. MLOps exige robustez a datos sucios en producción. Además, ColumnTransformer maneja columnausentes si se configura con remainder='drop' o passthrough. La lección conceptual: un modelo no vive en un notebook limpio; vive en un entorno hostil. El pipeline debe anticipar fallas, no asumirlas.
 P3: "Guardamos pipeline_v1.joblib. ¿Qué más debemos registrar junto a este archivo para que sea verdaderamente reproducible en 6 meses?"
 🔍 El .joblib solo contiene pesos y lógica interna. Para reproducibilidad MLOps necesitamos:
 •	Versión exacta de requirements.txt (pandas, sklearn, joblib)
@@ -246,7 +257,7 @@ a)	Los nuevos datos, b) Un cambio en el código, o c) Ambos?"
 •	La necesidad de DVC, Pachyderm o similar para datos.
 •	Que la trazabilidad requiere vincular: código + datos + hiperparámetros + métricas.
 ________________________________________
-Code
+## Code
 pip install dvc
 Anteriormente, generamos data/raw/spam.csv, splits y artifacts/pipeline_v1.pkl. Git no está diseñado para archivos binarios o datasets >100MB: cada commit duplica el archivo, el repositorio se infla y el historial se vuelve inmanejable. dvc (Data Version Control) resuelve esto guardando los archivos pesados en almacenamiento externo (local, GCS, S3) y dejando en Git solo un puntero ligero (.dvc) con el hash SHA-256. Así versionamos datos sin romper Git.
 pip install mlflow
@@ -385,7 +396,7 @@ Primer modelo simple que sirve como punto de comparación Baseline Model
 Qué tan 'sofisticado' es un modelo: desde reglas simples hasta redes profundas Model Complexity
 "Un modelo muy simple no detecta spam nuevo; uno muy complejo 'memoriza' spam viejo" Bias-Variance Tradeoff Equilibrio entre simplificar demasiado (subajuste) o memorizar (sobreajuste)
 ________________________________________
-Code
+## Code
 Aquí cerramos el ciclo de "entrenar" y entramos al ciclo de "aprobar para producción". Sin gates, no hay MLOps; solo experimentos en notebooks.
 pip install pytest
 un test verifica que una función devuelva el resultado esperado. En ML, el modelo siempre tendrá error; lo que nos importa es que ese error esté dentro de límites aceptables para el negocio. pytest es el estándar industrial porque permite:
@@ -510,7 +521,7 @@ El fallo del CI es una señal de alerta, no un diagnóstico. MLflow cierra el ci
 2.	Si params (C, max_features, seed) son idénticos → el código no cambió. Probablemente los datos cambiaron (drift o nueva versión del dataset).
 3.	Si data_version o hash de X_train.csv es distinto → data drift. Revisar EDA de la nueva versión.
 4.	Si params cambiaron → hiperparámetros subóptimos. Revisar experimentos cercanos o lanzar búsqueda automática.
-5.	Si el code_version (git hash) cambió pero los datos/params son iguales → bug en preprocessing o lógica de entrenamiento.
+5.	Si el ## Code_version (git hash) cambió pero los datos/params son iguales → bug en preprocessing o lógica de entrenamiento.
 En MLOps, nunca se debuggea a ciegas. MLflow + CI proporcionan el rastro forense exacto: qué cambió, cuándo, y qué impacto tuvo. El diagnóstico deja de ser intuitivo y se vuelve sistemático.
 
  
@@ -541,7 +552,7 @@ Objetivo: Que surja la necesidad de MLFlow como respuesta al caos experimental.
 •	La diferencia entre loggear y monitorear.
 •	Que la trazabilidad es un requisito para el mantenimiento, no un "nice-to-have".
 ________________________________________
-Code
+## Code
 Aquí unimos código, datos, tests y modelo en un flujo que se ejecuta solo, decide solo y protege producción. Sin automatización, MLOps es solo documentación.
 # En la máquina local o en el runner del CI:
 pip install -r requirements.txt
@@ -708,7 +719,7 @@ Objetivo: Entender las particularidades del testing en ML.
 "Desplegar v1.2 al 5% de los correos, monitorear 24h, luego escalar", Canary Deployment
 "El modelo nuevo clasifica correos 'en silencio'; comparamos sus decisiones con el modelo actual", Shadow Mode, Ejecutar el nuevo modelo en paralelo sin que afecte al usuario, para comparar
 ________________________________________
-Code
+## Code
 Aquí cerramos el ciclo MLOps: un modelo desplegado no es un punto final, es un sistema vivo que decae. Monitorear es anticipar; automatizar el reentrenamiento es sobrevivir.
 pip install evidently
 En CI/CD se valida que el modelo funcione sobre datos históricos. En producción, los datos cambian con el tiempo. evidently es la librería estándar open-source para monitoreo de ML porque:
@@ -799,7 +810,7 @@ El umbral no es técnico, es de negocio + operacional. Definirlo implica:
 1.	Costo de reentrenamiento: si es alto (GPU, ingeniería, validación), el umbral sube (0.15-0.2).
 2.	Costo de error en producción: si es alto (clientes perdidos, multas), el umbral baja (0.05-0.1).
 3.	Velocidad de cambio del dominio: spam cambia rápido → umbral bajo. Datos médicos estables → umbral alto.
-En MLOps, los umbrales se documentan, versionan y revisan trimestralmente. No se hardcodean; se parametrizan en un config file o Feature Store.
+En MLOps, los umbrales se documentan, versionan y revisan trimestralmente. No se hard## Codean; se parametrizan en un config file o Feature Store.
 ________________________________________
 "Si decidimos reentrenar automáticamente cada vez que haya drift, ¿qué riesgo introducimos? ¿Cómo evitamos un ciclo infinito de reentrenamiento con datos ruidosos?"
 🔍 Razonamiento esperado:
@@ -858,7 +869,7 @@ Feedback Loop	Mecanismo para capturar correcciones de usuarios y reentrenar el m
 Model Retraining Strategy	Cuándo y cómo actualizar el modelo: schedule, trigger por drift, o manual	"¿Cocinar cada día con receta fija, o ajustar según los ingredientes disponibles?"	"Reentrenar semanalmente con nuevos datos + validación automática antes de desplegar"
 
 ________________________________________
-Code
+## Code
 Aquí cerramos el ciclo: pasamos de "modelo que funciona" a "sistema gobernado, reutilizable y rentable". Sin gobernanza, MLOps escala el caos.
 pip install feast
 Hasta ahora, calculamos features (msg_length, num_exclamations) en el script de entrenamiento y las recalculamos manualmente en el endpoint de inferencia. Esto genera duplicación, inconsistencia y riesgo de drift silencioso. feast (Feature Store) introduce un catálogo centralizado y versionado de features:
@@ -868,7 +879,7 @@ Hasta ahora, calculamos features (msg_length, num_exclamations) en el script de 
 pip install pandera
 Los tests de pytest validan que el código funciona. pandera valida que los datos que entran al pipeline cumplen contratos explícitos: tipos, rangos, valores nulos, restricciones de negocio. En gobernanza de ML, la calidad de datos no es opcional; es un requisito de compliance. Sin validación runtime, un correo mal formateado o un pico de spam silencioso rompe el modelo sin que el CI lo detecte.
 pip install python-dotenv
-Hardcodear rutas, URIs o credenciales rompe el principio de infraestructura inmutable. python-dotenv permite gestionar configuraciones por entorno (dev, staging, prod) sin tocar el código. En MLOps maduro, el mismo artefacto se despliega en todos los entornos; solo cambian las variables de entorno. Esto elimina errores de "funcionó en staging, falló en prod por una ruta distinta".
+Hard## Codear rutas, URIs o credenciales rompe el principio de infraestructura inmutable. python-dotenv permite gestionar configuraciones por entorno (dev, staging, prod) sin tocar el código. En MLOps maduro, el mismo artefacto se despliega en todos los entornos; solo cambian las variables de entorno. Esto elimina errores de "funcionó en staging, falló en prod por una ruta distinta".
 obernanza + Feature Definition + Multi-Env (src/fase_08_governance.py)
 import os
 import pandas as pd
@@ -948,7 +959,7 @@ En gobernanza, los datos son tan críticos como el código. Validar ambos cierra
 "Si usamos el mismo código en dev, staging y prod, ¿cómo evitamos que un error en dev rompa staging o que se filtren credenciales de prod a un notebook local?"
 🔍 Razonamiento esperado:
 La respuesta está en aislamiento por diseño:
-1.	Variables de entorno + .env por capa: El código nunca hardcodea URIs. Lee os.getenv(). Cada entorno inyecta sus propios valores en despliegue.
+1.	Variables de entorno + .env por capa: El código nunca hard## Codea URIs. Lee os.getenv(). Cada entorno inyecta sus propios valores en despliegue.
 2.	Secretos gestionados: Credenciales de GCS, MLflow, BDs viven en Secret Manager (GCP), no en .env commitados.
 3.	Permisos por IAM: El SA de dev no tiene acceso a buckets de prod. Un commit en develop no puede escribir en registry de producción.
 4.	Promoción de artefactos, no de código: El mismo .joblib y .parquet se mueven entre entornos. No se recompila.
