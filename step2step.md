@@ -1099,7 +1099,7 @@ VALIDATE_INGESTION() | Eventarc + Pub/Sub + Cloud Functions | Gate de calidad an
 
 
 # Algoritmos de ML
-## 📐 1. [* Regresion Lineal *](../algoritmos/Supervised_Learning-Regresion_Lineal.md)
+## 📐 1. [ Regresion Lineal ](../algoritmos/Supervised_Learning-Regresion_Lineal.md)
 🧠 *Concepto Clave:* Predice un valor numérico continuo ajustando una línea recta que minimiza el error respecto a los datos.  
 ⚙️ *¿Cómo funciona?* Busca la combinación de pesos para cada feature que hace que ŷ = w₁x₁ + w₂x₂ + ... + b se acerque lo más posible al valor real. Usa mínimos cuadrados.  
 🎯 *¿Cuándo elegirlo?* Forecasting, tendencias, variables continuas (precio, temperatura, tiempo).  
