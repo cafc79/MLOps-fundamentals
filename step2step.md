@@ -1,9 +1,7 @@
-🔍FASE 1: Del Caos al Problema (Problem Framing)
-
+🔍FASE 1: Del Caos al Problema (Problem Framing)  
 Objetivo: Que Melissa y Airis entiendan que no empezamos con código, sino con una necesidad de negocio mal definida.
 
-🎯 Preguntas para plantear:
-
+🎯 Preguntas para plantear:  
 🗣️ "Imagina que el equipo de soporte recibe 10,000 correos diarios. 
     ¿Qué dolor concreto estamos intentando aliviar?"
 
@@ -15,18 +13,19 @@ Objetivo: Que Melissa y Airis entiendan que no empezamos con código, sino con u
 
 "No es 'arreglar el correo', es 'reducir el tiempo que se pierde revisando spam'" y esto es el Problem Statement, Definir claramente qué queremos resolver y para quién
 
-💡 Lo que buscas que ellas descubran:
+💡 Lo que buscas que ellas descubran:  
+•	La diferencia entre problema de negocio ("reducir ruido") y problema de ML ("clasificación binaria").  
+    o	"Cada correo → 'spam' o 'ham' (legítimo)", "Como separar ropa: limpia/sucia, colores/blancos" y esto es Classification Problem, Tipo de problema donde asignamos una categoría a cada entrada  
+•	Que los falsos positivos tienen costo de negocio.  
+    o	"FP = correo de cliente va a spam (grave). FN = spam llega a inbox (molesto)"  
+    o	False Positive / False Negative Errores de clasificación: bloquear algo bueno o dejar pasar algo malo  
+•	La necesidad de definir métricas de éxito antes de tocar datos.  
+    o	El impacto económico o operacional de cada tipo de error, Cost of Error  
+    
+"Reducción del 80% en correos spam en inbox, con <1% de falsos positivos" y esto es el Success Metrics (Business), Cómo mediremos el éxito en términos de negocio  
 
-•	La diferencia entre problema de negocio ("reducir ruido") y problema de ML ("clasificación binaria").
-    o	"Cada correo → 'spam' o 'ham' (legítimo)", "Como separar ropa: limpia/sucia, colores/blancos" y esto es Classification Problem, Tipo de problema donde asignamos una categoría a cada entrada
-•	Que los falsos positivos tienen costo de negocio.
-    o	"FP = correo de cliente va a spam (grave). FN = spam llega a inbox (molesto)"
-    o	False Positive / False Negative Errores de clasificación: bloquear algo bueno o dejar pasar algo malo
-•	La necesidad de definir métricas de éxito antes de tocar datos.
-    o	El impacto económico o operacional de cada tipo de error, Cost of Error
-"Reducción del 80% en correos spam en inbox, con <1% de falsos positivos" y esto es el Success Metrics (Business), Cómo mediremos el éxito en términos de negocio
-El Split de Datos: El spam es un evento raro (digamos que solo el 10% de los correos son spam). Cuando uses Python para dividir tus datos en Entrenamiento (Train) y Prueba (Test), ¿qué parámetro o técnica específica debes usar obligatoriamente para no arruinar el aprendizaje del modelo?
-Inmutabilidad: Sabiendo que los analistas van a seguir añadiendo nuevos correos a este archivo la próxima semana, ¿qué herramienta de terminal vas a inicializar primero en tu proyecto para asegurar que el modelo que entrenemos hoy esté vinculado a esta versión exacta de los datos?
+El Split de Datos: El spam es un evento raro (digamos que solo el 10% de los correos son spam). Cuando uses Python para dividir tus datos en Entrenamiento (Train) y Prueba (Test), ¿qué parámetro o técnica específica debes usar obligatoriamente para no arruinar el aprendizaje del modelo?  
+Inmutabilidad: Sabiendo que los analistas van a seguir añadiendo nuevos correos a este archivo la próxima semana, ¿qué herramienta de terminal vas a inicializar primero en tu proyecto para asegurar que el modelo que entrenemos hoy esté vinculado a esta versión exacta de los datos?  
 ________________________________________
 Code
 spam_filter_mlops/
