@@ -1,5 +1,6 @@
 🔍FASE 1: Del Caos al Problema (Problem Framing)
 Objetivo: Que Melissa y Airis entiendan que no empezamos con código, sino con una necesidad de negocio mal definida.
+
 🎯 Preguntas para plantear:
 🗣️ "Imagina que el equipo de soporte recibe 10,000 correos diarios. 
     ¿Qué dolor concreto estamos intentando aliviar?"
