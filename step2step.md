@@ -564,20 +564,20 @@ def test_f1_meets_deployment_threshold(model, test_data):
 ```
 ________________________________________
 
-"Si el test_split ya nos dio un accuracy=0.92, ¿por qué necesitamos validación cruzada? ¿Qué nos revela la std (desviación estándar) que la métrica única oculta?"
-🔍 Razonamiento esperado:
-Un único split es una foto instantánea; puede ser favorable o desfavorable por azar. La validación cruzada toma 5 fotos distintas del mismo dataset y calcula el promedio y la variabilidad.
-La std nos dice qué tan estable es el modelo frente a variaciones naturales de los datos:
-•	F1 = 0.91 ± 0.01 → Modelo robusto. Confiable para producción.
-•	F1 = 0.91 ± 0.12 → Modelo inestable. Depende críticamente de qué ejemplos caen en train/test. En producción, su rendimiento será impredecible.
-En MLOps, la estabilidad importa más que el pico de rendimiento. Un modelo con F1=0.88 ± 0.02 suele preferirse sobre uno con F1=0.93 ± 0.15.
+"Si el test_split ya nos dio un accuracy=0.92, ¿por qué necesitamos validación cruzada? ¿Qué nos revela la std (desviación estándar) que la métrica única oculta?"  
+🔍 Razonamiento esperado:  
+Un único split es una foto instantánea; puede ser favorable o desfavorable por azar. La validación cruzada toma 5 fotos distintas del mismo dataset y calcula el promedio y la variabilidad.  
+La std nos dice qué tan estable es el modelo frente a variaciones naturales de los datos:  
+•	F1 = 0.91 ± 0.01 → Modelo robusto. Confiable para producción.  
+•	F1 = 0.91 ± 0.12 → Modelo inestable. Depende críticamente de qué ejemplos caen en train/test. En producción, su rendimiento será impredecible.  
+En MLOps, la estabilidad importa más que el pico de rendimiento. Un modelo con F1=0.88 ± 0.02 suele preferirse sobre uno con F1=0.93 ± 0.15.  
 
-"En pytest, ¿por qué escribimos assert f1 >= 0.85 en lugar de solo verificar que el script 'corre sin errores'? ¿Qué diferencia conceptual hay entre un test de software tradicional y un 'gate' de ML?"
-🔍 Razonamiento esperado:
-•	Software tradicional: La función sum(a,b) siempre debe devolver a+b. El test valida determinismo. Si falla, hay un bug de código.
-•	Machine Learning: El modelo es probabilístico y estocástico. Siempre tendrá error. El test no valida que "funcione", valida que cumpla un Acuerdo de Nivel de Servicio (SLA) de negocio.
-El assert f1 >= 0.85 es un gate de calidad automatizado. Si el modelo corre pero su F1 es 0.70, el CI debe rechazar el despliegue automáticamente, no porque haya un crash, sino porque no cumple el umbral acordado con el área de negocio.
-Esto cambia la mentalidad: en ML, correr ≠ listo. Correr + cumplir gate ≠ listo. Solo entonces se aprueba para staging.
+"En pytest, ¿por qué escribimos assert f1 >= 0.85 en lugar de solo verificar que el script 'corre sin errores'? ¿Qué diferencia conceptual hay entre un test de software tradicional y un 'gate' de ML?"  
+🔍 Razonamiento esperado:  
+•	Software tradicional: La función sum(a,b) siempre debe devolver a+b. El test valida determinismo. Si falla, hay un bug de código.  
+•	Machine Learning: El modelo es probabilístico y estocástico. Siempre tendrá error. El test no valida que "funcione", valida que cumpla un Acuerdo de Nivel de Servicio (SLA) de negocio.  
+El assert f1 >= 0.85 es un gate de calidad automatizado. Si el modelo corre pero su F1 es 0.70, el CI debe rechazar el despliegue automáticamente, no porque haya un crash, sino porque no cumple el umbral acordado con el área de negocio.  
+Esto cambia la mentalidad: en ML, correr ≠ listo. Correr + cumplir gate ≠ listo. Solo entonces se aprueba para staging.  
 
 "Si el CI falla porque F1 = 0.78 (por debajo del gate), ¿cómo sabes si el problema es: a) código roto, b) datos cambiados, o c) hiperparámetros subóptimos? ¿Cómo usarías MLflow para diagnosticarlo sin adivinar?"
 🔍 Razonamiento esperado:
