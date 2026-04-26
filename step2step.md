@@ -1,5 +1,5 @@
 # 🔍FASE 1: Del Caos al Problema (Problem Framing)  
-###Objetivo: 
+### Objetivo:   
 Que Melissa y Airis entiendan que no empezamos con código, sino con una necesidad de negocio mal definida.  
 
 🎯 Preguntas para plantear:  
@@ -30,7 +30,8 @@ El Split de Datos: El spam es un evento raro (digamos que solo el 10% de los cor
 Inmutabilidad: Sabiendo que los analistas van a seguir añadiendo nuevos correos a este archivo la próxima semana, ¿qué herramienta de terminal vas a inicializar primero en tu proyecto para asegurar que el modelo que entrenemos hoy esté vinculado a esta versión exacta de los datos?
 ________________________________________
 ## Code
-
+> > 
+```
 spam_filter_mlops/  
 ├── data/  
 │   ├── raw/          # 📥 Datos crudos (nunca se modifican)  
@@ -42,16 +43,17 @@ spam_filter_mlops/
 │   └── fase_03_pipeline.py
 ├── requirements.txt  
 └── README.md  
+```
 
 > 
-```
+```bash
 pip install pandas
 ```
 
 En MLOps, los datos no se procesan con listas de Python ni csv nativo. pandas introduce el concepto de DataFrame: una estructura tabular optimizada, con indexación alineada, operaciones vectorizadas y manejo nativo de tipos. Además, pd.read_csv() maneja codificaciones, saltos de línea y esquemas inconsistentes sin romper el script. Es la base para cualquier pipeline de datos porque garantiza que la ingesta sea determinista y reproducible, no dependiente de scripts frágiles.
 
->
-```
+> 
+```python
 # Creamos src/fase_01_setup.py
 import pandas as pd
 import os
@@ -88,12 +90,12 @@ ________________________________________
 🔍 Traducirlo implica mapear objetivos de negocio a variables técnicas. Aquí, target = 1 para spam nos permite entrenar un clasificador binario. Pero más importante: al estandarizar la etiqueta ahora, evitamos inconsistencias futuras ('Spam', 'spam', 1, True). MLOps exige normalización temprana de esquemas; si el esquema cambia después, el modelo falla en producción sin warning claro. 
 
 # 📊 FASE 2: Selección y Exploración de Datos
-### Objetivo: 
+### Objetivo:  
 Entender que los datos no "aparecen", se seleccionan con criterio.
 
-🎯 Preguntas para plantear:
+🎯 Preguntas para plantear:  
 🗣️ "Tenemos acceso a: asunto, cuerpo, remitente, hora, adjuntos, headers completos. 
-    ¿Todos son igualmente útiles? ¿Cuáles podrían ser 'ruido'?"
+    ¿Todos son igualmente útiles? ¿Cuáles podrían ser 'ruido'?"  
 •	Cada variable o característica que usamos para predecir. Feature
 
 🗣️ "Si un spammer cambia 'Viagra' por 'V!agra', ¿nuestro modelo lo detectaría 
@@ -118,7 +120,7 @@ ________________________________________
 ## Code
 
 > 
-```
+```bash
 pip install scikit-learn
 ```
 
@@ -190,7 +192,7 @@ Que surja naturalmente la necesidad de un pipeline de preprocessing.
     ¿cómo reproducimos los resultados?"  
 •	"¿Qué hacemos si un correo no tiene asunto? ¿Lo eliminamos? ¿Usamos 'sin_asunto' como feature?" Missing Values Handling Estrategia para tratar datos faltantes: eliminar, imputar, marcar
 
-💡 Lo que buscas que ella descubra:  
+💡 Lo que buscas que ellas descubran:  
 •	La necesidad de pipelines reproducibles de preprocessing.  
 •	Que la limpieza no es un paso "one-off", es parte del sistema.  
 •	El concepto de training-serving skew.
@@ -282,7 +284,7 @@ a)	Los nuevos datos, b) Un cambio en el código, o c) Ambos?"
 🗣️ "¿Es lo mismo versionar 10 líneas de código que versionar 10 GB de correos procesados? 
     ¿Qué herramientas conoces que manejen esta diferencia?"
 
-💡 Lo que buscas que ella descubra:
+💡 Lo que buscas que ellas descubran:
 •	La necesidad de DVC, Pachyderm o similar para datos.
 •	Que la trazabilidad requiere vincular: código + datos + hiperparámetros + métricas.
 ________________________________________
@@ -292,10 +294,20 @@ ________________________________________
 > 
 ```
 pip install dvc
+```
+
 Anteriormente, generamos data/raw/spam.csv, splits y artifacts/pipeline_v1.pkl. Git no está diseñado para archivos binarios o datasets >100MB: cada commit duplica el archivo, el repositorio se infla y el historial se vuelve inmanejable. dvc (Data Version Control) resuelve esto guardando los archivos pesados en almacenamiento externo (local, GCS, S3) y dejando en Git solo un puntero ligero (.dvc) con el hash SHA-256. Así versionamos datos sin romper Git.
+
+> 
+```
 pip install mlflow
+```
+
 Tenemos un pipeline que entrena, pero si mañana cambiamos max_features, C o el algoritmo, ¿cómo comparamos qué versión fue mejor? ¿Dónde quedan los parámetros, las métricas y el artefacto de cada ejecución? mlflow es un sistema de experiment tracking: registra automáticamente parámetros, métricas, código y modelos en un servidor local o remoto. Responde a la pregunta: "¿Con qué configuración exacta se obtuvo este F1=0.92?" sin depender de notas en un notebook o nombres de archivos como model_final_v3_real.pkl.
-CMD 
+
+> 
+```
+# CMD 
 # 1. Inicializa DVC (crea .dvc/ y .dvcignore)
 dvc init
 
@@ -306,9 +318,13 @@ dvc add data/processed/X_train.csv data/processed/X_test.csv data/processed/y_tr
 # 3. Git solo rastrea los punteros (.dvc), no los datos
 git add data/raw/spam.csv.dvc data/processed/*.dvc data/.gitignore
 git commit -m "feat: versionar datos y splits con DVC"
+```
 
 Ahora, git log muestra cambios en código. dvc log (o el archivo .dvc) muestra cambios en datos. Si alguien clona el repo, corre dvc pull y recupera la versión exacta de los datos usada para ese commit. Reproducibilidad garantizada.
-Creamos src/fase_04_mlflow_tracking.py
+
+> 
+```python
+# Creamos src/fase_04_mlflow_tracking.py
 import pandas as pd
 import mlflow
 import mlflow.sklearn
@@ -366,19 +382,21 @@ with mlflow.start_run():
     
     print(f"✅ Run {mlflow.active_run().info.run_id} completado.")
     print(f"   Accuracy: {acc:.3f} | Precision: {prec:.3f} | Recall: {rec:.3f} | F1: {f1:.3f}")
+```    
 
 Al ejecutar este script, MLflow crea una carpeta mlruns/ con:
 •	run_id único
 •	params/, metrics/, artifacts/
-•	Interfaz web en http://localhost:5000 para comparar runs, descargar modelos y ver gráficas.
+•	Interfaz web en **http://localhost:5000** para comparar runs, descargar modelos y ver gráficas.
 
 Sin MLflow, tendrías el código en Git y los datos en DVC, pero ningún vínculo auditable que diga: "El modelo con F1=0.92 se entrenó con la versión abc123 del dataset, usando C=1.0 y max_features=2000, ejecutado el 12/05/2024". MLflow cierra el círculo de trazabilidad MLOps.
 
 ________________________________________
 
 "Cambiamos C=1.0 a C=0.1 y volvemos a correr el script. ¿Cómo sabemos si el nuevo modelo es realmente mejor o solo tuvo suerte con el split de test?"
-🧠 Razonamiento de la respuesta:
-MLflow nos da comparación estructurada, pero para responder "suerte vs mejora real" debemos integrar validación robusta (que veremos en la siguiente fase). Con MLflow solo:
+
+🧠 Razonamiento de la respuesta:  
+MLflow nos da comparación estructurada, pero para responder "suerte vs mejora real" debemos integrar validación robusta (que veremos en la siguiente fase). Con MLflow solo:  
 1.	Vemos dos run_id en el dashboard.
 2.	Comparamos métricas lado a lado.
 3.	Si F1 sube de 0.91 a 0.93, MLflow nos dice que mejoró en este split.
@@ -420,7 +438,7 @@ Objetivo: Que entienda que elegir algoritmo es un ejercicio de restricciones, no
 🗣️ "¿Necesitamos que el modelo aprenda nuevas formas de spam sin reentrenar desde cero? 
     ¿Eso descarta algún tipo de algoritmo?"
 
-💡 Lo que buscas que ella descubra:
+💡 Lo que buscas que ellas descubran:
 •	El trade-off entre interpretabilidad vs. rendimiento.
 •	La importancia de la complejidad computacional.
 •	Que no existe "el mejor algoritmo", existe "el más adecuado para estas restricciones".
@@ -580,7 +598,7 @@ Objetivo: Que surja la necesidad de MLFlow como respuesta al caos experimental.
 🗣️ "Si quieres comparar visualmente la curva de aprendizaje de 3 modelos, 
     ¿lo haces con prints en consola o hay una forma más sistemática?"
 
-💡 Lo que buscas que ella descubra:
+💡 Lo que buscas que ellas descubran:
 •	Que MLFlow Tracking responde a la necesidad de reproducibilidad.
 •	La diferencia entre loggear y monitorear.
 •	Que la trazabilidad es un requisito para el mantenimiento, no un "nice-to-have".
@@ -741,7 +759,7 @@ Objetivo: Entender las particularidades del testing en ML.
 🗣️ "¿Qué pasa si el modelo pasa todos los tests en CI, pero en producción 
     los datos de entrada tienen una distribución distinta? ¿Cómo detectamos eso temprano?"
 
-💡 Lo que buscas que ella descubra:
+💡 Lo que buscas que ellas descubran:
 •	Que en ML el testing es multinivel: código, datos, modelo, desempeño en producción.
 •	La necesidad de shadow deployment o canary releases para modelos.
 •	Que el CI/CD de ML incluye validación de drift y calidad de datos.
@@ -885,7 +903,7 @@ Threshold Tuning	Ajustar el punto de corte para decidir cuándo predecir 'spam'	
 🗣️ "¿Cuándo usarías RMSE vs. MAE? ¿Y en un problema de clasificación como este, 
     por qué no aplican?"
 
-💡 Lo que buscas que ella descubra:
+💡 Lo que buscas que ellas descubran:
 •	Que Accuracy es engañosa con clases desbalanceadas.
 •	La relación entre Precisión, Recall y F1 en términos de negocio.
 •	Que las métricas deben alinearse con los costos de error del dominio.
