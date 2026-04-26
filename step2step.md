@@ -774,7 +774,8 @@ En MLOps, el CI es el primer firewall. Un entorno aislado + tests estrictos + ga
 
 
 # 🔄 FASE 7: CI/CD para ML (No es lo mismo que software tradicional)
-Objetivo: Entender las particularidades del testing en ML.
+### Objetivo:
+Entender las particularidades del testing en ML.
 
 🎯 Preguntas para plantear:
 🗣️ "En software tradicional, un test unitario verifica que una función devuelva el valor esperado. 
@@ -872,13 +873,13 @@ else:
     print("✅ Distribución estable. Modelo en producción sigue siendo válido.")
 ```
 
-|COMPONENTE EN CÓDIGO|	EQUIVALENTE NATIVO EN GCP	|PROPÓSITO|
-
-|EVIDENTLY + DATADRIFTPRESET|	Vertex AI Model Monitoring	|Monitoreo nativo de drift en features/predicciones sin Código|  
-|RETRAIN_TRIGGER.JSON|	Pub/Sub + Cloud Scheduler	|Canal de eventos para orquestar reentrenamiento|  
-|PYTHON TRIGGER SCRIPT|	Cloud Run / Cloud Functions	|Ejecuta lógica de decisión o notifica equipos|  
-|VERTEX AI TRAINING|	Vertex AI Pipelines + Kubeflow	|Reentrena automáticamente con nuevos datos|  
-|MLFLOW REGISTRY|	Vertex AI Model Registry	|Versionado y promoción automática a Staging|  
+| COMPONENTE EN CÓDIGO | EQUIVALENTE NATIVO EN GCP | PROPÓSITO |
+| :--- | :---: | ---: |
+| EVIDENTLY + DATADRIFTPRESET | Vertex AI Model Monitoring | Monitoreo nativo de drift en features/predicciones sin Código|  
+| RETRAIN_TRIGGER.JSON | Pub/Sub + Cloud Scheduler | Canal de eventos para orquestar reentrenamiento|  
+| PYTHON TRIGGER SCRIPT | Cloud Run / Cloud Functions | Ejecuta lógica de decisión o notifica equipos|  
+| VERTEX AI TRAINING | Vertex AI Pipelines + Kubeflow | Reentrena automáticamente con nuevos datos |  
+| MLFLOW REGISTRY | Vertex AI Model Registry | Versionado y promoción automática a Staging |  
 
 ________________________________________
 
