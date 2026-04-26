@@ -874,7 +874,7 @@ else:
 ```
 
 | COMPONENTE EN CÓDIGO | EQUIVALENTE NATIVO EN GCP | PROPÓSITO |
-| :--- | :---: | ---: |
+| :--- | :---: | :--- |
 | EVIDENTLY + DATADRIFTPRESET | Vertex AI Model Monitoring | Monitoreo nativo de drift en features/predicciones sin Código|  
 | RETRAIN_TRIGGER.JSON | Pub/Sub + Cloud Scheduler | Canal de eventos para orquestar reentrenamiento|  
 | PYTHON TRIGGER SCRIPT | Cloud Run / Cloud Functions | Ejecuta lógica de decisión o notifica equipos|  
@@ -922,14 +922,15 @@ La automatización acelera; los gates protegen.
 ### Objetivo: 
 Que entienda que la métrica correcta depende del costo de error.
 
-|Concepto|	Definición Simple|	Fórmula (opcional)|	Conexión Spam Filter|
-|Accuracy|	Porcentaje de predicciones correctas sobre el total|	`(TP+TN) / Total`|	"Engañosa si hay desbalance: 95% accuracy puede ser solo predecir siempre 'ham'"|
-|Precision|	De los que predije como spam, ¿cuántos realmente lo eran?|	`TP / (TP+FP)`|	"Alta precisión = pocos correos legítimos bloqueados por error"|
-|Recall (Sensitivity)|	De los spam reales, ¿cuántos logré detectar?|	`TP / (TP+FN)`|	"Alto recall = pocos spams se escapan a la bandeja de entrada"|
-|F1-Score|	Promedio armónico de precisión y recall: balance entre ambos|	`2 * (P*R)/(P+R)`	|"Útil cuando necesitamos equilibrar FP y FN; nuestro 'número mágico' de calidad"|
-|Confusion Matrix|	Tabla que muestra cuántos aciertos y errores de cada tipo cometió el modelo	Matriz 2x2: [TN, FP; FN, TP]|	"Nos permite ver visualmente: ¿estamos fallando más en FP o en FN?"|
-|ROC-AUC|	Capacidad del modelo para distinguir entre clases, sin importar el umbral	|Área bajo la curva TPR vs FPR	|"Un AUC de 0.95 significa que el modelo 'ordena bien' spam vs ham en general"|
-|Threshold Tuning|	Ajustar el punto de corte para decidir cuándo predecir 'spam'	|Mover el umbral de probabilidad (ej: de 0.5 a 0.7)	|"Si queremos menos FP, subimos el umbral: solo marcamos como spam si estamos muy seguros"|
+| Concepto| Definición Simple| Fórmula (opcional)| Conexión Spam Filter |
+| :--- | :--- | :--- | :--- |
+| Accuracy | Porcentaje de predicciones correctas sobre el total | `(TP+TN) / Total` | "Engañosa si hay desbalance: 95% accuracy puede ser solo predecir siempre 'ham'" |
+| Precision | De los que predije como spam, ¿cuántos realmente lo eran? | `TP / (TP+FP)` | "Alta precisión = pocos correos legítimos bloqueados por error" |
+| Recall (Sensitivity) | De los spam reales, ¿cuántos logré detectar? | `TP / (TP+FN)` | "Alto recall = pocos spams se escapan a la bandeja de entrada" |
+| F1-Score | Promedio armónico de precisión y recall: balance entre ambos | `2 * (P*R)/(P+R)` | "Útil cuando necesitamos equilibrar FP y FN; nuestro 'número mágico' de calidad" |
+| Confusion Matrix | Tabla que muestra cuántos aciertos y errores de cada tipo cometió el modelo | Matriz 2x2: [TN, FP; FN, TP] | "Nos permite ver visualmente: ¿estamos fallando más en FP o en FN?" |
+| ROC-AUC | Capacidad del modelo para distinguir entre clases, sin importar el umbral | Área bajo la curva TPR vs FPR | "Un AUC de 0.95 significa que el modelo 'ordena bien' spam vs ham en general" |
+| Threshold Tuning | Ajustar el punto de corte para decidir cuándo predecir 'spam' | Mover el umbral de probabilidad (ej: de 0.5 a 0.7) | "Si queremos menos FP, subimos el umbral: solo marcamos como spam si estamos muy seguros" |
 
 🎯 Preguntas para plantear:
 🗣️ "Nuestro dataset tiene 95% ham, 5% spam. Un modelo que siempre predice 'ham' 
@@ -952,15 +953,16 @@ Que entienda que la métrica correcta depende del costo de error.
 •	Que las métricas deben alinearse con los costos de error del dominio.
 
 
-Concepto	Definición Simple	Analogía	Conexión Spam Filter
-Model Serving	Poner el modelo a disposición para que reciba peticiones y devuelva predicciones	"Como abrir el restaurante: la cocina ya está lista para recibir órdenes"	"API REST en Cloud Run: POST /predict con correo → devuelve {'label': 'spam'}"
-Latency / Throughput	Tiempo de respuesta y cantidad de peticiones que el modelo puede atender	"Cuánto tarda en salir un plato y cuántos comensales puede atender por hora"	"¿El filtro responde en <200ms? ¿Puede procesar 100 correos/minuto sin colapsar?"
-Data Drift	Cuando la distribución de los datos de entrada cambia con el tiempo	"Los gustos de los comensales cambian: hoy piden más vegano, ayer era todo carne"	"Los spammers empiezan a usar 'G@n@r' en lugar de 'Ganar' → el modelo no lo reconoce"
-Concept Drift	Cuando la relación entre features y target cambia (la definición de 'spam' evoluciona)	"Antes 'oferta' era spam; hoy muchas newsletters legítimas usan esa palabra"	"Lo que era spam en 2024 puede no serlo en 2026; el modelo debe adaptarse"
-Monitoring Dashboard	Visualización en tiempo real de métricas de modelo, datos y sistema	"El tablero de control de un avión: velocidad, altitud, combustible, alertas"	"Gráficas: % spam detectado, tasa de FP, latencia p95, volumen de correos/hora"
-Alerting	Notificaciones automáticas cuando algo sale de lo esperado	"Como la alarma de humo: te avisa antes de que el fuego se propague"	"Si la tasa de FP sube >2% en 1 hora → alerta a Slack + rollback automático"
-Feedback Loop	Mecanismo para capturar correcciones de usuarios y reentrenar el modelo	"Como un chef que pregunta '¿cómo estuvo?' y ajusta la receta para la próxima"	"Cuando se marca un correo como 'no es spam', ese ejemplo se guarda para el próximo entrenamiento"
-Model Retraining Strategy	Cuándo y cómo actualizar el modelo: schedule, trigger por drift, o manual	"¿Cocinar cada día con receta fija, o ajustar según los ingredientes disponibles?"	"Reentrenar semanalmente con nuevos datos + validación automática antes de desplegar"
+| Concepto | Definición Simple | Analogía | Conexión Spam Filter |
+| :--- | :--- | :--- | :--- |
+| Model Serving | Poner el modelo a disposición para que reciba peticiones y devuelva predicciones | "Como abrir el restaurante: la cocina ya está lista para recibir órdenes" | "API REST en Cloud Run: POST /predict con correo → devuelve {'label': 'spam'}" |
+| Latency / Throughput | Tiempo de respuesta y cantidad de peticiones que el modelo puede atender | "Cuánto tarda en salir un plato y cuántos comensales puede atender por hora" | "¿El filtro responde en <200ms? ¿Puede procesar 100 correos/minuto sin colapsar?" |
+| Data Drift | Cuando la distribución de los datos de entrada cambia con el tiempo | "Los gustos de los comensales cambian: hoy piden más vegano, ayer era todo carne" | "Los spammers empiezan a usar 'G@n@r' en lugar de 'Ganar' → el modelo no lo reconoce" |
+| Concept Drift | Cuando la relación entre features y target cambia (la definición de 'spam' evoluciona) | "Antes 'oferta' era spam; hoy muchas newsletters legítimas usan esa palabra" | "Lo que era spam en 2024 puede no serlo en 2026; el modelo debe adaptarse" |
+| Monitoring Dashboard | Visualización en tiempo real de métricas de modelo, datos y sistema | "El tablero de control de un avión: velocidad, altitud, combustible, alertas" | "Gráficas: % spam detectado, tasa de FP, latencia p95, volumen de correos/hora" |    
+| Alerting | Notificaciones automáticas cuando algo sale de lo esperado | "Como la alarma de humo: te avisa antes de que el fuego se propague" | "Si la tasa de FP sube >2% en 1 hora → alerta a Slack + rollback automático" |
+| Feedback Loop | Mecanismo para capturar correcciones de usuarios y reentrenar el modelo | "Como un chef que pregunta '¿cómo estuvo?' y ajusta la receta para la próxima" | "Cuando se marca un correo como 'no es spam', ese ejemplo se guarda para el próximo entrenamiento" |
+| Model Retraining Strategy | Cuándo y cómo actualizar el modelo: schedule, trigger por drift, o manual | "¿Cocinar cada día con receta fija, o ajustar según los ingredientes disponibles?" | "Reentrenar semanalmente con nuevos datos + validación automática antes de desplegar" |
 
 ________________________________________
 ## Code
@@ -1086,34 +1088,35 @@ El ROI de MLOps no se mide en "accuracy +2%". Se mide en reducción de costo ope
 4.	Infraestructura optimizada: Monitoreo evita provisionar GPUs innecesarias o reentrenar sin motivo.
 En MLOps, la métrica de éxito es predictibilidad, no perfección. Un sistema que falla rápido, se recupera solo y audita cada decisión vale más que un modelo "preciso" que nadie confía en tocar.
 
-COMPONENTE EN CÓDIGO	EQUIVALENTE NATIVO EN GCP	PROPÓSITO
-FEAST + FEATUREVIEW	Vertex AI Feature Store	Servir features online/batch con consistencia garantizada
-PANDERA SCHEMA	Dataform + BigQuery Assertions o Cloud Run pre-flight checks	Validación de calidad de datos en ingestión
-PYTHON-DOTENV + ENV VARS	Cloud Run Environment Variables + Secret Manager	Gestión segura de config multi-ambiente
-VALIDATE_INGESTION()	Eventarc + Pub/Sub + Cloud Functions	Gate de calidad antes de entrar a pipeline de training
-ROI TRACKING	Cloud Billing Export + Vertex AI Cost Dashboard	Atribución de costo por modelo/ambiente/equipo
+| COMPONENTE EN CÓDIGO | EQUIVALENTE NATIVO EN GCP | PROPÓSITO |
+| :--- | :--- | :--- |
+FEAST + FEATUREVIEW | Vertex AI Feature Store | Servir features online/batch con consistencia garantizada |
+| PANDERA SCHEMA | Dataform + BigQuery Assertions o Cloud Run pre-flight checks | Validación de calidad de datos en ingestión |
+| PYTHON-DOTENV + ENV VARS | Cloud Run Environment Variables + Secret Manager | Gestión segura de config multi-ambiente |
+VALIDATE_INGESTION() | Eventarc + Pub/Sub + Cloud Functions | Gate de calidad antes de entrar a pipeline de training |
+| ROI TRACKING | Cloud Billing Export + Vertex AI Cost Dashboard | Atribución de costo por modelo/ambiente/equipo |
 
 
 
 # Algoritmos de ML
 ## 📐 1. Regresión Lineal
-🧠 Concepto Clave: Predice un valor numérico continuo ajustando una línea recta que minimiza el error respecto a los datos.  
-⚙️ ¿Cómo funciona? Busca la combinación de pesos para cada feature que hace que ŷ = w₁x₁ + w₂x₂ + ... + b se acerque lo más posible al valor real. Usa mínimos cuadrados.  
-🎯 ¿Cuándo elegirlo? Forecasting, tendencias, variables continuas (precio, temperatura, tiempo).  
+🧠 *Concepto Clave:* Predice un valor numérico continuo ajustando una línea recta que minimiza el error respecto a los datos.  
+⚙️ *¿Cómo funciona?* Busca la combinación de pesos para cada feature que hace que ŷ = w₁x₁ + w₂x₂ + ... + b se acerque lo más posible al valor real. Usa mínimos cuadrados.  
+🎯 *¿Cuándo elegirlo?* Forecasting, tendencias, variables continuas (precio, temperatura, tiempo).  
 ✅ Extremadamente rápido, interpretable, baseline sólido.  
 ❌ Asume relación lineal, sensible a outliers, no sirve para clasificación.  
 
 ## 🎲 2. Regresión Logística
-🧠 Concepto Clave: Extensión de la regresión lineal diseñada para clasificación binaria. Predice probabilidades.  
-⚙️ ¿Cómo funciona? Aplica la función sigmoide (1 / (1 + e⁻ᶻ)) a la salida lineal para comprimirla entre 0 y 1. Si P ≥ 0.5 → clase positiva.  
-🎯 ¿Cuándo elegirlo? Clasificación binaria/multiclase, necesidad de probabilidades calibradas, baseline interpretable.  
+🧠 *Concepto Clave:* Extensión de la regresión lineal diseñada para clasificación binaria. Predice probabilidades.  
+⚙️ *¿Cómo funciona?* Aplica la función sigmoide (1 / (1 + e⁻ᶻ)) a la salida lineal para comprimirla entre 0 y 1. Si P ≥ 0.5 → clase positiva.  
+🎯 *¿Cuándo elegirlo?* Clasificación binaria/multiclase, necesidad de probabilidades calibradas, baseline interpretable.  
 ✅ Rápido, escalable, entrega probabilidades, fácil de debuggear.  
 ❌ Línea de decisión lineal; lucha con patrones no lineales complejos.  
 
 ## 🌳 3. Árboles de Decisión
-🧠 Concepto Clave: Modelo que toma decisiones mediante reglas SI-ENTONCES anidadas, dividiendo los datos recursivamente.  
-⚙️ ¿Cómo funciona? En cada nodo elige la feature y umbral que maximiza la "pureza" (Gini o Entropía) de los subconjuntos resultantes.  
-🎯 ¿Cuándo elegirlo? Necesidad de reglas explicables, datos mixtos (numéricos + categóricos), relaciones no lineales.  
+🧠 *Concepto Clave:* Modelo que toma decisiones mediante reglas SI-ENTONCES anidadas, dividiendo los datos recursivamente.  
+⚙️ *¿Cómo funciona?* En cada nodo elige la feature y umbral que maximiza la "pureza" (Gini o Entropía) de los subconjuntos resultantes.  
+🎯 *¿Cuándo elegirlo?* Necesidad de reglas explicables, datos mixtos (numéricos + categóricos), relaciones no lineales.  
 ✅ No requiere escalado, muy interpretable, maneja interacciones complejas.  
 ❌ Propenso a sobreajuste, inestable (pequeños cambios en datos → árbol distinto).  
 ________________________________________
