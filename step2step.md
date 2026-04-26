@@ -87,7 +87,8 @@ ________________________________________
 🔍 La descarga no es atómica. Un corte de red deja un CSV parcial que pd.read_csv() podría leer silenciosamente o fallar de forma impredecible. En producción, se usan estrategias como descargar a .tmp y luego os.replace(), o verificar checksums (SHA-256). Este primer script enseña el principio: la ingestión debe ser segura o  el pipeline no es confiable.  
 
 ***"¿Cómo traducimos 'reducir spam sin bloquear correos de clientes' a algo que este script prepare para el futuro?"***  
-🔍 Traducirlo implica mapear objetivos de negocio a variables técnicas. Aquí, target = 1 para spam nos permite entrenar un clasificador binario. Pero más importante: al estandarizar la etiqueta ahora, evitamos inconsistencias futuras ('Spam', 'spam', 1, True). MLOps exige normalización temprana de esquemas; si el esquema cambia después, el modelo falla en producción sin warning claro. 
+🔍 Traducirlo implica mapear objetivos de negocio a variables técnicas. Aquí, target = 1 para spam nos permite entrenar un clasificador binario. Pero más importante: al estandarizar la etiqueta ahora, evitamos inconsistencias futuras ('Spam', 'spam', 1, True). MLOps exige normalización temprana de esquemas; si el esquema cambia después, el modelo falla en producción sin warning claro.  
+
 
 # 📊 FASE 2: Selección y Exploración de Datos
 ### Objetivo:  
@@ -109,11 +110,11 @@ Entender que los datos no "aparecen", se seleccionan con criterio.
     ¿Qué riesgo hay si el modelo 'memoriza' dominios específicos del dataset de entrenamiento?"
 •	"No es lo mismo tener harina que tener una masa lista para hornear",  Feature Engineering Transformar datos crudos en features útiles para el modelo
 
-💡 Lo que buscas que ellas descubran:
-•	La importancia del feature engineering (no todo texto es igual).
-•	El problema del desequilibrio de clases.
-•	El riesgo de data leakage y sobreajuste.
-Data Leakage (Fuga de Datos): Vamos a tener que limpiar el texto (quitar signos de puntuación, pasar a minúsculas). ¿Vas a limpiar todo el dataset antes o después de hacer la división de Train/Test? Entonces, "Si incluimos 'fue marcado como spam por el usuario' como feature, el modelo 'hace trampa'" entonces Data Leakage, Cuando información del futuro o de test 'se filtra' al entrenamiento
+💡 Lo que buscas que ellas descubran:  
+•	La importancia del feature engineering (no todo texto es igual).  
+•	El problema del desequilibrio de clases.  
+•	El riesgo de data leakage y sobreajuste.  
+Data Leakage (Fuga de Datos): Vamos a tener que limpiar el texto (quitar signos de puntuación, pasar a minúsculas). ¿Vas a limpiar todo el dataset antes o después de hacer la división de Train/Test? Entonces, "Si incluimos 'fue marcado como spam por el usuario' como feature, el modelo 'hace trampa'" entonces Data Leakage, Cuando información del futuro o de test 'se filtra' al entrenamiento  
 Investigar los datos antes de modelar: distribuciones, valores nulos, correlaciones, Exploratory Data Analysis (EDA)
 ________________________________________
 
@@ -161,13 +162,13 @@ print("✅ Splits guardados. Zero leakage garantizado.")
 ```
 ________________________________________
 
-P1: "¿Por qué hacemos el train_test_split antes de crear TfidfVectorizer o escalar valores?"  
+***"P1: ¿Por qué hacemos el train_test_split antes de crear TfidfVectorizer o escalar valores?"***  
 🔍 Razonamiento esperado: Si vectorizamos o escalamos todo el dataset primero, el vectorizador "ve" la distribución completa de palabras, y el escalador calcula medias/desviaciones con datos de prueba incluidos. El modelo entonces recibe información indirecta de la prueba durante el entrenamiento: data leakage. En MLOps, la regla es sagrada: split → fit en train → transform en train y test. El split define el universo de conocimiento permitido.
 
-P2: "¿Qué hace stratify=y y por qué es crítico en un dataset de spam?"  
+***P2: "¿Qué hace stratify=y y por qué es crítico en un dataset de spam?"***  
 🔍 Razonamiento esperado: El spam suele ser minoría (~10-20%). Sin stratify, el split aleatorio podría poner 0% o 2% de spam en test, haciendo que accuracy sea engañosa o que el modelo nunca vea ejemplos positivos. stratify=y fuerza que la proporción de clases se mantenga idéntica en train y test. MLOps exige representatividad estadística; si el test no refleja la realidad, las métricas son ilusorias.
 
-P3: "Si mañana se envía un correo nuevo, ¿cómo garantizamos que msg_length y num_exclamations se calculen exactamente igual que en entrenamiento?"  
+***P3: "Si mañana se envía un correo nuevo, ¿cómo garantizamos que msg_length y num_exclamations se calculen exactamente igual que en entrenamiento?"***  
 🔍 La lógica de feature engineering debe estar centralizada y versionada, no replicada en notebooks o scripts sueltos. Si hoy usamos .str.len() y mañana alguien cambia a .str.split().len(), el modelo en producción recibirá features distintas y fallará silenciosamente. En MLOps, las transformaciones se encapsulan en el mismo pipeline que se entrena (ver Fase 3), eliminando training-serving skew.
 
  
@@ -197,7 +198,7 @@ Que surja naturalmente la necesidad de un pipeline de preprocessing.
 •	Que la limpieza no es un paso "one-off", es parte del sistema.  
 •	El concepto de training-serving skew.
 
-"Poner toda la ropa del mismo color antes de lavar" Text Normalization Estandarizar texto: minúsculas, eliminar puntuación, lematización
+*"Poner toda la ropa del mismo color antes de lavar" Text Normalization Estandarizar texto: minúsculas, eliminar puntuación, lematización*
 ________________________________________
 
 ## Code
@@ -250,19 +251,20 @@ print(f"✅ Pipeline guardado. Accuracy en test: {acc:.3f}")
 ```
 ________________________________________
 
-P1: "¿Por qué metemos TfidfVectorizer y StandardScaler dentro de Pipeline en lugar de aplicarlos manualmente antes de fit()?"  
+***P1: "¿Por qué metemos TfidfVectorizer y StandardScaler dentro de Pipeline en lugar de aplicarlos manualmente antes de fit()?"***  
 🔍 Si aplicas transformaciones manualmente, debes recordar ejecutarlas en el mismo orden y con los mismos parámetros en producción. Un Pipeline encapsula el flujo completo como un solo objeto serializable. En fit(), aprende vocabulario y escalado solo de train. En predict(), aplica las mismas transformaciones automáticamente. Esto elimina errores humanos y garantiza Training == Serving.
 
-P2: "¿Qué pasa si en producción llega un mensaje con caracteres no UTF-8 o sin texto? ¿El pipeline se rompe?"  
+***P2: "¿Qué pasa si en producción llega un mensaje con caracteres no UTF-8 o sin texto? ¿El pipeline se rompe?"***  
 🔍 TfidfVectorizer tiene parámetros como de## Code_error='ignore' o lowercase=True. Si no se configuran, puede lanzar Uni## CodeDe## CodeError. MLOps exige robustez a datos sucios en producción. Además, ColumnTransformer maneja columnausentes si se configura con remainder='drop' o passthrough. La lección conceptual: un modelo no vive en un notebook limpio; vive en un entorno hostil. El pipeline debe anticipar fallas, no asumirlas.
 
-P3: "Guardamos pipeline_v1.joblib. ¿Qué más debemos registrar junto a este archivo para que sea verdaderamente reproducible en 6 meses?"  
+***P3: "Guardamos pipeline_v1.joblib. ¿Qué más debemos registrar junto a este archivo para que sea verdaderamente reproducible en 6 meses?"***  
 🔍 El .joblib solo contiene pesos y lógica interna. Para reproducibilidad MLOps necesitamos:  
 •	Versión exacta de requirements.txt (pandas, sklearn, joblib)  
 •	Hash de los datos usados (X_train.csv, y_train.csv)  
 •	Parámetros de configuración (max_features=2000, C=1.0, random_state=42)  
 •	Métricas de validación y métricas de negocio aceptadas Sin este contexto, el artefacto es una caja negra. Esto nos lleva directamente a la necesidad de MLflow Tracking y DVC (Fase 4), donde vinculamos código + datos + modelo + métricas en un único run auditable.
- 
+  
+
 # 🔄 FASE 4: Versionado de Datos y Código
 ### Objetivo: 
 Que entienda por qué git solo no basta en ML.
@@ -393,8 +395,7 @@ Sin MLflow, tendrías el código en Git y los datos en DVC, pero ningún víncul
 
 ________________________________________
 
-"Cambiamos C=1.0 a C=0.1 y volvemos a correr el script. ¿Cómo sabemos si el nuevo modelo es realmente mejor o solo tuvo suerte con el split de test?"
-
+***"Cambiamos C=1.0 a C=0.1 y volvemos a correr el script. ¿Cómo sabemos si el nuevo modelo es realmente mejor o solo tuvo suerte con el split de test?"***
 🧠 Razonamiento de la respuesta:  
 MLflow nos da comparación estructurada, pero para responder "suerte vs mejora real" debemos integrar validación robusta (que veremos en la siguiente fase). Con MLflow solo:  
 1.	Vemos dos run_id en el dashboard.
@@ -406,7 +407,7 @@ o	Tests de significancia estadística (que MLflow no hace por defecto, pero pode
 o	Registro de std_dev de métricas en validación cruzada
 MLflow no valida la robustez, pero la hace rastreable. La decisión de promover un modelo a producción debe basarse en métricas estables, no en un único run.
 
-"¿Por qué logueamos precision y recall por separado si f1_score ya los combina? ¿Qué decisión de negocio podríamos tomar equivocada si solo guardáramos f1?"  
+***"¿Por qué logueamos precision y recall por separado si f1_score ya los combina? ¿Qué decisión de negocio podríamos tomar equivocada si solo guardáramos f1?"***  
 🧠 Razonamiento de la respuesta:  
 F1 es un promedio armónico útil, pero oculta el trade-off. En un filtro de spam:
 •	Alta precision (0.98) + baja recall (0.60) → El modelo bloquea muy poco spam, pero casi nunca se equivoca con correos legítimos. Costo: Melissa sigue perdiendo tiempo revisando spam.  
@@ -417,8 +418,9 @@ Si solo logueamos F1, podríamos elegir un modelo con F1=0.85 que en realidad ti
 3.	Podemos auditar: "¿Por qué promovimos este modelo? Porque priorizamos precision sobre recall según SLA del equipo de soporte."
 F1 resume; precision y recall explican. MLOps exige transparencia en la decisión, no solo un número bonito.
 
-"Si mañana me piden revertir al modelo de ayer, ¿qué haría paso a paso?"  
+*"Si mañana me piden revertir al modelo de ayer, ¿qué haría paso a paso?"*  
  
+
 # 🤖 FASE 5: Selección de Algoritmo (No es magia, es criterio)
 ### Objetivo:
 Que entienda que elegir algoritmo es un ejercicio de restricciones, no de popularidad.
@@ -564,7 +566,7 @@ def test_f1_meets_deployment_threshold(model, test_data):
 ```
 ________________________________________
 
-"Si el test_split ya nos dio un accuracy=0.92, ¿por qué necesitamos validación cruzada? ¿Qué nos revela la std (desviación estándar) que la métrica única oculta?"  
+***"Si el test_split ya nos dio un accuracy=0.92, ¿por qué necesitamos validación cruzada? ¿Qué nos revela la std (desviación estándar) que la métrica única oculta?"***  
 🔍 Razonamiento esperado:  
 Un único split es una foto instantánea; puede ser favorable o desfavorable por azar. La validación cruzada toma 5 fotos distintas del mismo dataset y calcula el promedio y la variabilidad.  
 La std nos dice qué tan estable es el modelo frente a variaciones naturales de los datos:  
@@ -572,14 +574,14 @@ La std nos dice qué tan estable es el modelo frente a variaciones naturales de 
 •	F1 = 0.91 ± 0.12 → Modelo inestable. Depende críticamente de qué ejemplos caen en train/test. En producción, su rendimiento será impredecible.  
 En MLOps, la estabilidad importa más que el pico de rendimiento. Un modelo con F1=0.88 ± 0.02 suele preferirse sobre uno con F1=0.93 ± 0.15.  
 
-"En pytest, ¿por qué escribimos assert f1 >= 0.85 en lugar de solo verificar que el script 'corre sin errores'? ¿Qué diferencia conceptual hay entre un test de software tradicional y un 'gate' de ML?"  
+***"En pytest, ¿por qué escribimos assert f1 >= 0.85 en lugar de solo verificar que el script 'corre sin errores'? ¿Qué diferencia conceptual hay entre un test de software tradicional y un 'gate' de ML?"***  
 🔍 Razonamiento esperado:  
 •	Software tradicional: La función sum(a,b) siempre debe devolver a+b. El test valida determinismo. Si falla, hay un bug de código.  
 •	Machine Learning: El modelo es probabilístico y estocástico. Siempre tendrá error. El test no valida que "funcione", valida que cumpla un Acuerdo de Nivel de Servicio (SLA) de negocio.  
 El assert f1 >= 0.85 es un gate de calidad automatizado. Si el modelo corre pero su F1 es 0.70, el CI debe rechazar el despliegue automáticamente, no porque haya un crash, sino porque no cumple el umbral acordado con el área de negocio.  
 Esto cambia la mentalidad: en ML, correr ≠ listo. Correr + cumplir gate ≠ listo. Solo entonces se aprueba para staging.  
 
-"Si el CI falla porque F1 = 0.78 (por debajo del gate), ¿cómo sabes si el problema es: a) código roto, b) datos cambiados, o c) hiperparámetros subóptimos? ¿Cómo usarías MLflow para diagnosticarlo sin adivinar?"
+***"Si el CI falla porque F1 = 0.78 (por debajo del gate), ¿cómo sabes si el problema es: a) código roto, b) datos cambiados, o c) hiperparámetros subóptimos? ¿Cómo usarías MLflow para diagnosticarlo sin adivinar?"***
 🔍 Razonamiento esperado:
 El fallo del CI es una señal de alerta, no un diagnóstico. MLflow cierra el ciclo de observabilidad:
 1.	Comparar run_id actual vs run_id anterior exitoso en el dashboard.
@@ -730,7 +732,7 @@ if __name__ == "__main__":
     promote_best_model_to_staging()
 ```
 ________________________________________
-"¿Por qué ejecutamos dvc pull dentro del CI en lugar de incluir los datos directamente en el repositorio o usarlos locales?"
+***"¿Por qué ejecutamos dvc pull dentro del CI en lugar de incluir los datos directamente en el repositorio o usarlos locales?"***
 🔍 Razonamiento esperado:
 Incluir datasets en Git rompe el versionado (archivos >100MB generan historiales inmanejables). Usar datos locales rompe la reproducibilidad: el CI runner es una máquina nueva cada vez. dvc pull en el CI garantiza que:
 1.	El mismo hash de datos se usa en desarrollo, testing y producción.
@@ -738,7 +740,7 @@ Incluir datasets en Git rompe el versionado (archivos >100MB generan historiales
 3.	Si el dataset cambia en GCS, el CI automáticamente usa la nueva versión y los tests revelan si el modelo se degrada.
 En MLOps, los datos son parte del código de construcción. Sin dvc pull en CI, no hay garantía de que lo que se prueba es lo que se despliega.
 
-"Si pytest falla en el CI, el pipeline se detiene. ¿Qué gana el equipo al bloquear el merge automáticamente en lugar de solo enviar un warning?"  
+***"Si pytest falla en el CI, el pipeline se detiene. ¿Qué gana el equipo al bloquear el merge automáticamente en lugar de solo enviar un warning?"***  
 🔍 Razonamiento esperado:  
 Un warning se ignora; un gate se respeta. En ML, los errores son silenciosos: un modelo con F1=0.60 puede "correr" perfectamente en producción y generar costos de negocio reales (clientes perdidos, alertas falsas, desgaste operativo).
 Bloquear el merge automáticamente:  
@@ -747,7 +749,7 @@ Bloquear el merge automáticamente:
 3.	Crea un contrato de calidad: el equipo acuerda upfront qué métricas son innegociables (precision >= 0.90, F1 >= 0.85).
 En MLOps, la automatización protege al negocio de la urgencia. Un CI que bloquea es un CI que cumple su función.
 
-"¿Por qué promovemos a Staging y no directamente a Production si los tests pasaron? ¿Qué riesgo cubre esa etapa intermedia?"  
+***"¿Por qué promovemos a Staging y no directamente a Production si los tests pasaron? ¿Qué riesgo cubre esa etapa intermedia?"***  
 🔍 Razonamiento esperado:  
 Los tests de CI validan calidad técnica sobre datos históricos. Pero producción tiene:  
 •	Tráfico real con patrones no vistos  
@@ -761,7 +763,7 @@ Staging es un sandbox de validación operativa:
 4.	Solo tras 24-72h de estabilidad se promueve a Production
 En MLOps, ningún modelo salta de CI a producción sin validación en entorno espejo. Staging es el amortiguador entre "funciona en pruebas" y "funciona en el mundo real".
 
-"¿Qué pasaría si un desarrollador cambia requirements.txt añadiendo una versión incompatible de scikit-learn? ¿Cómo lo detecta el CI antes de que llegue a producción?"  
+***"¿Qué pasaría si un desarrollador cambia requirements.txt añadiendo una versión incompatible de scikit-learn? ¿Cómo lo detecta el CI antes de que llegue a producción?"***  
 🔍 Razonamiento esperado:  
 El CI ejecuta pip install -r requirements.txt en un entorno limpio. Si hay incompatibilidad:
 1.	La instalación falla → el job se detiene inmediatamente
@@ -769,6 +771,7 @@ El CI ejecuta pip install -r requirements.txt en un entorno limpio. Si hay incom
 3.	El modelo no se registra en MLflow → no hay promoción accidental
 Además, en flujos maduros se añade pip-audit o safety para detectar vulnerabilidades, y pip freeze > requirements.txt se bloquea con pre-commit hooks.
 En MLOps, el CI es el primer firewall. Un entorno aislado + tests estrictos + gates automáticos crean un sistema donde los errores se atrapan antes de costar dinero.  
+
 
 # 🔄 FASE 7: CI/CD para ML (No es lo mismo que software tradicional)
 Objetivo: Entender las particularidades del testing en ML.
@@ -802,7 +805,7 @@ ________________________________________
 Aquí cerramos el ciclo MLOps: un modelo desplegado no es un punto final, es un sistema vivo que decae. Monitorear es anticipar; automatizar el reentrenamiento es sobrevivir.  
 
 > 
-```python
+```bash
 pip install evidently
 ```
 
@@ -879,13 +882,13 @@ else:
 
 ________________________________________
 
-"¿Qué diferencia hay entre Data Drift y Concept Drift? ¿Cuál de los dos podemos detectar sin tener etiquetas reales en producción?"  
+***"¿Qué diferencia hay entre Data Drift y Concept Drift? ¿Cuál de los dos podemos detectar sin tener etiquetas reales en producción?"***  
 🔍 Razonamiento esperado:  
 •	Data Drift: La distribución de las features cambia. Ej: antes los correos promediaban 120 caracteres, ahora promedian 450. Los spammers usan mensajes más largos. → Detectable sin etiquetas (comparamos distribución actual vs referencia).  
 •	Concept Drift: La relación entre features y target cambia. Ej: antes "¡GRATIS!" era spam; ahora es newsletter legítima de una tienda. El modelo sigue viendo la misma distribución, pero su mapeo a spam/ham ya no es válido. → Solo detectable con feedback real o labels retrasadas.  
-En MLOps, monitoreamos ambos: Data Drift con evidently/Vertex AI, Concept Drift con métricas de negocio (tasa de corrección de usuarios, precision en batch con labels retrasadas).  
+En MLOps, monitoreamos ambos: Data Drift con Evidently/Vertex AI, Concept Drift con métricas de negocio (tasa de corrección de usuarios, precision en batch con labels retrasadas).  
 ________________________________________
-"Si el CI pasó con F1=0.92, ¿por qué el modelo puede degradarse en producción sin que el código haya cambiado? ¿Qué asunción oculta rompemos al desplegar?"  
+***"Si el CI pasó con F1=0.92, ¿por qué el modelo puede degradarse en producción sin que el código haya cambiado? ¿Qué asunción oculta rompemos al desplegar?"***  
 🔍 Razonamiento esperado:  
 El CI asume estación temporal: que el futuro se parece al pasado. En producción, esa asunción se rompe por:  
 •	Cambios externos (nuevas tácticas de spam, estacionalidad, campañas de marketing)  
@@ -893,7 +896,7 @@ El CI asume estación temporal: que el futuro se parece al pasado. En producció
 •	Degradación de infraestructura (latencia alta → timeouts → pérdida de context window)  
 Monitorear no es "ver si el modelo sigue corriendo", es ver si el modelo sigue siendo válido para el problema actual. En MLOps, correr ≠ resolver.  
 ________________________________________
-"¿Por qué usamos un umbral de 0.1 para drift en lugar de 0.05 o 0.2? ¿Quién debería definir ese número y con qué criterio?"  
+***"¿Por qué usamos un umbral de 0.1 para drift en lugar de 0.05 o 0.2? ¿Quién debería definir ese número y con qué criterio?"***  
 🔍 Razonamiento esperado:  
 El umbral no es técnico, es de negocio + operacional. Definirlo implica:  
 1.	Costo de reentrenamiento: si es alto (GPU, ingeniería, validación), el umbral sube (0.15-0.2).  
@@ -901,7 +904,7 @@ El umbral no es técnico, es de negocio + operacional. Definirlo implica:
 3.	Velocidad de cambio del dominio: spam cambia rápido → umbral bajo. Datos médicos estables → umbral alto.  
 En MLOps, los umbrales se documentan, versionan y revisan trimestralmente. No se hard## Codean; se parametrizan en un config file o Feature Store.  
 ________________________________________
-"Si decidimos reentrenar automáticamente cada vez que haya drift, ¿qué riesgo introducimos? ¿Cómo evitamos un ciclo infinito de reentrenamiento con datos ruidosos?"  
+***"Si decidimos reentrenar automáticamente cada vez que haya drift, ¿qué riesgo introducimos? ¿Cómo evitamos un ciclo infinito de reentrenamiento con datos ruidosos?"***  
 🔍 Razonamiento esperado:  
 El reentrenamiento automático ciego crea inestabilidad operativa:  
 •	Datos ruidosos o atípicos → modelo se sobreajusta a anomalías → nuevo drift → reentrena de nuevo.  
@@ -1049,7 +1052,7 @@ if __name__ == "__main__":
 ```
 ________________________________________
 
-"¿Por qué invertir tiempo en un Feature Store si podemos simplemente guardar processed_data.parquet y leerlo cuando necesitemos?"  
+***"¿Por qué invertir tiempo en un Feature Store si podemos simplemente guardar processed_data.parquet y leerlo cuando necesitemos?"***  
 🔍 Razonamiento esperado:  
 Un .parquet es una foto estática. Un Feature Store es un sistema vivo que resuelve 3 problemas críticos:  
 1.	Consistencia online/batch: En inferencia en tiempo real, no puedes cargar un parquet de 10GB. El Feature Store sirve features individuales vía API con latencia <50ms, usando la misma lógica que se usó para entrenar.  
@@ -1057,14 +1060,14 @@ Un .parquet es una foto estática. Un Feature Store es un sistema vivo que resue
 3.	Reutilización y costo: 5 equipos recalculando msg_length = 5x costo de computación + 5 riesgos de inconsistencia. Un store = 1 definición, 5 consumidores.  
 En MLOps, la gobernanza empieza por evitar duplicación. El Feature Store no es lujo; es infraestructura de escala.
 
-"Si ya tenemos pytest y validación de métricas, ¿qué aporta pandera que no cubran los tests unitarios?"  
+***"Si ya tenemos pytest y validación de métricas, ¿qué aporta pandera que no cubran los tests unitarios?"***  
 🔍 Razonamiento esperado:  
 •	pytest valida comportamiento del código (¿la función devuelve lo esperado?).  
 •	pandera valida integridad de los datos en runtime (¿el input cumple el contrato antes de entrar al pipeline?).  
 Un test unitario pasa si el código está bien, pero falla silenciosamente si los datos cambian fuera de rango. pandera actúa como un firewall de datos: si un spammer envía mensajes de 50,000 caracteres, el pipeline rechaza la entrada antes de que el modelo genere predicciones erróneas o consuma memoria innecesaria.  
 En gobernanza, los datos son tan críticos como el código. Validar ambos cierra el ciclo de calidad.
 
-"Si usamos el mismo código en dev, staging y prod, ¿cómo evitamos que un error en dev rompa staging o que se filtren credenciales de prod a un notebook local?"  
+***"Si usamos el mismo código en dev, staging y prod, ¿cómo evitamos que un error en dev rompa staging o que se filtren credenciales de prod a un notebook local?"***  
 🔍 Razonamiento esperado:  
 La respuesta está en aislamiento por diseño:  
 1.	Variables de entorno + .env por capa: El código nunca hard## Codea URIs. Lee os.getenv(). Cada entorno inyecta sus propios valores en despliegue.  
@@ -1073,7 +1076,7 @@ La respuesta está en aislamiento por diseño:
 4.	Promoción de artefactos, no de código: El mismo .joblib y .parquet se mueven entre entornos. No se recompila.  
 En MLOps, la seguridad no es un add-on; es una propiedad del pipeline. La separación estricta de entornos + gestión centralizada de secretos elimina la mayoría de incidentes de producción.
 
-"El negocio pregunta: '¿Cuánto nos cuesta mantener todo este MLOps? ¿Vale la pena?'. ¿Cómo calculamos el ROI sin caer en tecnicismos?"
+***"El negocio pregunta: '¿Cuánto nos cuesta mantener todo este MLOps? ¿Vale la pena?'. ¿Cómo calculamos el ROI sin caer en tecnicismos?"***
 🔍 Razonamiento esperado:
 El ROI de MLOps no se mide en "accuracy +2%". Se mide en reducción de costo operativo + aceleración de valor:
 1.	Time-to-Market: Sin MLOps, un nuevo modelo tarda 3 semanas en desplegarse (pruebas manuales, config, rollback). Con CI/CD + registry: 2 horas. (3 semanas - 2h) × valor/hora del equipo.
