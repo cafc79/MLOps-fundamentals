@@ -1099,98 +1099,98 @@ VALIDATE_INGESTION() | Eventarc + Pub/Sub + Cloud Functions | Gate de calidad an
 
 
 # Algoritmos de ML
-## 📐 1. Regresión Lineal
+## 📐 1. [* Regresion Lineal *](../algoritmos/Supervised_Learning-Regresion_Lineal.md)
 🧠 *Concepto Clave:* Predice un valor numérico continuo ajustando una línea recta que minimiza el error respecto a los datos.  
 ⚙️ *¿Cómo funciona?* Busca la combinación de pesos para cada feature que hace que ŷ = w₁x₁ + w₂x₂ + ... + b se acerque lo más posible al valor real. Usa mínimos cuadrados.  
 🎯 *¿Cuándo elegirlo?* Forecasting, tendencias, variables continuas (precio, temperatura, tiempo).  
 ✅ Extremadamente rápido, interpretable, baseline sólido.  
 ❌ Asume relación lineal, sensible a outliers, no sirve para clasificación.  
 
-## 🎲 2. Regresión Logística
+## 🎲 2. [* Regresión Logística *](../algoritmos/Supervised_Learning-Regresion_Logistica.md)
 🧠 *Concepto Clave:* Extensión de la regresión lineal diseñada para clasificación binaria. Predice probabilidades.  
 ⚙️ *¿Cómo funciona?* Aplica la función sigmoide (1 / (1 + e⁻ᶻ)) a la salida lineal para comprimirla entre 0 y 1. Si P ≥ 0.5 → clase positiva.  
 🎯 *¿Cuándo elegirlo?* Clasificación binaria/multiclase, necesidad de probabilidades calibradas, baseline interpretable.  
 ✅ Rápido, escalable, entrega probabilidades, fácil de debuggear.  
 ❌ Línea de decisión lineal; lucha con patrones no lineales complejos.  
 
-## 🌳 3. Árboles de Decisión
+## 🌳 3. [* Árboles de Decisión *](../algoritmos/Supervised_Learning-Arboles_de_Decision.md)
 🧠 *Concepto Clave:* Modelo que toma decisiones mediante reglas SI-ENTONCES anidadas, dividiendo los datos recursivamente.  
 ⚙️ *¿Cómo funciona?* En cada nodo elige la feature y umbral que maximiza la "pureza" (Gini o Entropía) de los subconjuntos resultantes.  
 🎯 *¿Cuándo elegirlo?* Necesidad de reglas explicables, datos mixtos (numéricos + categóricos), relaciones no lineales.  
 ✅ No requiere escalado, muy interpretable, maneja interacciones complejas.  
 ❌ Propenso a sobreajuste, inestable (pequeños cambios en datos → árbol distinto).  
-________________________________________
-## 🌲🌲🌲 4. Random Forest
+
+## 🌲🌲🌲 4. [* Random Forest *](../algoritmos/Supervised_Learning-Random_Forest.md)
 🧠 *Concepto Clave:* Ensemble de cientos de árboles de decisión que votan colectivamente para reducir varianza y sobreajuste.  
 ⚙️ *¿Cómo funciona?* Entrena cada árbol con un subconjunto aleatorio de datos (bagging) y features. La predicción final es la mayoría de votos (clasificación) o promedio (regresión).  
 🎯 *¿Cuándo elegirlo?* Alta precisión requerida, datos ruidosos, importancia de features, robustez en producción.  
 ✅ Muy preciso, robusto a overfitting, entrega feature importance, maneja no-linealidad.  
 ❌ Menos interpretable que un solo árbol, mayor consumo de RAM/CPU, serving más lento.  
-________________________________________
-## 📏 5. Máquinas de Vectores de Soporte (SVM)
+
+## 📏 5. [* Máquinas de Vectores de Soporte (SVM) *](../algoritmos/Supervised_Learning-SVM.md)
 🧠 *Concepto Clave:* Encuentra el hiperplano que maximiza el margen de separación entre clases.  
 ⚙️ *¿Cómo funciona?* Usa solo los puntos más cercanos al borde ("vectores de soporte") para definir la frontera. Con kernels (lineal, RBF, polinomial) puede separar datos no lineales proyectándolos a dimensiones superiores.  
 🎯 *¿Cuándo elegirlo?* Datos de alta dimensionalidad (texto, embeddings), margen de separación claro, clasificación precisa.  
 ✅ Muy efectivo en espacios de alta dimensión, robusto a overfitting (con buen C/gamma), histórico en NLP.  
 ❌ Costoso en datasets >100K muestras, difícil de interpretar, sensible a escalado y hiperparámetros.  
-________________________________________
-## 📧 6. Naive Bayes
+
+## 📧 6. [* Naive Bayes *](../algoritmos/Supervised_Learning-Naive_Bayes.md)
 🧠 *Concepto Clave:* Clasificador probabilístico basado en el Teorema de Bayes, asumiendo independencia entre features.  
 ⚙️ *¿Cómo funciona?* Calcula P(Spam | palabras) ∝ P(Spam) × ∏ P(palabra | Spam). Aunque la independencia es "ingenua", funciona sorprendentemente bien en texto.  
 🎯 *¿Cuándo elegirlo?* Clasificación de texto, entrenamiento ultra-rápido, baseline NLP, recursos limitados.  
 ✅ Extremadamente rápido, escala bien a millones de features, tolera missing data, simple de implementar.  
 ❌ Asume independencia (las palabras en un correo no son independientes), puede calibrar mal probabilidades.  
-________________________________________
-## 📍 7. K-Nearest Neighbors (KNN)
+
+## 📍 7. [* K-Nearest Neighbors (KNN) *](../algoritmos/Supervised_Learning-KNN.md)
 🧠 *Concepto Clave:* Clasifica un ejemplo nuevo basándose en la mayoría de sus K vecinos más cercanos en el espacio de features.  
 ⚙️ *¿Cómo funciona?* No entrena un modelo explícito. Al predecir, calcula distancias (euclidiana, manhattan, coseno) a todos los puntos de entrenamiento y vota.  
 🎯 *¿Cuándo elegirlo?* Datasets pequeños, relaciones no paramétricas, necesidad de adaptación instantánea a nuevos datos.  
 ✅ Sin fase de entrenamiento, simple, se adapta a fronteras complejas.  
 ❌ Predicción lenta (O(N)), sensible a escala y dimensionalidad, alto consumo de memoria.  
 ________________________________________
-## 🔍 8. Análisis de Componentes Principales (PCA)
+## 🔍 8. [* Análisis de Componentes Principales (PCA) *](../algoritmos/Unsupervised_Learning-PCA.md)
 🧠 *Concepto Clave:* Reducción de dimensionalidad no supervisada. Encuentra las direcciones de máxima varianza y proyecta los datos en un espacio más pequeño.  
 ⚙️ *¿Cómo funciona?* Calcula componentes ortogonales (autovectores de la matriz de covarianza) y retiene solo los que explican la mayor variabilidad.  
 🎯 *¿Cuándo elegirlo?* Datos con cientos/miles de features, ruido alto, necesidad de visualización o acelerar modelos posteriores.  
 ✅ Rápido, elimina redundancia, mejora estabilidad numérica.  
 ❌ Pierde interpretabilidad (los componentes no son features originales), asume relaciones lineales.  
-________________________________________
-## 🧩 9. K-Means Clustering
+
+## 🧩 9. [* K-Means Clustering *](../algoritmos/Unsupervised_Learning-K_Means.md)
 🧠 *Concepto Clave:* Agrupamiento no supervisado que partitiona datos en K grupos basándose en distancia a centroides.  
 ⚙️ *¿Cómo funciona?* Inicializa K centroides → asigna cada punto al centroide más cercano → recalcula centroides → repite hasta convergencia.  
 🎯 *¿Cuándo elegirlo?* Segmentación, detección de patrones ocultos, reducción de datos antes de modelado supervisado.  
 ✅ Simple, escalable (O(N·K·d)), fácil de paralelizar.  
 ❌ Requiere definir K, sensible a escala e inicialización, asume clusters esféricos y de tamaño similar.  
-________________________________________
-## 🌿 10. Agrupamiento Jerárquico (Hierarchical Clustering)
+
+## 🌿 10. [* Agrupamiento Jerárquico (Hierarchical Clustering) *](../algoritmos/Unsupervised_Learning-Hierarchical_Clustering.md)
 🧠 *Concepto Clave:* Construye una jerarquía de clusters (dendrograma) sin requerir K predefinido.  
 ⚙️ *¿Cómo funciona?* Versión aglomerativa: cada punto inicia como cluster → se fusionan los dos más cercanos iterativamente → se detiene al cortar el dendrograma.  
 🎯 *¿Cuándo elegirlo?* Exploración de estructura natural de datos, datasets pequeños/medianos, necesidad de niveles de granularidad.  
 ✅ No requiere K, visualmente interpretable, captura relaciones anidadas.  
 ❌ Complejidad O(N²) o O(N³), sensible a ruido, difícil de actualizar incrementalmente.  
-________________________________________
-## 🎮 11. Q-Learning (Reinforcement Learning)
+
+## 🎮 11. [* Q-Learning (Reinforcement Learning) *](../algoritmos/Reinforcement_Learning-QLearning.md)
 🧠 *Concepto Clave:* Aprendizaje por refuerzo que optimiza decisiones secuenciales maximizando recompensa acumulada.  
 ⚙️ *¿Cómo funciona?* Actualiza una tabla o red de valores Q(s,a) usando la ecuación de Bellman: Q ← Q + α[r + γ·max Q(s',a') - Q]. Balancea exploración vs explotación.  
 🎯 *¿Cuándo elegirlo?* Entornos dinámicos, decisiones en cadena, sistemas adaptativos con feedback retardado.  
 ✅ Aprende sin modelo del entorno, maneja recompensas diferidas, se adapta en tiempo real.  
 ❌ Inestable con espacios grandes, requiere simulación o entorno seguro, difícil de debuggear.  
-________________________________________
-## 🖼️ 12. Redes Neuronales Convolucionales (CNN)
+
+## 🖼️ 12. [* Redes Neuronales Convolucionales (CNN) *](../algoritmos/Deep_Learning-CNN.md)
 🧠 *Concepto Clave:* Arquitectura deep learning optimizada para datos con estructura espacial o local (imágenes, señales, texto 1D).  
 ⚙️ *¿Cómo funciona?* Aplica filtros deslizantes que detectan patrones locales → pooling reduce dimensionalidad → capas profundas combinan features jerárquicamente.  
 🎯 *¿Cuándo elegirlo?* Reconocimiento visual, procesamiento de señales, extracción de patrones locales en secuencias.  
 ✅ Invariante a traslación, excelente en patrones locales, altamente paralelizable en GPU.  
 ❌ Requiere muchos datos, computacionalmente costoso, caja negra difícil de auditar.  
-________________________________________
-## 🔁 13. Redes Neuronales Recurrentes (RNN / LSTM / GRU)
+
+## 🔁 13. [* Redes Neuronales Recurrentes (RNN / LSTM / GRU) *](../algoritmos/Deep_Learning-RNN_LSTM_GRU.md)
 🧠 *Concepto Clave:* Redes con memoria interna que procesan secuencias manteniendo un estado oculto paso a paso.  
 ⚙️ *¿Cómo funciona?* h_t = f(W·h_{t-1} + U·x_t + b). LSTM/GRU añaden compuertas para retener/olvidar información a largo plazo y evitar vanishing gradients.  
 🎯 *¿Cuándo elegirlo?* Datos secuenciales: texto, series de tiempo, audio, donde el orden importa.  
 ✅ Captura dependencias temporales, flexible en longitud de secuencia.  
 ❌ Entrenamiento lento, propenso a desvanecimiento de gradientes (RNN base), mayormente reemplazado por Transformers.  
-________________________________________
-## 🕸️ 14. Perceptrón Multicapa (MLP)
+
+## 🕸️ 14. [* Perceptrón Multicapa (MLP) *](../algoritmos/Deep_Learning-MLP.md)
 🧠 *Concepto Clave:* Red neuronal feedforward con capas ocultas y activaciones no lineales. Aproximador universal.  
 ⚙️ *¿Cómo funciona?* Propaga datos hacia adelante: z = W·x + b → a = σ(z). Entrena con backpropagation y optimizadores (Adam, SGD).  
 🎯 *¿Cuándo elegirlo?* Datos tabulares complejos, relaciones no lineales fuertes, baseline deep learning.  
