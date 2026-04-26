@@ -738,22 +738,22 @@ Incluir datasets en Git rompe el versionado (archivos >100MB generan historiales
 3.	Si el dataset cambia en GCS, el CI automáticamente usa la nueva versión y los tests revelan si el modelo se degrada.
 En MLOps, los datos son parte del código de construcción. Sin dvc pull en CI, no hay garantía de que lo que se prueba es lo que se despliega.
 
-"Si pytest falla en el CI, el pipeline se detiene. ¿Qué gana el equipo al bloquear el merge automáticamente en lugar de solo enviar un warning?"
-🔍 Razonamiento esperado:
+"Si pytest falla en el CI, el pipeline se detiene. ¿Qué gana el equipo al bloquear el merge automáticamente en lugar de solo enviar un warning?"  
+🔍 Razonamiento esperado:  
 Un warning se ignora; un gate se respeta. En ML, los errores son silenciosos: un modelo con F1=0.60 puede "correr" perfectamente en producción y generar costos de negocio reales (clientes perdidos, alertas falsas, desgaste operativo).
-Bloquear el merge automáticamente:
-1.	Invierte la carga de prueba: no es "demostrar que funciona", es "el CI demuestra que no cumple el SLA".
-2.	Elimina el sesgo humano: nadie presiona "merge anyway" bajo presión de entrega.
+Bloquear el merge automáticamente:  
+1.	Invierte la carga de prueba: no es "demostrar que funciona", es "el CI demuestra que no cumple el SLA".  
+2.	Elimina el sesgo humano: nadie presiona "merge anyway" bajo presión de entrega.  
 3.	Crea un contrato de calidad: el equipo acuerda upfront qué métricas son innegociables (precision >= 0.90, F1 >= 0.85).
 En MLOps, la automatización protege al negocio de la urgencia. Un CI que bloquea es un CI que cumple su función.
 
-"¿Por qué promovemos a Staging y no directamente a Production si los tests pasaron? ¿Qué riesgo cubre esa etapa intermedia?"
-🔍 Razonamiento esperado:
-Los tests de CI validan calidad técnica sobre datos históricos. Pero producción tiene:
-•	Tráfico real con patrones no vistos
-•	Latencia y concurrencia distintas
-•	Integraciones con otros sistemas (APIs, colas, BDs)
-•	Usuarios que interactúan de forma impredecible
+"¿Por qué promovemos a Staging y no directamente a Production si los tests pasaron? ¿Qué riesgo cubre esa etapa intermedia?"  
+🔍 Razonamiento esperado:  
+Los tests de CI validan calidad técnica sobre datos históricos. Pero producción tiene:  
+•	Tráfico real con patrones no vistos  
+•	Latencia y concurrencia distintas  
+•	Integraciones con otros sistemas (APIs, colas, BDs)  
+•	Usuarios que interactúan de forma impredecible  
 Staging es un sandbox de validación operativa:
 1.	Se despliega en paralelo al modelo actual (shadow mode)
 2.	Se monitorea latencia, tasa de error, drift de features
@@ -761,8 +761,8 @@ Staging es un sandbox de validación operativa:
 4.	Solo tras 24-72h de estabilidad se promueve a Production
 En MLOps, ningún modelo salta de CI a producción sin validación en entorno espejo. Staging es el amortiguador entre "funciona en pruebas" y "funciona en el mundo real".
 
-"¿Qué pasaría si un desarrollador cambia requirements.txt añadiendo una versión incompatible de scikit-learn? ¿Cómo lo detecta el CI antes de que llegue a producción?"
-🔍 Razonamiento esperado:
+"¿Qué pasaría si un desarrollador cambia requirements.txt añadiendo una versión incompatible de scikit-learn? ¿Cómo lo detecta el CI antes de que llegue a producción?"  
+🔍 Razonamiento esperado:  
 El CI ejecuta pip install -r requirements.txt en un entorno limpio. Si hay incompatibilidad:
 1.	La instalación falla → el job se detiene inmediatamente
 2.	Si pasa la instalación pero hay API breaking changes, pytest fallará en los tests de schema o predicción
@@ -786,20 +786,26 @@ Objetivo: Entender las particularidades del testing en ML.
 🗣️ "¿Qué pasa si el modelo pasa todos los tests en CI, pero en producción 
     los datos de entrada tienen una distribución distinta? ¿Cómo detectamos eso temprano?"
 
-💡 Lo que buscas que ellas descubran:
-•	Que en ML el testing es multinivel: código, datos, modelo, desempeño en producción.
-•	La necesidad de shadow deployment o canary releases para modelos.
-•	Que el CI/CD de ML incluye validación de drift y calidad de datos.
+💡 Lo que buscas que ellas descubran:  
+•	Que en ML el testing es multinivel: código, datos, modelo, desempeño en producción.  
+•	La necesidad de shadow deployment o canary releases para modelos.  
+•	Que el CI/CD de ML incluye validación de drift y calidad de datos.  
 
-"Cada push a main: linting + tests unitarios + validación de schema de datos" CI (Continuous Integration), Integrar y validar cambios de código frecuentemente con tests automáticos
-"Si el nuevo modelo supera F1 > 0.90 en validación → se despliega a staging automáticamente"; CD (Continuous Delivery/Deployment) Automatizar el despliegue de modelos a entornos de prueba o producción
-"Tests: accuracy > 0.95, FP rate < 0.01, sin sesgo por dominio de email"; Model Testing,  Validar no solo el código, sino el comportamiento del modelo: métricas, fairness, drift
-"Desplegar v1.2 al 5% de los correos, monitorear 24h, luego escalar", Canary Deployment
-"El modelo nuevo clasifica correos 'en silencio'; comparamos sus decisiones con el modelo actual", Shadow Mode, Ejecutar el nuevo modelo en paralelo sin que afecte al usuario, para comparar
+"Cada push a main: linting + tests unitarios + validación de schema de datos" CI (Continuous Integration), Integrar y validar cambios de código frecuentemente con tests automáticos  
+"Si el nuevo modelo supera F1 > 0.90 en validación → se despliega a staging automáticamente"; CD (Continuous Delivery/Deployment) Automatizar el despliegue de modelos a entornos de prueba o producción  
+"Tests: accuracy > 0.95, FP rate < 0.01, sin sesgo por dominio de email"; Model Testing,  Validar no solo el código, sino el comportamiento del modelo: métricas, fairness, drift  
+"Desplegar v1.2 al 5% de los correos, monitorear 24h, luego escalar", Canary Deployment  
+"El modelo nuevo clasifica correos 'en silencio'; comparamos sus decisiones con el modelo actual", Shadow Mode, Ejecutar el nuevo modelo en paralelo sin que afecte al usuario, para comparar  
 ________________________________________
 ## Code
-Aquí cerramos el ciclo MLOps: un modelo desplegado no es un punto final, es un sistema vivo que decae. Monitorear es anticipar; automatizar el reentrenamiento es sobrevivir.
+
+Aquí cerramos el ciclo MLOps: un modelo desplegado no es un punto final, es un sistema vivo que decae. Monitorear es anticipar; automatizar el reentrenamiento es sobrevivir.  
+
+> 
+```python
 pip install evidently
+```
+
 En CI/CD se valida que el modelo funcione sobre datos históricos. En producción, los datos cambian con el tiempo. evidently es la librería estándar open-source para monitoreo de ML porque:
 •	Calcula drift estadístico (Kolmogorov-Smirnov, PSI, Jensen-Shannon) sin necesidad de etiquetas reales.
 •	Genera reportes HTML/JSON listos para dashboards o alertas.
@@ -863,41 +869,41 @@ else:
     print("✅ Distribución estable. Modelo en producción sigue siendo válido.")
 ```
 
-|COMPONENTE EN CÓDIGO|	EQUIVALENTE NATIVO EN GCP	|PROPÓSITO|
-|EVIDENTLY + DATADRIFTPRESET|	Vertex AI Model Monitoring	|Monitoreo nativo de drift en features/predicciones sin Código|
-|RETRAIN_TRIGGER.JSON|	Pub/Sub + Cloud Scheduler	|Canal de eventos para orquestar reentrenamiento|
-|PYTHON TRIGGER SCRIPT|	Cloud Run / Cloud Functions	|Ejecuta lógica de decisión o notifica equipos|
-|VERTEX AI TRAINING|	Vertex AI Pipelines + Kubeflow	|Reentrena automáticamente con nuevos datos|
-|MLFLOW REGISTRY|	Vertex AI Model Registry	|Versionado y promoción automática a Staging|
+|COMPONENTE EN CÓDIGO|	EQUIVALENTE NATIVO EN GCP	|PROPÓSITO|  
+|EVIDENTLY + DATADRIFTPRESET|	Vertex AI Model Monitoring	|Monitoreo nativo de drift en features/predicciones sin Código|  
+|RETRAIN_TRIGGER.JSON|	Pub/Sub + Cloud Scheduler	|Canal de eventos para orquestar reentrenamiento|  
+|PYTHON TRIGGER SCRIPT|	Cloud Run / Cloud Functions	|Ejecuta lógica de decisión o notifica equipos|  
+|VERTEX AI TRAINING|	Vertex AI Pipelines + Kubeflow	|Reentrena automáticamente con nuevos datos|  
+|MLFLOW REGISTRY|	Vertex AI Model Registry	|Versionado y promoción automática a Staging|  
 
 ________________________________________
 
-"¿Qué diferencia hay entre Data Drift y Concept Drift? ¿Cuál de los dos podemos detectar sin tener etiquetas reales en producción?"
-🔍 Razonamiento esperado:
-•	Data Drift: La distribución de las features cambia. Ej: antes los correos promediaban 120 caracteres, ahora promedian 450. Los spammers usan mensajes más largos. → Detectable sin etiquetas (comparamos distribución actual vs referencia).
-•	Concept Drift: La relación entre features y target cambia. Ej: antes "¡GRATIS!" era spam; ahora es newsletter legítima de una tienda. El modelo sigue viendo la misma distribución, pero su mapeo a spam/ham ya no es válido. → Solo detectable con feedback real o labels retrasadas.
-En MLOps, monitoreamos ambos: Data Drift con evidently/Vertex AI, Concept Drift con métricas de negocio (tasa de corrección de usuarios, precision en batch con labels retrasadas).
+"¿Qué diferencia hay entre Data Drift y Concept Drift? ¿Cuál de los dos podemos detectar sin tener etiquetas reales en producción?"  
+🔍 Razonamiento esperado:  
+•	Data Drift: La distribución de las features cambia. Ej: antes los correos promediaban 120 caracteres, ahora promedian 450. Los spammers usan mensajes más largos. → Detectable sin etiquetas (comparamos distribución actual vs referencia).  
+•	Concept Drift: La relación entre features y target cambia. Ej: antes "¡GRATIS!" era spam; ahora es newsletter legítima de una tienda. El modelo sigue viendo la misma distribución, pero su mapeo a spam/ham ya no es válido. → Solo detectable con feedback real o labels retrasadas.  
+En MLOps, monitoreamos ambos: Data Drift con evidently/Vertex AI, Concept Drift con métricas de negocio (tasa de corrección de usuarios, precision en batch con labels retrasadas).  
 ________________________________________
-"Si el CI pasó con F1=0.92, ¿por qué el modelo puede degradarse en producción sin que el código haya cambiado? ¿Qué asunción oculta rompemos al desplegar?"
-🔍 Razonamiento esperado:
-El CI asume estación temporal: que el futuro se parece al pasado. En producción, esa asunción se rompe por:
-•	Cambios externos (nuevas tácticas de spam, estacionalidad, campañas de marketing)
-•	Cambios internos (nuevas reglas de filtrado en el servidor, integraciones con otros sistemas)
-•	Degradación de infraestructura (latencia alta → timeouts → pérdida de context window)
-Monitorear no es "ver si el modelo sigue corriendo", es ver si el modelo sigue siendo válido para el problema actual. En MLOps, correr ≠ resolver.
+"Si el CI pasó con F1=0.92, ¿por qué el modelo puede degradarse en producción sin que el código haya cambiado? ¿Qué asunción oculta rompemos al desplegar?"  
+🔍 Razonamiento esperado:  
+El CI asume estación temporal: que el futuro se parece al pasado. En producción, esa asunción se rompe por:  
+•	Cambios externos (nuevas tácticas de spam, estacionalidad, campañas de marketing)  
+•	Cambios internos (nuevas reglas de filtrado en el servidor, integraciones con otros sistemas)  
+•	Degradación de infraestructura (latencia alta → timeouts → pérdida de context window)  
+Monitorear no es "ver si el modelo sigue corriendo", es ver si el modelo sigue siendo válido para el problema actual. En MLOps, correr ≠ resolver.  
 ________________________________________
-"¿Por qué usamos un umbral de 0.1 para drift en lugar de 0.05 o 0.2? ¿Quién debería definir ese número y con qué criterio?"
-🔍 Razonamiento esperado:
-El umbral no es técnico, es de negocio + operacional. Definirlo implica:
-1.	Costo de reentrenamiento: si es alto (GPU, ingeniería, validación), el umbral sube (0.15-0.2).
-2.	Costo de error en producción: si es alto (clientes perdidos, multas), el umbral baja (0.05-0.1).
-3.	Velocidad de cambio del dominio: spam cambia rápido → umbral bajo. Datos médicos estables → umbral alto.
-En MLOps, los umbrales se documentan, versionan y revisan trimestralmente. No se hard## Codean; se parametrizan en un config file o Feature Store.
+"¿Por qué usamos un umbral de 0.1 para drift en lugar de 0.05 o 0.2? ¿Quién debería definir ese número y con qué criterio?"  
+🔍 Razonamiento esperado:  
+El umbral no es técnico, es de negocio + operacional. Definirlo implica:  
+1.	Costo de reentrenamiento: si es alto (GPU, ingeniería, validación), el umbral sube (0.15-0.2).  
+2.	Costo de error en producción: si es alto (clientes perdidos, multas), el umbral baja (0.05-0.1).  
+3.	Velocidad de cambio del dominio: spam cambia rápido → umbral bajo. Datos médicos estables → umbral alto.  
+En MLOps, los umbrales se documentan, versionan y revisan trimestralmente. No se hard## Codean; se parametrizan en un config file o Feature Store.  
 ________________________________________
-"Si decidimos reentrenar automáticamente cada vez que haya drift, ¿qué riesgo introducimos? ¿Cómo evitamos un ciclo infinito de reentrenamiento con datos ruidosos?"
-🔍 Razonamiento esperado:
-El reentrenamiento automático ciego crea inestabilidad operativa:
-•	Datos ruidosos o atípicos → modelo se sobreajusta a anomalías → nuevo drift → reentrena de nuevo.
+"Si decidimos reentrenar automáticamente cada vez que haya drift, ¿qué riesgo introducimos? ¿Cómo evitamos un ciclo infinito de reentrenamiento con datos ruidosos?"  
+🔍 Razonamiento esperado:  
+El reentrenamiento automático ciego crea inestabilidad operativa:  
+•	Datos ruidosos o atípicos → modelo se sobreajusta a anomalías → nuevo drift → reentrena de nuevo.  
 •	Degradación progresiva por acumulación de errores de etiquetado automático.
 La solución MLOps es human-in-the-loop + gates de calidad:
 1.	Drift detectado → alerta al equipo + trigger a Staging
@@ -969,6 +975,7 @@ Hasta ahora, calculamos features (msg_length, num_exclamations) en el script de 
 ```python
 pip install pandera
 ```
+
 Los tests de pytest validan que el código funciona. pandera valida que los datos que entran al pipeline cumplen contratos explícitos: tipos, rangos, valores nulos, restricciones de negocio. En gobernanza de ML, la calidad de datos no es opcional; es un requisito de compliance. Sin validación runtime, un correo mal formateado o un pico de spam silencioso rompe el modelo sin que el CI lo detecte.
 
 > 
@@ -1041,28 +1048,28 @@ if __name__ == "__main__":
 ```
 ________________________________________
 
-"¿Por qué invertir tiempo en un Feature Store si podemos simplemente guardar processed_data.parquet y leerlo cuando necesitemos?"
-🔍 Razonamiento esperado:
-Un .parquet es una foto estática. Un Feature Store es un sistema vivo que resuelve 3 problemas críticos:
-1.	Consistencia online/batch: En inferencia en tiempo real, no puedes cargar un parquet de 10GB. El Feature Store sirve features individuales vía API con latencia <50ms, usando la misma lógica que se usó para entrenar.
-2.	Versionado temporal: ¿Qué features vio el modelo el 12/03/2024 a las 14:30? Un Feature Store guarda el point-in-time correcto. Un parquet mezcla datos viejos y nuevos, causando data leakage retrospectivo.
-3.	Reutilización y costo: 5 equipos recalculando msg_length = 5x costo de computación + 5 riesgos de inconsistencia. Un store = 1 definición, 5 consumidores.
+"¿Por qué invertir tiempo en un Feature Store si podemos simplemente guardar processed_data.parquet y leerlo cuando necesitemos?"  
+🔍 Razonamiento esperado:  
+Un .parquet es una foto estática. Un Feature Store es un sistema vivo que resuelve 3 problemas críticos:  
+1.	Consistencia online/batch: En inferencia en tiempo real, no puedes cargar un parquet de 10GB. El Feature Store sirve features individuales vía API con latencia <50ms, usando la misma lógica que se usó para entrenar.  
+2.	Versionado temporal: ¿Qué features vio el modelo el 12/03/2024 a las 14:30? Un Feature Store guarda el point-in-time correcto. Un parquet mezcla datos viejos y nuevos, causando data leakage retrospectivo.  
+3.	Reutilización y costo: 5 equipos recalculando msg_length = 5x costo de computación + 5 riesgos de inconsistencia. Un store = 1 definición, 5 consumidores.  
 En MLOps, la gobernanza empieza por evitar duplicación. El Feature Store no es lujo; es infraestructura de escala.
 
-"Si ya tenemos pytest y validación de métricas, ¿qué aporta pandera que no cubran los tests unitarios?"
-🔍 Razonamiento esperado:
-•	pytest valida comportamiento del código (¿la función devuelve lo esperado?).
-•	pandera valida integridad de los datos en runtime (¿el input cumple el contrato antes de entrar al pipeline?).
-Un test unitario pasa si el código está bien, pero falla silenciosamente si los datos cambian fuera de rango. pandera actúa como un firewall de datos: si un spammer envía mensajes de 50,000 caracteres, el pipeline rechaza la entrada antes de que el modelo genere predicciones erróneas o consuma memoria innecesaria.
+"Si ya tenemos pytest y validación de métricas, ¿qué aporta pandera que no cubran los tests unitarios?"  
+🔍 Razonamiento esperado:  
+•	pytest valida comportamiento del código (¿la función devuelve lo esperado?).  
+•	pandera valida integridad de los datos en runtime (¿el input cumple el contrato antes de entrar al pipeline?).  
+Un test unitario pasa si el código está bien, pero falla silenciosamente si los datos cambian fuera de rango. pandera actúa como un firewall de datos: si un spammer envía mensajes de 50,000 caracteres, el pipeline rechaza la entrada antes de que el modelo genere predicciones erróneas o consuma memoria innecesaria.  
 En gobernanza, los datos son tan críticos como el código. Validar ambos cierra el ciclo de calidad.
 
-"Si usamos el mismo código en dev, staging y prod, ¿cómo evitamos que un error en dev rompa staging o que se filtren credenciales de prod a un notebook local?"
-🔍 Razonamiento esperado:
-La respuesta está en aislamiento por diseño:
-1.	Variables de entorno + .env por capa: El código nunca hard## Codea URIs. Lee os.getenv(). Cada entorno inyecta sus propios valores en despliegue.
-2.	Secretos gestionados: Credenciales de GCS, MLflow, BDs viven en Secret Manager (GCP), no en .env commitados.
-3.	Permisos por IAM: El SA de dev no tiene acceso a buckets de prod. Un commit en develop no puede escribir en registry de producción.
-4.	Promoción de artefactos, no de código: El mismo .joblib y .parquet se mueven entre entornos. No se recompila.
+"Si usamos el mismo código en dev, staging y prod, ¿cómo evitamos que un error en dev rompa staging o que se filtren credenciales de prod a un notebook local?"  
+🔍 Razonamiento esperado:  
+La respuesta está en aislamiento por diseño:  
+1.	Variables de entorno + .env por capa: El código nunca hard## Codea URIs. Lee os.getenv(). Cada entorno inyecta sus propios valores en despliegue.  
+2.	Secretos gestionados: Credenciales de GCS, MLflow, BDs viven en Secret Manager (GCP), no en .env commitados.  
+3.	Permisos por IAM: El SA de dev no tiene acceso a buckets de prod. Un commit en develop no puede escribir en registry de producción.  
+4.	Promoción de artefactos, no de código: El mismo .joblib y .parquet se mueven entre entornos. No se recompila.  
 En MLOps, la seguridad no es un add-on; es una propiedad del pipeline. La separación estricta de entornos + gestión centralizada de secretos elimina la mayoría de incidentes de producción.
 
 "El negocio pregunta: '¿Cuánto nos cuesta mantener todo este MLOps? ¿Vale la pena?'. ¿Cómo calculamos el ROI sin caer en tecnicismos?"
@@ -1085,99 +1092,99 @@ ROI TRACKING	Cloud Billing Export + Vertex AI Cost Dashboard	Atribución de cost
 
 # Algoritmos de ML
 ## 📐 1. Regresión Lineal
-🧠 Concepto Clave: Predice un valor numérico continuo ajustando una línea recta que minimiza el error respecto a los datos.
-⚙️ ¿Cómo funciona? Busca la combinación de pesos para cada feature que hace que ŷ = w₁x₁ + w₂x₂ + ... + b se acerque lo más posible al valor real. Usa mínimos cuadrados.
-🎯 ¿Cuándo elegirlo? Forecasting, tendencias, variables continuas (precio, temperatura, tiempo).
-✅ Extremadamente rápido, interpretable, baseline sólido.
-❌ Asume relación lineal, sensible a outliers, no sirve para clasificación.
+🧠 Concepto Clave: Predice un valor numérico continuo ajustando una línea recta que minimiza el error respecto a los datos.  
+⚙️ ¿Cómo funciona? Busca la combinación de pesos para cada feature que hace que ŷ = w₁x₁ + w₂x₂ + ... + b se acerque lo más posible al valor real. Usa mínimos cuadrados.  
+🎯 ¿Cuándo elegirlo? Forecasting, tendencias, variables continuas (precio, temperatura, tiempo).  
+✅ Extremadamente rápido, interpretable, baseline sólido.  
+❌ Asume relación lineal, sensible a outliers, no sirve para clasificación.  
 
 ## 🎲 2. Regresión Logística
-🧠 Concepto Clave: Extensión de la regresión lineal diseñada para clasificación binaria. Predice probabilidades.
-⚙️ ¿Cómo funciona? Aplica la función sigmoide (1 / (1 + e⁻ᶻ)) a la salida lineal para comprimirla entre 0 y 1. Si P ≥ 0.5 → clase positiva.
-🎯 ¿Cuándo elegirlo? Clasificación binaria/multiclase, necesidad de probabilidades calibradas, baseline interpretable.
-✅ Rápido, escalable, entrega probabilidades, fácil de debuggear.
-❌ Línea de decisión lineal; lucha con patrones no lineales complejos.
+🧠 Concepto Clave: Extensión de la regresión lineal diseñada para clasificación binaria. Predice probabilidades.  
+⚙️ ¿Cómo funciona? Aplica la función sigmoide (1 / (1 + e⁻ᶻ)) a la salida lineal para comprimirla entre 0 y 1. Si P ≥ 0.5 → clase positiva.  
+🎯 ¿Cuándo elegirlo? Clasificación binaria/multiclase, necesidad de probabilidades calibradas, baseline interpretable.  
+✅ Rápido, escalable, entrega probabilidades, fácil de debuggear.  
+❌ Línea de decisión lineal; lucha con patrones no lineales complejos.  
 
 ## 🌳 3. Árboles de Decisión
-🧠 Concepto Clave: Modelo que toma decisiones mediante reglas SI-ENTONCES anidadas, dividiendo los datos recursivamente.
-⚙️ ¿Cómo funciona? En cada nodo elige la feature y umbral que maximiza la "pureza" (Gini o Entropía) de los subconjuntos resultantes.
-🎯 ¿Cuándo elegirlo? Necesidad de reglas explicables, datos mixtos (numéricos + categóricos), relaciones no lineales.
-✅ No requiere escalado, muy interpretable, maneja interacciones complejas.
-❌ Propenso a sobreajuste, inestable (pequeños cambios en datos → árbol distinto).
+🧠 Concepto Clave: Modelo que toma decisiones mediante reglas SI-ENTONCES anidadas, dividiendo los datos recursivamente.  
+⚙️ ¿Cómo funciona? En cada nodo elige la feature y umbral que maximiza la "pureza" (Gini o Entropía) de los subconjuntos resultantes.  
+🎯 ¿Cuándo elegirlo? Necesidad de reglas explicables, datos mixtos (numéricos + categóricos), relaciones no lineales.  
+✅ No requiere escalado, muy interpretable, maneja interacciones complejas.  
+❌ Propenso a sobreajuste, inestable (pequeños cambios en datos → árbol distinto).  
 ________________________________________
 ## 🌲🌲🌲 4. Random Forest
-🧠 Concepto Clave: Ensemble de cientos de árboles de decisión que votan colectivamente para reducir varianza y sobreajuste.
-⚙️ ¿Cómo funciona? Entrena cada árbol con un subconjunto aleatorio de datos (bagging) y features. La predicción final es la mayoría de votos (clasificación) o promedio (regresión).
-🎯 ¿Cuándo elegirlo? Alta precisión requerida, datos ruidosos, importancia de features, robustez en producción.
-✅ Muy preciso, robusto a overfitting, entrega feature importance, maneja no-linealidad.
-❌ Menos interpretable que un solo árbol, mayor consumo de RAM/CPU, serving más lento.
+🧠 Concepto Clave: Ensemble de cientos de árboles de decisión que votan colectivamente para reducir varianza y sobreajuste.  
+⚙️ ¿Cómo funciona? Entrena cada árbol con un subconjunto aleatorio de datos (bagging) y features. La predicción final es la mayoría de votos (clasificación) o promedio (regresión).  
+🎯 ¿Cuándo elegirlo? Alta precisión requerida, datos ruidosos, importancia de features, robustez en producción.  
+✅ Muy preciso, robusto a overfitting, entrega feature importance, maneja no-linealidad.  
+❌ Menos interpretable que un solo árbol, mayor consumo de RAM/CPU, serving más lento.  
 ________________________________________
 ## 📏 5. Máquinas de Vectores de Soporte (SVM)
-🧠 Concepto Clave: Encuentra el hiperplano que maximiza el margen de separación entre clases.
-⚙️ ¿Cómo funciona? Usa solo los puntos más cercanos al borde ("vectores de soporte") para definir la frontera. Con kernels (lineal, RBF, polinomial) puede separar datos no lineales proyectándolos a dimensiones superiores.
-🎯 ¿Cuándo elegirlo? Datos de alta dimensionalidad (texto, embeddings), margen de separación claro, clasificación precisa.
-✅ Muy efectivo en espacios de alta dimensión, robusto a overfitting (con buen C/gamma), histórico en NLP.
-❌ Costoso en datasets >100K muestras, difícil de interpretar, sensible a escalado y hiperparámetros.
+🧠 Concepto Clave: Encuentra el hiperplano que maximiza el margen de separación entre clases.  
+⚙️ ¿Cómo funciona? Usa solo los puntos más cercanos al borde ("vectores de soporte") para definir la frontera. Con kernels (lineal, RBF, polinomial) puede separar datos no lineales proyectándolos a dimensiones superiores.  
+🎯 ¿Cuándo elegirlo? Datos de alta dimensionalidad (texto, embeddings), margen de separación claro, clasificación precisa.  
+✅ Muy efectivo en espacios de alta dimensión, robusto a overfitting (con buen C/gamma), histórico en NLP.  
+❌ Costoso en datasets >100K muestras, difícil de interpretar, sensible a escalado y hiperparámetros.  
 ________________________________________
 ## 📧 6. Naive Bayes
-🧠 Concepto Clave: Clasificador probabilístico basado en el Teorema de Bayes, asumiendo independencia entre features.
-⚙️ ¿Cómo funciona? Calcula P(Spam | palabras) ∝ P(Spam) × ∏ P(palabra | Spam). Aunque la independencia es "ingenua", funciona sorprendentemente bien en texto.
-🎯 ¿Cuándo elegirlo? Clasificación de texto, entrenamiento ultra-rápido, baseline NLP, recursos limitados.
-✅ Extremadamente rápido, escala bien a millones de features, tolera missing data, simple de implementar.
-❌ Asume independencia (las palabras en un correo no son independientes), puede calibrar mal probabilidades.
+🧠 Concepto Clave: Clasificador probabilístico basado en el Teorema de Bayes, asumiendo independencia entre features.  
+⚙️ ¿Cómo funciona? Calcula P(Spam | palabras) ∝ P(Spam) × ∏ P(palabra | Spam). Aunque la independencia es "ingenua", funciona sorprendentemente bien en texto.  
+🎯 ¿Cuándo elegirlo? Clasificación de texto, entrenamiento ultra-rápido, baseline NLP, recursos limitados.  
+✅ Extremadamente rápido, escala bien a millones de features, tolera missing data, simple de implementar.  
+❌ Asume independencia (las palabras en un correo no son independientes), puede calibrar mal probabilidades.  
 ________________________________________
 ## 📍 7. K-Nearest Neighbors (KNN)
-🧠 Concepto Clave: Clasifica un ejemplo nuevo basándose en la mayoría de sus K vecinos más cercanos en el espacio de features.
-⚙️ ¿Cómo funciona? No entrena un modelo explícito. Al predecir, calcula distancias (euclidiana, manhattan, coseno) a todos los puntos de entrenamiento y vota.
-🎯 ¿Cuándo elegirlo? Datasets pequeños, relaciones no paramétricas, necesidad de adaptación instantánea a nuevos datos.
-✅ Sin fase de entrenamiento, simple, se adapta a fronteras complejas.
-❌ Predicción lenta (O(N)), sensible a escala y dimensionalidad, alto consumo de memoria.
+🧠 Concepto Clave: Clasifica un ejemplo nuevo basándose en la mayoría de sus K vecinos más cercanos en el espacio de features.  
+⚙️ ¿Cómo funciona? No entrena un modelo explícito. Al predecir, calcula distancias (euclidiana, manhattan, coseno) a todos los puntos de entrenamiento y vota.  
+🎯 ¿Cuándo elegirlo? Datasets pequeños, relaciones no paramétricas, necesidad de adaptación instantánea a nuevos datos.  
+✅ Sin fase de entrenamiento, simple, se adapta a fronteras complejas.  
+❌ Predicción lenta (O(N)), sensible a escala y dimensionalidad, alto consumo de memoria.  
 ________________________________________
 ## 🔍 8. Análisis de Componentes Principales (PCA)
-🧠 Concepto Clave: Reducción de dimensionalidad no supervisada. Encuentra las direcciones de máxima varianza y proyecta los datos en un espacio más pequeño.
-⚙️ ¿Cómo funciona? Calcula componentes ortogonales (autovectores de la matriz de covarianza) y retiene solo los que explican la mayor variabilidad.
-🎯 ¿Cuándo elegirlo? Datos con cientos/miles de features, ruido alto, necesidad de visualización o acelerar modelos posteriores.
-✅ Rápido, elimina redundancia, mejora estabilidad numérica.
-❌ Pierde interpretabilidad (los componentes no son features originales), asume relaciones lineales.
+🧠 Concepto Clave: Reducción de dimensionalidad no supervisada. Encuentra las direcciones de máxima varianza y proyecta los datos en un espacio más pequeño.  
+⚙️ ¿Cómo funciona? Calcula componentes ortogonales (autovectores de la matriz de covarianza) y retiene solo los que explican la mayor variabilidad.  
+🎯 ¿Cuándo elegirlo? Datos con cientos/miles de features, ruido alto, necesidad de visualización o acelerar modelos posteriores.  
+✅ Rápido, elimina redundancia, mejora estabilidad numérica.  
+❌ Pierde interpretabilidad (los componentes no son features originales), asume relaciones lineales.  
 ________________________________________
 ## 🧩 9. K-Means Clustering
-🧠 Concepto Clave: Agrupamiento no supervisado que partitiona datos en K grupos basándose en distancia a centroides.
-⚙️ ¿Cómo funciona? Inicializa K centroides → asigna cada punto al centroide más cercano → recalcula centroides → repite hasta convergencia.
-🎯 ¿Cuándo elegirlo? Segmentación, detección de patrones ocultos, reducción de datos antes de modelado supervisado.
-✅ Simple, escalable (O(N·K·d)), fácil de paralelizar.
-❌ Requiere definir K, sensible a escala e inicialización, asume clusters esféricos y de tamaño similar.
+🧠 Concepto Clave: Agrupamiento no supervisado que partitiona datos en K grupos basándose en distancia a centroides.  
+⚙️ ¿Cómo funciona? Inicializa K centroides → asigna cada punto al centroide más cercano → recalcula centroides → repite hasta convergencia.  
+🎯 ¿Cuándo elegirlo? Segmentación, detección de patrones ocultos, reducción de datos antes de modelado supervisado.  
+✅ Simple, escalable (O(N·K·d)), fácil de paralelizar.  
+❌ Requiere definir K, sensible a escala e inicialización, asume clusters esféricos y de tamaño similar.  
 ________________________________________
 ## 🌿 10. Agrupamiento Jerárquico (Hierarchical Clustering)
-🧠 Concepto Clave: Construye una jerarquía de clusters (dendrograma) sin requerir K predefinido.
-⚙️ ¿Cómo funciona? Versión aglomerativa: cada punto inicia como cluster → se fusionan los dos más cercanos iterativamente → se detiene al cortar el dendrograma.
-🎯 ¿Cuándo elegirlo? Exploración de estructura natural de datos, datasets pequeños/medianos, necesidad de niveles de granularidad.
-✅ No requiere K, visualmente interpretable, captura relaciones anidadas.
-❌ Complejidad O(N²) o O(N³), sensible a ruido, difícil de actualizar incrementalmente.
+🧠 Concepto Clave: Construye una jerarquía de clusters (dendrograma) sin requerir K predefinido.  
+⚙️ ¿Cómo funciona? Versión aglomerativa: cada punto inicia como cluster → se fusionan los dos más cercanos iterativamente → se detiene al cortar el dendrograma.  
+🎯 ¿Cuándo elegirlo? Exploración de estructura natural de datos, datasets pequeños/medianos, necesidad de niveles de granularidad.  
+✅ No requiere K, visualmente interpretable, captura relaciones anidadas.  
+❌ Complejidad O(N²) o O(N³), sensible a ruido, difícil de actualizar incrementalmente.  
 ________________________________________
 ## 🎮 11. Q-Learning (Reinforcement Learning)
-🧠 Concepto Clave: Aprendizaje por refuerzo que optimiza decisiones secuenciales maximizando recompensa acumulada.
-⚙️ ¿Cómo funciona? Actualiza una tabla o red de valores Q(s,a) usando la ecuación de Bellman: Q ← Q + α[r + γ·max Q(s',a') - Q]. Balancea exploración vs explotación.
-🎯 ¿Cuándo elegirlo? Entornos dinámicos, decisiones en cadena, sistemas adaptativos con feedback retardado.
-✅ Aprende sin modelo del entorno, maneja recompensas diferidas, se adapta en tiempo real.
-❌ Inestable con espacios grandes, requiere simulación o entorno seguro, difícil de debuggear.
+🧠 Concepto Clave: Aprendizaje por refuerzo que optimiza decisiones secuenciales maximizando recompensa acumulada.  
+⚙️ ¿Cómo funciona? Actualiza una tabla o red de valores Q(s,a) usando la ecuación de Bellman: Q ← Q + α[r + γ·max Q(s',a') - Q]. Balancea exploración vs explotación.  
+🎯 ¿Cuándo elegirlo? Entornos dinámicos, decisiones en cadena, sistemas adaptativos con feedback retardado.  
+✅ Aprende sin modelo del entorno, maneja recompensas diferidas, se adapta en tiempo real.  
+❌ Inestable con espacios grandes, requiere simulación o entorno seguro, difícil de debuggear.  
 ________________________________________
 ## 🖼️ 12. Redes Neuronales Convolucionales (CNN)
-🧠 Concepto Clave: Arquitectura deep learning optimizada para datos con estructura espacial o local (imágenes, señales, texto 1D).
-⚙️ ¿Cómo funciona? Aplica filtros deslizantes que detectan patrones locales → pooling reduce dimensionalidad → capas profundas combinan features jerárquicamente.
-🎯 ¿Cuándo elegirlo? Reconocimiento visual, procesamiento de señales, extracción de patrones locales en secuencias.
-✅ Invariante a traslación, excelente en patrones locales, altamente paralelizable en GPU.
-❌ Requiere muchos datos, computacionalmente costoso, caja negra difícil de auditar.
+🧠 Concepto Clave: Arquitectura deep learning optimizada para datos con estructura espacial o local (imágenes, señales, texto 1D).  
+⚙️ ¿Cómo funciona? Aplica filtros deslizantes que detectan patrones locales → pooling reduce dimensionalidad → capas profundas combinan features jerárquicamente.  
+🎯 ¿Cuándo elegirlo? Reconocimiento visual, procesamiento de señales, extracción de patrones locales en secuencias.  
+✅ Invariante a traslación, excelente en patrones locales, altamente paralelizable en GPU.  
+❌ Requiere muchos datos, computacionalmente costoso, caja negra difícil de auditar.  
 ________________________________________
 ## 🔁 13. Redes Neuronales Recurrentes (RNN / LSTM / GRU)
-🧠 Concepto Clave: Redes con memoria interna que procesan secuencias manteniendo un estado oculto paso a paso.
-⚙️ ¿Cómo funciona? h_t = f(W·h_{t-1} + U·x_t + b). LSTM/GRU añaden compuertas para retener/olvidar información a largo plazo y evitar vanishing gradients.
-🎯 ¿Cuándo elegirlo? Datos secuenciales: texto, series de tiempo, audio, donde el orden importa.
-✅ Captura dependencias temporales, flexible en longitud de secuencia.
-❌ Entrenamiento lento, propenso a desvanecimiento de gradientes (RNN base), mayormente reemplazado por Transformers.
+🧠 Concepto Clave: Redes con memoria interna que procesan secuencias manteniendo un estado oculto paso a paso.  
+⚙️ ¿Cómo funciona? h_t = f(W·h_{t-1} + U·x_t + b). LSTM/GRU añaden compuertas para retener/olvidar información a largo plazo y evitar vanishing gradients.  
+🎯 ¿Cuándo elegirlo? Datos secuenciales: texto, series de tiempo, audio, donde el orden importa.  
+✅ Captura dependencias temporales, flexible en longitud de secuencia.  
+❌ Entrenamiento lento, propenso a desvanecimiento de gradientes (RNN base), mayormente reemplazado por Transformers.  
 ________________________________________
 ## 🕸️ 14. Perceptrón Multicapa (MLP)
-🧠 Concepto Clave: Red neuronal feedforward con capas ocultas y activaciones no lineales. Aproximador universal.
-⚙️ ¿Cómo funciona? Propaga datos hacia adelante: z = W·x + b → a = σ(z). Entrena con backpropagation y optimizadores (Adam, SGD).
-🎯 ¿Cuándo elegirlo? Datos tabulares complejos, relaciones no lineales fuertes, baseline deep learning.
-✅ Flexible, captura interacciones complejas, compatible con features numéricas/categóricas.
-❌ Propenso a overfitting, requiere regularización/dropout, menos interpretable, sensible a escalado.
+🧠 Concepto Clave: Red neuronal feedforward con capas ocultas y activaciones no lineales. Aproximador universal.  
+⚙️ ¿Cómo funciona? Propaga datos hacia adelante: z = W·x + b → a = σ(z). Entrena con backpropagation y optimizadores (Adam, SGD).  
+🎯 ¿Cuándo elegirlo? Datos tabulares complejos, relaciones no lineales fuertes, baseline deep learning.  
+✅ Flexible, captura interacciones complejas, compatible con features numéricas/categóricas.  
+❌ Propenso a overfitting, requiere regularización/dropout, menos interpretable, sensible a escalado.  
