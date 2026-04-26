@@ -15,12 +15,12 @@ Objetivo: Que Melissa y Airis entiendan que no empezamos con código, sino con u
 
 💡 Lo que buscas que ellas descubran:  
 •	La diferencia entre problema de negocio ("reducir ruido") y problema de ML ("clasificación binaria").  
-    o	"Cada correo → 'spam' o 'ham' (legítimo)", "Como separar ropa: limpia/sucia, colores/blancos" y esto es Classification Problem, Tipo de problema donde asignamos una categoría a cada entrada  
+> > o	"Cada correo → 'spam' o 'ham' (legítimo)", "Como separar ropa: limpia/sucia, colores/blancos" y esto es Classification Problem, Tipo de problema donde asignamos una categoría a cada entrada  
 •	Que los falsos positivos tienen costo de negocio.  
-    o	"FP = correo de cliente va a spam (grave). FN = spam llega a inbox (molesto)"  
-    o	False Positive / False Negative Errores de clasificación: bloquear algo bueno o dejar pasar algo malo  
+> > o	"FP = correo de cliente va a spam (grave). FN = spam llega a inbox (molesto)"  
+> > o	False Positive / False Negative Errores de clasificación: bloquear algo bueno o dejar pasar algo malo  
 •	La necesidad de definir métricas de éxito antes de tocar datos.  
-    o	El impacto económico o operacional de cada tipo de error, Cost of Error  
+> > o	El impacto económico o operacional de cada tipo de error, Cost of Error  
     
 "Reducción del 80% en correos spam en inbox, con <1% de falsos positivos" y esto es el Success Metrics (Business), Cómo mediremos el éxito en términos de negocio  
 
