@@ -127,7 +127,7 @@ pip install scikit-learn
 scikit-learn es el estándar industrial para utilidades de ML en Python. No la usamos aquí para modelar aún, sino por train_test_split, que implementa particiones estratificadas, reproducibles y libres de sesgo. Además, su API es consistente con la fase siguiente (pipelines, métricas, validación). En MLOps, usar una librería probada para splits evita errores silenciosos como fugas de datos o desbalances no intencionales.
 
 > 
-```
+```python
 # Creamos src/fase_02_eda_split.py
 import pandas as pd
 from sklearn.model_selection import train_test_split
@@ -203,14 +203,14 @@ ________________________________________
 ## Code
 
 > 
-```
+```bash
 pip install joblib
 ```
 
 pickle es la herramienta nativa de Python para serializar objetos, pero es lenta y maneja mal matrices grandes de numpy. joblib está optimizada específicamente para objetos numéricos y scikit-learn: comprime arrays, serializa en paralelo y produce archivos más ligeros. En MLOps, el artefacto que se despliega es el modelo serializado; usar joblib garantiza carga rápida en producción, menor consumo de memoria y compatibilidad garantizada con sklearn.
 
 > 
-```
+```python
 # Creamos src/fase_03_pipeline.py
 import pandas as pd
 import joblib
@@ -292,21 +292,21 @@ ________________________________________
 ## Code
 
 > 
-```
+```bash
 pip install dvc
 ```
 
 Anteriormente, generamos data/raw/spam.csv, splits y artifacts/pipeline_v1.pkl. Git no está diseñado para archivos binarios o datasets >100MB: cada commit duplica el archivo, el repositorio se infla y el historial se vuelve inmanejable. dvc (Data Version Control) resuelve esto guardando los archivos pesados en almacenamiento externo (local, GCS, S3) y dejando en Git solo un puntero ligero (.dvc) con el hash SHA-256. Así versionamos datos sin romper Git.
 
 > 
-```
+```bash
 pip install mlflow
 ```
 
 Tenemos un pipeline que entrena, pero si mañana cambiamos max_features, C o el algoritmo, ¿cómo comparamos qué versión fue mejor? ¿Dónde quedan los parámetros, las métricas y el artefacto de cada ejecución? mlflow es un sistema de experiment tracking: registra automáticamente parámetros, métricas, código y modelos en un servidor local o remoto. Responde a la pregunta: "¿Con qué configuración exacta se obtuvo este F1=0.92?" sin depender de notas en un notebook o nombres de archivos como model_final_v3_real.pkl.
 
 > 
-```
+```bash
 # CMD 
 # 1. Inicializa DVC (crea .dvc/ y .dvcignore)
 dvc init
@@ -406,23 +406,24 @@ o	Tests de significancia estadística (que MLflow no hace por defecto, pero pode
 o	Registro de std_dev de métricas en validación cruzada
 MLflow no valida la robustez, pero la hace rastreable. La decisión de promover un modelo a producción debe basarse en métricas estables, no en un único run.
 
-"¿Por qué logueamos precision y recall por separado si f1_score ya los combina? ¿Qué decisión de negocio podríamos tomar equivocada si solo guardáramos f1?"
-🧠 Razonamiento de la respuesta:
+"¿Por qué logueamos precision y recall por separado si f1_score ya los combina? ¿Qué decisión de negocio podríamos tomar equivocada si solo guardáramos f1?"  
+🧠 Razonamiento de la respuesta:  
 F1 es un promedio armónico útil, pero oculta el trade-off. En un filtro de spam:
-•	Alta precision (0.98) + baja recall (0.60) → El modelo bloquea muy poco spam, pero casi nunca se equivoca con correos legítimos. Costo: Melissa sigue perdiendo tiempo revisando spam.
-•	Baja precision (0.70) + alta recall (0.95) → Atrapa casi todo el spam, pero bloquea muchos correos válidos. Costo: Airis pierde ventas o comunicaciones críticas.
+•	Alta precision (0.98) + baja recall (0.60) → El modelo bloquea muy poco spam, pero casi nunca se equivoca con correos legítimos. Costo: Melissa sigue perdiendo tiempo revisando spam.  
+•	Baja precision (0.70) + alta recall (0.95) → Atrapa casi todo el spam, pero bloquea muchos correos válidos. Costo: Airis pierde ventas o comunicaciones críticas.  
 Si solo logueamos F1, podríamos elegir un modelo con F1=0.85 que en realidad tiene precision=0.65 (inaceptable para negocio). Al registrar precision y recall por separado en MLflow:
 1.	Podemos ajustar el umbral de decisión post-entrenamiento sin reentrenar.
 2.	Podemos alinear la métrica con el costo real de error (FP vs FN).
 3.	Podemos auditar: "¿Por qué promovimos este modelo? Porque priorizamos precision sobre recall según SLA del equipo de soporte."
 F1 resume; precision y recall explican. MLOps exige transparencia en la decisión, no solo un número bonito.
 
-"Si mañana me piden revertir al modelo de ayer, ¿qué haría paso a paso?"
+"Si mañana me piden revertir al modelo de ayer, ¿qué haría paso a paso?"  
  
-🤖 FASE 5: Selección de Algoritmo (No es magia, es criterio)
-Objetivo: Que entienda que elegir algoritmo es un ejercicio de restricciones, no de popularidad.
+# 🤖 FASE 5: Selección de Algoritmo (No es magia, es criterio)
+### Objetivo:
+Que entienda que elegir algoritmo es un ejercicio de restricciones, no de popularidad.
 
-🎯 Preguntas para plantear:
+🎯 Preguntas para plantear:  
 🗣️ "Tenemos 50,000 correos con 10,000 features (palabras). 
     ¿Qué algoritmos podrían sufrir con esta dimensionalidad? ¿Cuáles la manejan bien?"
 
@@ -438,9 +439,9 @@ Objetivo: Que entienda que elegir algoritmo es un ejercicio de restricciones, no
 🗣️ "¿Necesitamos que el modelo aprenda nuevas formas de spam sin reentrenar desde cero? 
     ¿Eso descarta algún tipo de algoritmo?"
 
-💡 Lo que buscas que ellas descubran:
-•	El trade-off entre interpretabilidad vs. rendimiento.
-•	La importancia de la complejidad computacional.
+💡 Lo que buscas que ellas descubran:  
+•	El trade-off entre interpretabilidad vs. rendimiento.  
+•	La importancia de la complejidad computacional.  
 •	Que no existe "el mejor algoritmo", existe "el más adecuado para estas restricciones".
 
 Primer modelo simple que sirve como punto de comparación Baseline Model
@@ -448,12 +449,21 @@ Qué tan 'sofisticado' es un modelo: desde reglas simples hasta redes profundas 
 "Un modelo muy simple no detecta spam nuevo; uno muy complejo 'memoriza' spam viejo" Bias-Variance Tradeoff Equilibrio entre simplificar demasiado (subajuste) o memorizar (sobreajuste)
 ________________________________________
 ## Code
+
 Aquí cerramos el ciclo de "entrenar" y entramos al ciclo de "aprobar para producción". Sin gates, no hay MLOps; solo experimentos en notebooks.
+
+> 
+```bash
 pip install pytest
-un test verifica que una función devuelva el resultado esperado. En ML, el modelo siempre tendrá error; lo que nos importa es que ese error esté dentro de límites aceptables para el negocio. pytest es el estándar industrial porque permite:
-•	Parametrizar casos de prueba (ej: distintos tipos de correos)
+```
+
+un test verifica que una función devuelva el resultado esperado. En ML, el modelo siempre tendrá error; lo que nos importa es que ese error esté dentro de límites aceptables para el negocio. pytest es el estándar industrial porque permite:  
+•	Parametrizar casos de prueba (ej: distintos tipos de correos)  
 •	Integrarse nativamente en pipelines CI/CD (pytest tests/) Sin tests automáticos, no hay Integración Continua. Sin CI, no hay forma de garantizar que un nuevo commit o un nuevo dataset no rompa el modelo en producción.
-Validación Cruzada + Logging de Estabilidad (src/fase_05_cv_validation.py)
+
+> 
+```python
+# Validación Cruzada + Logging de Estabilidad (src/fase_05_cv_validation.py)
 import pandas as pd
 import mlflow
 from sklearn.model_selection import cross_validate
@@ -502,7 +512,11 @@ with mlflow.start_run(run_name="cv_baseline_logreg_v1"):
     
     print("✅ Validación cruzada completada.")
     print(f"   F1 mean: {cv_results['test_f1'].mean():.3f} ± {cv_results['test_f1'].std():.3f}")
-Tests Automatizados como Gate de Calidad (tests/test_pipeline.py)
+```    
+
+> 
+```python
+# Tests Automatizados como Gate de Calidad (tests/test_pipeline.py)
 import pytest
 import pandas as pd
 import joblib
@@ -547,7 +561,7 @@ def test_f1_meets_deployment_threshold(model, test_data):
         f"❌ F1 score {f1:.3f} está por debajo del umbral de despliegue ({MIN_F1_GATE}). "
         f"Revisar drift de datos, feature engineering o reentrenar con más datos."
     )
-
+```
 ________________________________________
 
 "Si el test_split ya nos dio un accuracy=0.92, ¿por qué necesitamos validación cruzada? ¿Qué nos revela la std (desviación estándar) que la métrica única oculta?"
@@ -576,8 +590,9 @@ El fallo del CI es una señal de alerta, no un diagnóstico. MLflow cierra el ci
 En MLOps, nunca se debuggea a ciegas. MLflow + CI proporcionan el rastro forense exacto: qué cambió, cuándo, y qué impacto tuvo. El diagnóstico deja de ser intuitivo y se vuelve sistemático.
 
  
-🧪 FASE 6: Entrenamiento y Trazabilidad con MLFlow
-Objetivo: Que surja la necesidad de MLFlow como respuesta al caos experimental.
+# 🧪 FASE 6: Entrenamiento y Trazabilidad con MLFlow
+### Objetivo: 
+Que surja la necesidad de MLFlow como respuesta al caos experimental.
 
 🎯 Preguntas para plantear:
 🗣️ "Corriste 15 experimentos hoy con distintas combinaciones de features y hiperparámetros. 
@@ -604,12 +619,17 @@ Objetivo: Que surja la necesidad de MLFlow como respuesta al caos experimental.
 •	Que la trazabilidad es un requisito para el mantenimiento, no un "nice-to-have".
 ________________________________________
 ## Code
-Aquí unimos código, datos, tests y modelo en un flujo que se ejecuta solo, decide solo y protege producción. Sin automatización, MLOps es solo documentación.
-# En la máquina local o en el runner del CI:
+
+Aquí unimos código, datos, tests y modelo en un flujo que se ejecuta solo, decide solo y protege producción. Sin automatización, MLOps es solo documentación.  
+En la máquina local o en el runner del CI:
+
+> 
+```bash
 pip install -r requirements.txt
 pip install dvc[gs]  # Soporte para Google Cloud Storage
 pip install mlflow
 pip install pytest
+```
 
 En MLOps, no se confía en entornos locales. Cada desarrollador tiene versiones distintas de Python, librerías o rutas. GitHub Actions crea un entenedor efímero y limpio (ubuntu-latest) donde:
 1.	Se instala Python desde cero
@@ -618,7 +638,10 @@ En MLOps, no se confía en entornos locales. Cada desarrollador tiene versiones 
 4.	Se ejecutan pytest → valida gates de calidad
 5.	Si todo pasa, se promueve el modelo a Staging en MLflow Registry → habilita despliegue seguro
 Esto transforma "funciona en mi laptop" en "funciona en cualquier entorno, siempre".
-Configuración CI/CD  .github/workflows/mlops_pipeline.yml
+
+> 
+```yaml
+# Configuración CI/CD  .github/workflows/mlops_pipeline.yml
 name: MLOps CI/CD Pipeline
 on:
   push:
@@ -659,8 +682,11 @@ jobs:
         run: python src/fase_06_registry.py
         env:
           MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI }}
+```
 
-Creamos src/fase_06_registry.py
+> 
+```python
+# Creamos src/fase_06_registry.py
 import os
 import mlflow
 from mlflow.tracking import MlflowClient
@@ -702,6 +728,7 @@ def promote_best_model_to_staging():
 
 if __name__ == "__main__":
     promote_best_model_to_staging()
+```
 ________________________________________
 "¿Por qué ejecutamos dvc pull dentro del CI en lugar de incluir los datos directamente en el repositorio o usarlos locales?"
 🔍 Razonamiento esperado:
@@ -743,7 +770,7 @@ El CI ejecuta pip install -r requirements.txt en un entorno limpio. Si hay incom
 Además, en flujos maduros se añade pip-audit o safety para detectar vulnerabilidades, y pip freeze > requirements.txt se bloquea con pre-commit hooks.
 En MLOps, el CI es el primer firewall. Un entorno aislado + tests estrictos + gates automáticos crean un sistema donde los errores se atrapan antes de costar dinero.
 
-🔄 FASE 7: CI/CD para ML (No es lo mismo que software tradicional)
+# 🔄 FASE 7: CI/CD para ML (No es lo mismo que software tradicional)
 Objetivo: Entender las particularidades del testing en ML.
 
 🎯 Preguntas para plantear:
@@ -778,7 +805,10 @@ En CI/CD se valida que el modelo funcione sobre datos históricos. En producció
 •	Genera reportes HTML/JSON listos para dashboards o alertas.
 •	Define tests programáticos (assert drift_score < 0.1) que pueden disparar pipelines automáticos.
 En GCP, esta lógica se traduce nativamente a Vertex AI Model Monitoring, pero evidently permite entender el qué y por qué antes de delegarlo a servicios gestionados. MLOps exige saber qué se mide antes de automatizarlo.
-Detección de Drift + Trigger de Reentrenamiento (src/fase_07_monitoring.py)
+
+> 
+```python
+# Detección de Drift + Trigger de Reentrenamiento (src/fase_07_monitoring.py)
 import pandas as pd
 import json
 from evidently.report import Report
@@ -831,13 +861,14 @@ if len(features_with_drift) > 0:
         json.dump(trigger_payload, f)
 else:
     print("✅ Distribución estable. Modelo en producción sigue siendo válido.")
+```
 
-COMPONENTE EN CÓDIGO	EQUIVALENTE NATIVO EN GCP	PROPÓSITO
-EVIDENTLY + DATADRIFTPRESET	Vertex AI Model Monitoring	Monitoreo nativo de drift en features/predicciones sin Código
-RETRAIN_TRIGGER.JSON	Pub/Sub + Cloud Scheduler	Canal de eventos para orquestar reentrenamiento
-PYTHON TRIGGER SCRIPT	Cloud Run / Cloud Functions	Ejecuta lógica de decisión o notifica equipos
-VERTEX AI TRAINING	Vertex AI Pipelines + Kubeflow	Reentrena automáticamente con nuevos datos
-MLFLOW REGISTRY	Vertex AI Model Registry	Versionado y promoción automática a Staging
+|COMPONENTE EN CÓDIGO|	EQUIVALENTE NATIVO EN GCP	|PROPÓSITO|
+|EVIDENTLY + DATADRIFTPRESET|	Vertex AI Model Monitoring	|Monitoreo nativo de drift en features/predicciones sin Código|
+|RETRAIN_TRIGGER.JSON|	Pub/Sub + Cloud Scheduler	|Canal de eventos para orquestar reentrenamiento|
+|PYTHON TRIGGER SCRIPT|	Cloud Run / Cloud Functions	|Ejecuta lógica de decisión o notifica equipos|
+|VERTEX AI TRAINING|	Vertex AI Pipelines + Kubeflow	|Reentrena automáticamente con nuevos datos|
+|MLFLOW REGISTRY|	Vertex AI Model Registry	|Versionado y promoción automática a Staging|
 
 ________________________________________
 
@@ -876,17 +907,18 @@ La solución MLOps es human-in-the-loop + gates de calidad:
 La automatización acelera; los gates protegen.
 
  
-📈 FASE 8: Métricas y Evaluación (Más allá de la Accuracy)
-Objetivo: Que entienda que la métrica correcta depende del costo de error.
-Concepto	Definición Simple	Fórmula (opcional)	Conexión Spam Filter
-Accuracy	Porcentaje de predicciones correctas sobre el total	`(TP+TN) / Total`	"Engañosa si hay desbalance: 95% accuracy puede ser solo predecir siempre 'ham'"
-Precision	De los que predije como spam, ¿cuántos realmente lo eran?	`TP / (TP+FP)`	"Alta precisión = pocos correos legítimos bloqueados por error"
-Recall (Sensitivity)	De los spam reales, ¿cuántos logré detectar?	`TP / (TP+FN)`	"Alto recall = pocos spams se escapan a la bandeja de entrada"
-F1-Score	Promedio armónico de precisión y recall: balance entre ambos	`2 * (P*R)/(P+R)`	"Útil cuando necesitamos equilibrar FP y FN; nuestro 'número mágico' de calidad"
-Confusion Matrix	Tabla que muestra cuántos aciertos y errores de cada tipo cometió el modelo	Matriz 2x2: [TN, FP; FN, TP]	"Nos permite ver visualmente: ¿estamos fallando más en FP o en FN?"
-ROC-AUC	Capacidad del modelo para distinguir entre clases, sin importar el umbral	Área bajo la curva TPR vs FPR	"Un AUC de 0.95 significa que el modelo 'ordena bien' spam vs ham en general"
-Threshold Tuning	Ajustar el punto de corte para decidir cuándo predecir 'spam'	Mover el umbral de probabilidad (ej: de 0.5 a 0.7)	"Si queremos menos FP, subimos el umbral: solo marcamos como spam si estamos muy seguros"
+# 📈 FASE 8: Métricas y Evaluación (Más allá de la Accuracy)
+### Objetivo: 
+Que entienda que la métrica correcta depende del costo de error.
 
+|Concepto|	Definición Simple|	Fórmula (opcional)|	Conexión Spam Filter|
+|Accuracy|	Porcentaje de predicciones correctas sobre el total|	`(TP+TN) / Total`|	"Engañosa si hay desbalance: 95% accuracy puede ser solo predecir siempre 'ham'"|
+|Precision|	De los que predije como spam, ¿cuántos realmente lo eran?|	`TP / (TP+FP)`|	"Alta precisión = pocos correos legítimos bloqueados por error"|
+|Recall (Sensitivity)|	De los spam reales, ¿cuántos logré detectar?|	`TP / (TP+FN)`|	"Alto recall = pocos spams se escapan a la bandeja de entrada"|
+|F1-Score|	Promedio armónico de precisión y recall: balance entre ambos|	`2 * (P*R)/(P+R)`	|"Útil cuando necesitamos equilibrar FP y FN; nuestro 'número mágico' de calidad"|
+|Confusion Matrix|	Tabla que muestra cuántos aciertos y errores de cada tipo cometió el modelo	Matriz 2x2: [TN, FP; FN, TP]|	"Nos permite ver visualmente: ¿estamos fallando más en FP o en FN?"|
+|ROC-AUC|	Capacidad del modelo para distinguir entre clases, sin importar el umbral	|Área bajo la curva TPR vs FPR	|"Un AUC de 0.95 significa que el modelo 'ordena bien' spam vs ham en general"|
+|Threshold Tuning|	Ajustar el punto de corte para decidir cuándo predecir 'spam'	|Mover el umbral de probabilidad (ej: de 0.5 a 0.7)	|"Si queremos menos FP, subimos el umbral: solo marcamos como spam si estamos muy seguros"|
 
 🎯 Preguntas para plantear:
 🗣️ "Nuestro dataset tiene 95% ham, 5% spam. Un modelo que siempre predice 'ham' 
@@ -922,16 +954,33 @@ Model Retraining Strategy	Cuándo y cómo actualizar el modelo: schedule, trigge
 ________________________________________
 ## Code
 Aquí cerramos el ciclo: pasamos de "modelo que funciona" a "sistema gobernado, reutilizable y rentable". Sin gobernanza, MLOps escala el caos.
+
+> 
+```bash
 pip install feast
+```
+
 Hasta ahora, calculamos features (msg_length, num_exclamations) en el script de entrenamiento y las recalculamos manualmente en el endpoint de inferencia. Esto genera duplicación, inconsistencia y riesgo de drift silencioso. feast (Feature Store) introduce un catálogo centralizado y versionado de features:
 •	Define una vez, sirve en batch (para entrenamiento) y online (para inferencia en tiempo real).
 •	Garantiza consistencia absoluta: el modelo ve exactamente la misma distribución y lógica en dev y producción.
 •	Habilita reutilización cross-modelo: si otro equipo necesita msg_length, no vuelve a escribirla; la consume desde el store.
+
+> 
+```python
 pip install pandera
+```
 Los tests de pytest validan que el código funciona. pandera valida que los datos que entran al pipeline cumplen contratos explícitos: tipos, rangos, valores nulos, restricciones de negocio. En gobernanza de ML, la calidad de datos no es opcional; es un requisito de compliance. Sin validación runtime, un correo mal formateado o un pico de spam silencioso rompe el modelo sin que el CI lo detecte.
+
+> 
+```python
 pip install python-dotenv
-Hard## Codear rutas, URIs o credenciales rompe el principio de infraestructura inmutable. python-dotenv permite gestionar configuraciones por entorno (dev, staging, prod) sin tocar el código. En MLOps maduro, el mismo artefacto se despliega en todos los entornos; solo cambian las variables de entorno. Esto elimina errores de "funcionó en staging, falló en prod por una ruta distinta".
-obernanza + Feature Definition + Multi-Env (src/fase_08_governance.py)
+```
+
+Hardcodear rutas, URIs o credenciales rompe el principio de infraestructura inmutable. python-dotenv permite gestionar configuraciones por entorno (dev, staging, prod) sin tocar el código. En MLOps maduro, el mismo artefacto se despliega en todos los entornos; solo cambian las variables de entorno. Esto elimina errores de "funcionó en staging, falló en prod por una ruta distinta".
+
+> 
+```python
+# gobernanza + Feature Definition + Multi-Env (src/fase_08_governance.py)
 import os
 import pandas as pd
 import pandera as pa
@@ -989,7 +1038,7 @@ if __name__ == "__main__":
         "target": [1]
     })
     validate_ingestion(sample)
-
+```
 ________________________________________
 
 "¿Por qué invertir tiempo en un Feature Store si podemos simplemente guardar processed_data.parquet y leerlo cuando necesitemos?"
@@ -1034,99 +1083,99 @@ ROI TRACKING	Cloud Billing Export + Vertex AI Cost Dashboard	Atribución de cost
 
 
 
-Algoritmos de ML
-📐 1. Regresión Lineal
+# Algoritmos de ML
+## 📐 1. Regresión Lineal
 🧠 Concepto Clave: Predice un valor numérico continuo ajustando una línea recta que minimiza el error respecto a los datos.
 ⚙️ ¿Cómo funciona? Busca la combinación de pesos para cada feature que hace que ŷ = w₁x₁ + w₂x₂ + ... + b se acerque lo más posible al valor real. Usa mínimos cuadrados.
 🎯 ¿Cuándo elegirlo? Forecasting, tendencias, variables continuas (precio, temperatura, tiempo).
 ✅ Extremadamente rápido, interpretable, baseline sólido.
 ❌ Asume relación lineal, sensible a outliers, no sirve para clasificación.
-________________________________________
-🎲 2. Regresión Logística
+
+## 🎲 2. Regresión Logística
 🧠 Concepto Clave: Extensión de la regresión lineal diseñada para clasificación binaria. Predice probabilidades.
 ⚙️ ¿Cómo funciona? Aplica la función sigmoide (1 / (1 + e⁻ᶻ)) a la salida lineal para comprimirla entre 0 y 1. Si P ≥ 0.5 → clase positiva.
 🎯 ¿Cuándo elegirlo? Clasificación binaria/multiclase, necesidad de probabilidades calibradas, baseline interpretable.
 ✅ Rápido, escalable, entrega probabilidades, fácil de debuggear.
 ❌ Línea de decisión lineal; lucha con patrones no lineales complejos.
-________________________________________
-🌳 3. Árboles de Decisión
+
+## 🌳 3. Árboles de Decisión
 🧠 Concepto Clave: Modelo que toma decisiones mediante reglas SI-ENTONCES anidadas, dividiendo los datos recursivamente.
 ⚙️ ¿Cómo funciona? En cada nodo elige la feature y umbral que maximiza la "pureza" (Gini o Entropía) de los subconjuntos resultantes.
 🎯 ¿Cuándo elegirlo? Necesidad de reglas explicables, datos mixtos (numéricos + categóricos), relaciones no lineales.
 ✅ No requiere escalado, muy interpretable, maneja interacciones complejas.
 ❌ Propenso a sobreajuste, inestable (pequeños cambios en datos → árbol distinto).
 ________________________________________
-🌲🌲🌲 4. Random Forest
+## 🌲🌲🌲 4. Random Forest
 🧠 Concepto Clave: Ensemble de cientos de árboles de decisión que votan colectivamente para reducir varianza y sobreajuste.
 ⚙️ ¿Cómo funciona? Entrena cada árbol con un subconjunto aleatorio de datos (bagging) y features. La predicción final es la mayoría de votos (clasificación) o promedio (regresión).
 🎯 ¿Cuándo elegirlo? Alta precisión requerida, datos ruidosos, importancia de features, robustez en producción.
 ✅ Muy preciso, robusto a overfitting, entrega feature importance, maneja no-linealidad.
 ❌ Menos interpretable que un solo árbol, mayor consumo de RAM/CPU, serving más lento.
 ________________________________________
-📏 5. Máquinas de Vectores de Soporte (SVM)
+## 📏 5. Máquinas de Vectores de Soporte (SVM)
 🧠 Concepto Clave: Encuentra el hiperplano que maximiza el margen de separación entre clases.
 ⚙️ ¿Cómo funciona? Usa solo los puntos más cercanos al borde ("vectores de soporte") para definir la frontera. Con kernels (lineal, RBF, polinomial) puede separar datos no lineales proyectándolos a dimensiones superiores.
 🎯 ¿Cuándo elegirlo? Datos de alta dimensionalidad (texto, embeddings), margen de separación claro, clasificación precisa.
 ✅ Muy efectivo en espacios de alta dimensión, robusto a overfitting (con buen C/gamma), histórico en NLP.
 ❌ Costoso en datasets >100K muestras, difícil de interpretar, sensible a escalado y hiperparámetros.
 ________________________________________
-📧 6. Naive Bayes
+## 📧 6. Naive Bayes
 🧠 Concepto Clave: Clasificador probabilístico basado en el Teorema de Bayes, asumiendo independencia entre features.
 ⚙️ ¿Cómo funciona? Calcula P(Spam | palabras) ∝ P(Spam) × ∏ P(palabra | Spam). Aunque la independencia es "ingenua", funciona sorprendentemente bien en texto.
 🎯 ¿Cuándo elegirlo? Clasificación de texto, entrenamiento ultra-rápido, baseline NLP, recursos limitados.
 ✅ Extremadamente rápido, escala bien a millones de features, tolera missing data, simple de implementar.
 ❌ Asume independencia (las palabras en un correo no son independientes), puede calibrar mal probabilidades.
 ________________________________________
-📍 7. K-Nearest Neighbors (KNN)
+## 📍 7. K-Nearest Neighbors (KNN)
 🧠 Concepto Clave: Clasifica un ejemplo nuevo basándose en la mayoría de sus K vecinos más cercanos en el espacio de features.
 ⚙️ ¿Cómo funciona? No entrena un modelo explícito. Al predecir, calcula distancias (euclidiana, manhattan, coseno) a todos los puntos de entrenamiento y vota.
 🎯 ¿Cuándo elegirlo? Datasets pequeños, relaciones no paramétricas, necesidad de adaptación instantánea a nuevos datos.
 ✅ Sin fase de entrenamiento, simple, se adapta a fronteras complejas.
 ❌ Predicción lenta (O(N)), sensible a escala y dimensionalidad, alto consumo de memoria.
 ________________________________________
-🔍 1. Análisis de Componentes Principales (PCA)
+## 🔍 8. Análisis de Componentes Principales (PCA)
 🧠 Concepto Clave: Reducción de dimensionalidad no supervisada. Encuentra las direcciones de máxima varianza y proyecta los datos en un espacio más pequeño.
 ⚙️ ¿Cómo funciona? Calcula componentes ortogonales (autovectores de la matriz de covarianza) y retiene solo los que explican la mayor variabilidad.
 🎯 ¿Cuándo elegirlo? Datos con cientos/miles de features, ruido alto, necesidad de visualización o acelerar modelos posteriores.
 ✅ Rápido, elimina redundancia, mejora estabilidad numérica.
 ❌ Pierde interpretabilidad (los componentes no son features originales), asume relaciones lineales.
 ________________________________________
-🧩 2. K-Means Clustering
+## 🧩 9. K-Means Clustering
 🧠 Concepto Clave: Agrupamiento no supervisado que partitiona datos en K grupos basándose en distancia a centroides.
 ⚙️ ¿Cómo funciona? Inicializa K centroides → asigna cada punto al centroide más cercano → recalcula centroides → repite hasta convergencia.
 🎯 ¿Cuándo elegirlo? Segmentación, detección de patrones ocultos, reducción de datos antes de modelado supervisado.
 ✅ Simple, escalable (O(N·K·d)), fácil de paralelizar.
 ❌ Requiere definir K, sensible a escala e inicialización, asume clusters esféricos y de tamaño similar.
 ________________________________________
-🌿 3. Agrupamiento Jerárquico (Hierarchical Clustering)
+## 🌿 10. Agrupamiento Jerárquico (Hierarchical Clustering)
 🧠 Concepto Clave: Construye una jerarquía de clusters (dendrograma) sin requerir K predefinido.
 ⚙️ ¿Cómo funciona? Versión aglomerativa: cada punto inicia como cluster → se fusionan los dos más cercanos iterativamente → se detiene al cortar el dendrograma.
 🎯 ¿Cuándo elegirlo? Exploración de estructura natural de datos, datasets pequeños/medianos, necesidad de niveles de granularidad.
 ✅ No requiere K, visualmente interpretable, captura relaciones anidadas.
 ❌ Complejidad O(N²) o O(N³), sensible a ruido, difícil de actualizar incrementalmente.
 ________________________________________
-🎮 4. Q-Learning (Reinforcement Learning)
+## 🎮 11. Q-Learning (Reinforcement Learning)
 🧠 Concepto Clave: Aprendizaje por refuerzo que optimiza decisiones secuenciales maximizando recompensa acumulada.
 ⚙️ ¿Cómo funciona? Actualiza una tabla o red de valores Q(s,a) usando la ecuación de Bellman: Q ← Q + α[r + γ·max Q(s',a') - Q]. Balancea exploración vs explotación.
 🎯 ¿Cuándo elegirlo? Entornos dinámicos, decisiones en cadena, sistemas adaptativos con feedback retardado.
 ✅ Aprende sin modelo del entorno, maneja recompensas diferidas, se adapta en tiempo real.
 ❌ Inestable con espacios grandes, requiere simulación o entorno seguro, difícil de debuggear.
 ________________________________________
-🖼️ 5. Redes Neuronales Convolucionales (CNN)
+## 🖼️ 12. Redes Neuronales Convolucionales (CNN)
 🧠 Concepto Clave: Arquitectura deep learning optimizada para datos con estructura espacial o local (imágenes, señales, texto 1D).
 ⚙️ ¿Cómo funciona? Aplica filtros deslizantes que detectan patrones locales → pooling reduce dimensionalidad → capas profundas combinan features jerárquicamente.
 🎯 ¿Cuándo elegirlo? Reconocimiento visual, procesamiento de señales, extracción de patrones locales en secuencias.
 ✅ Invariante a traslación, excelente en patrones locales, altamente paralelizable en GPU.
 ❌ Requiere muchos datos, computacionalmente costoso, caja negra difícil de auditar.
 ________________________________________
-🔁 6. Redes Neuronales Recurrentes (RNN / LSTM / GRU)
+## 🔁 13. Redes Neuronales Recurrentes (RNN / LSTM / GRU)
 🧠 Concepto Clave: Redes con memoria interna que procesan secuencias manteniendo un estado oculto paso a paso.
 ⚙️ ¿Cómo funciona? h_t = f(W·h_{t-1} + U·x_t + b). LSTM/GRU añaden compuertas para retener/olvidar información a largo plazo y evitar vanishing gradients.
 🎯 ¿Cuándo elegirlo? Datos secuenciales: texto, series de tiempo, audio, donde el orden importa.
 ✅ Captura dependencias temporales, flexible en longitud de secuencia.
 ❌ Entrenamiento lento, propenso a desvanecimiento de gradientes (RNN base), mayormente reemplazado por Transformers.
 ________________________________________
-🕸️ 7. Perceptrón Multicapa (MLP)
+## 🕸️ 14. Perceptrón Multicapa (MLP)
 🧠 Concepto Clave: Red neuronal feedforward con capas ocultas y activaciones no lineales. Aproximador universal.
 ⚙️ ¿Cómo funciona? Propaga datos hacia adelante: z = W·x + b → a = σ(z). Entrena con backpropagation y optimizadores (Adam, SGD).
 🎯 ¿Cuándo elegirlo? Datos tabulares complejos, relaciones no lineales fuertes, baseline deep learning.
