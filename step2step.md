@@ -1121,78 +1121,78 @@ VALIDATE_INGESTION() | Eventarc + Pub/Sub + Cloud Functions | Gate de calidad an
 ❌ Propenso a sobreajuste, inestable (pequeños cambios en datos → árbol distinto).  
 ________________________________________
 ## 🌲🌲🌲 4. Random Forest
-🧠 Concepto Clave: Ensemble de cientos de árboles de decisión que votan colectivamente para reducir varianza y sobreajuste.  
-⚙️ ¿Cómo funciona? Entrena cada árbol con un subconjunto aleatorio de datos (bagging) y features. La predicción final es la mayoría de votos (clasificación) o promedio (regresión).  
-🎯 ¿Cuándo elegirlo? Alta precisión requerida, datos ruidosos, importancia de features, robustez en producción.  
+🧠 *Concepto Clave:* Ensemble de cientos de árboles de decisión que votan colectivamente para reducir varianza y sobreajuste.  
+⚙️ *¿Cómo funciona?* Entrena cada árbol con un subconjunto aleatorio de datos (bagging) y features. La predicción final es la mayoría de votos (clasificación) o promedio (regresión).  
+🎯 *¿Cuándo elegirlo?* Alta precisión requerida, datos ruidosos, importancia de features, robustez en producción.  
 ✅ Muy preciso, robusto a overfitting, entrega feature importance, maneja no-linealidad.  
 ❌ Menos interpretable que un solo árbol, mayor consumo de RAM/CPU, serving más lento.  
 ________________________________________
 ## 📏 5. Máquinas de Vectores de Soporte (SVM)
-🧠 Concepto Clave: Encuentra el hiperplano que maximiza el margen de separación entre clases.  
-⚙️ ¿Cómo funciona? Usa solo los puntos más cercanos al borde ("vectores de soporte") para definir la frontera. Con kernels (lineal, RBF, polinomial) puede separar datos no lineales proyectándolos a dimensiones superiores.  
-🎯 ¿Cuándo elegirlo? Datos de alta dimensionalidad (texto, embeddings), margen de separación claro, clasificación precisa.  
+🧠 *Concepto Clave:* Encuentra el hiperplano que maximiza el margen de separación entre clases.  
+⚙️ *¿Cómo funciona?* Usa solo los puntos más cercanos al borde ("vectores de soporte") para definir la frontera. Con kernels (lineal, RBF, polinomial) puede separar datos no lineales proyectándolos a dimensiones superiores.  
+🎯 *¿Cuándo elegirlo?* Datos de alta dimensionalidad (texto, embeddings), margen de separación claro, clasificación precisa.  
 ✅ Muy efectivo en espacios de alta dimensión, robusto a overfitting (con buen C/gamma), histórico en NLP.  
 ❌ Costoso en datasets >100K muestras, difícil de interpretar, sensible a escalado y hiperparámetros.  
 ________________________________________
 ## 📧 6. Naive Bayes
-🧠 Concepto Clave: Clasificador probabilístico basado en el Teorema de Bayes, asumiendo independencia entre features.  
-⚙️ ¿Cómo funciona? Calcula P(Spam | palabras) ∝ P(Spam) × ∏ P(palabra | Spam). Aunque la independencia es "ingenua", funciona sorprendentemente bien en texto.  
-🎯 ¿Cuándo elegirlo? Clasificación de texto, entrenamiento ultra-rápido, baseline NLP, recursos limitados.  
+🧠 *Concepto Clave:* Clasificador probabilístico basado en el Teorema de Bayes, asumiendo independencia entre features.  
+⚙️ *¿Cómo funciona?* Calcula P(Spam | palabras) ∝ P(Spam) × ∏ P(palabra | Spam). Aunque la independencia es "ingenua", funciona sorprendentemente bien en texto.  
+🎯 *¿Cuándo elegirlo?* Clasificación de texto, entrenamiento ultra-rápido, baseline NLP, recursos limitados.  
 ✅ Extremadamente rápido, escala bien a millones de features, tolera missing data, simple de implementar.  
 ❌ Asume independencia (las palabras en un correo no son independientes), puede calibrar mal probabilidades.  
 ________________________________________
 ## 📍 7. K-Nearest Neighbors (KNN)
-🧠 Concepto Clave: Clasifica un ejemplo nuevo basándose en la mayoría de sus K vecinos más cercanos en el espacio de features.  
-⚙️ ¿Cómo funciona? No entrena un modelo explícito. Al predecir, calcula distancias (euclidiana, manhattan, coseno) a todos los puntos de entrenamiento y vota.  
-🎯 ¿Cuándo elegirlo? Datasets pequeños, relaciones no paramétricas, necesidad de adaptación instantánea a nuevos datos.  
+🧠 *Concepto Clave:* Clasifica un ejemplo nuevo basándose en la mayoría de sus K vecinos más cercanos en el espacio de features.  
+⚙️ *¿Cómo funciona?* No entrena un modelo explícito. Al predecir, calcula distancias (euclidiana, manhattan, coseno) a todos los puntos de entrenamiento y vota.  
+🎯 *¿Cuándo elegirlo?* Datasets pequeños, relaciones no paramétricas, necesidad de adaptación instantánea a nuevos datos.  
 ✅ Sin fase de entrenamiento, simple, se adapta a fronteras complejas.  
 ❌ Predicción lenta (O(N)), sensible a escala y dimensionalidad, alto consumo de memoria.  
 ________________________________________
 ## 🔍 8. Análisis de Componentes Principales (PCA)
-🧠 Concepto Clave: Reducción de dimensionalidad no supervisada. Encuentra las direcciones de máxima varianza y proyecta los datos en un espacio más pequeño.  
-⚙️ ¿Cómo funciona? Calcula componentes ortogonales (autovectores de la matriz de covarianza) y retiene solo los que explican la mayor variabilidad.  
-🎯 ¿Cuándo elegirlo? Datos con cientos/miles de features, ruido alto, necesidad de visualización o acelerar modelos posteriores.  
+🧠 *Concepto Clave:* Reducción de dimensionalidad no supervisada. Encuentra las direcciones de máxima varianza y proyecta los datos en un espacio más pequeño.  
+⚙️ *¿Cómo funciona?* Calcula componentes ortogonales (autovectores de la matriz de covarianza) y retiene solo los que explican la mayor variabilidad.  
+🎯 *¿Cuándo elegirlo?* Datos con cientos/miles de features, ruido alto, necesidad de visualización o acelerar modelos posteriores.  
 ✅ Rápido, elimina redundancia, mejora estabilidad numérica.  
 ❌ Pierde interpretabilidad (los componentes no son features originales), asume relaciones lineales.  
 ________________________________________
 ## 🧩 9. K-Means Clustering
-🧠 Concepto Clave: Agrupamiento no supervisado que partitiona datos en K grupos basándose en distancia a centroides.  
-⚙️ ¿Cómo funciona? Inicializa K centroides → asigna cada punto al centroide más cercano → recalcula centroides → repite hasta convergencia.  
-🎯 ¿Cuándo elegirlo? Segmentación, detección de patrones ocultos, reducción de datos antes de modelado supervisado.  
+🧠 *Concepto Clave:* Agrupamiento no supervisado que partitiona datos en K grupos basándose en distancia a centroides.  
+⚙️ *¿Cómo funciona?* Inicializa K centroides → asigna cada punto al centroide más cercano → recalcula centroides → repite hasta convergencia.  
+🎯 *¿Cuándo elegirlo?* Segmentación, detección de patrones ocultos, reducción de datos antes de modelado supervisado.  
 ✅ Simple, escalable (O(N·K·d)), fácil de paralelizar.  
 ❌ Requiere definir K, sensible a escala e inicialización, asume clusters esféricos y de tamaño similar.  
 ________________________________________
 ## 🌿 10. Agrupamiento Jerárquico (Hierarchical Clustering)
-🧠 Concepto Clave: Construye una jerarquía de clusters (dendrograma) sin requerir K predefinido.  
-⚙️ ¿Cómo funciona? Versión aglomerativa: cada punto inicia como cluster → se fusionan los dos más cercanos iterativamente → se detiene al cortar el dendrograma.  
-🎯 ¿Cuándo elegirlo? Exploración de estructura natural de datos, datasets pequeños/medianos, necesidad de niveles de granularidad.  
+🧠 *Concepto Clave:* Construye una jerarquía de clusters (dendrograma) sin requerir K predefinido.  
+⚙️ *¿Cómo funciona?* Versión aglomerativa: cada punto inicia como cluster → se fusionan los dos más cercanos iterativamente → se detiene al cortar el dendrograma.  
+🎯 *¿Cuándo elegirlo?* Exploración de estructura natural de datos, datasets pequeños/medianos, necesidad de niveles de granularidad.  
 ✅ No requiere K, visualmente interpretable, captura relaciones anidadas.  
 ❌ Complejidad O(N²) o O(N³), sensible a ruido, difícil de actualizar incrementalmente.  
 ________________________________________
 ## 🎮 11. Q-Learning (Reinforcement Learning)
-🧠 Concepto Clave: Aprendizaje por refuerzo que optimiza decisiones secuenciales maximizando recompensa acumulada.  
-⚙️ ¿Cómo funciona? Actualiza una tabla o red de valores Q(s,a) usando la ecuación de Bellman: Q ← Q + α[r + γ·max Q(s',a') - Q]. Balancea exploración vs explotación.  
-🎯 ¿Cuándo elegirlo? Entornos dinámicos, decisiones en cadena, sistemas adaptativos con feedback retardado.  
+🧠 *Concepto Clave:* Aprendizaje por refuerzo que optimiza decisiones secuenciales maximizando recompensa acumulada.  
+⚙️ *¿Cómo funciona?* Actualiza una tabla o red de valores Q(s,a) usando la ecuación de Bellman: Q ← Q + α[r + γ·max Q(s',a') - Q]. Balancea exploración vs explotación.  
+🎯 *¿Cuándo elegirlo?* Entornos dinámicos, decisiones en cadena, sistemas adaptativos con feedback retardado.  
 ✅ Aprende sin modelo del entorno, maneja recompensas diferidas, se adapta en tiempo real.  
 ❌ Inestable con espacios grandes, requiere simulación o entorno seguro, difícil de debuggear.  
 ________________________________________
 ## 🖼️ 12. Redes Neuronales Convolucionales (CNN)
-🧠 Concepto Clave: Arquitectura deep learning optimizada para datos con estructura espacial o local (imágenes, señales, texto 1D).  
-⚙️ ¿Cómo funciona? Aplica filtros deslizantes que detectan patrones locales → pooling reduce dimensionalidad → capas profundas combinan features jerárquicamente.  
-🎯 ¿Cuándo elegirlo? Reconocimiento visual, procesamiento de señales, extracción de patrones locales en secuencias.  
+🧠 *Concepto Clave:* Arquitectura deep learning optimizada para datos con estructura espacial o local (imágenes, señales, texto 1D).  
+⚙️ *¿Cómo funciona?* Aplica filtros deslizantes que detectan patrones locales → pooling reduce dimensionalidad → capas profundas combinan features jerárquicamente.  
+🎯 *¿Cuándo elegirlo?* Reconocimiento visual, procesamiento de señales, extracción de patrones locales en secuencias.  
 ✅ Invariante a traslación, excelente en patrones locales, altamente paralelizable en GPU.  
 ❌ Requiere muchos datos, computacionalmente costoso, caja negra difícil de auditar.  
 ________________________________________
 ## 🔁 13. Redes Neuronales Recurrentes (RNN / LSTM / GRU)
-🧠 Concepto Clave: Redes con memoria interna que procesan secuencias manteniendo un estado oculto paso a paso.  
-⚙️ ¿Cómo funciona? h_t = f(W·h_{t-1} + U·x_t + b). LSTM/GRU añaden compuertas para retener/olvidar información a largo plazo y evitar vanishing gradients.  
-🎯 ¿Cuándo elegirlo? Datos secuenciales: texto, series de tiempo, audio, donde el orden importa.  
+🧠 *Concepto Clave:* Redes con memoria interna que procesan secuencias manteniendo un estado oculto paso a paso.  
+⚙️ *¿Cómo funciona?* h_t = f(W·h_{t-1} + U·x_t + b). LSTM/GRU añaden compuertas para retener/olvidar información a largo plazo y evitar vanishing gradients.  
+🎯 *¿Cuándo elegirlo?* Datos secuenciales: texto, series de tiempo, audio, donde el orden importa.  
 ✅ Captura dependencias temporales, flexible en longitud de secuencia.  
 ❌ Entrenamiento lento, propenso a desvanecimiento de gradientes (RNN base), mayormente reemplazado por Transformers.  
 ________________________________________
 ## 🕸️ 14. Perceptrón Multicapa (MLP)
-🧠 Concepto Clave: Red neuronal feedforward con capas ocultas y activaciones no lineales. Aproximador universal.  
-⚙️ ¿Cómo funciona? Propaga datos hacia adelante: z = W·x + b → a = σ(z). Entrena con backpropagation y optimizadores (Adam, SGD).  
-🎯 ¿Cuándo elegirlo? Datos tabulares complejos, relaciones no lineales fuertes, baseline deep learning.  
+🧠 *Concepto Clave:* Red neuronal feedforward con capas ocultas y activaciones no lineales. Aproximador universal.  
+⚙️ *¿Cómo funciona?* Propaga datos hacia adelante: z = W·x + b → a = σ(z). Entrena con backpropagation y optimizadores (Adam, SGD).  
+🎯 *¿Cuándo elegirlo?* Datos tabulares complejos, relaciones no lineales fuertes, baseline deep learning.  
 ✅ Flexible, captura interacciones complejas, compatible con features numéricas/categóricas.  
 ❌ Propenso a overfitting, requiere regularización/dropout, menos interpretable, sensible a escalado.  
